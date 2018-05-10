@@ -7,8 +7,12 @@
 //
 
 #import "SearchTableViewController.h"
+#import "YoutubeConnectionManager.h"
+#import "VideoModel.h"
 
 @interface SearchTableViewController ()
+
+@property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModels;
 
 @end
 
@@ -16,7 +20,32 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.videoModels = [[NSMutableArray alloc] init];
+    [YoutubeConnectionManager makeYoutubeSearchRequestWithKeywords:@[@"gucic",@"gang"] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error = %@", error.localizedDescription);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                for (NSDictionary *item in items) {
+                    NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
+                    NSDictionary *snippet = [item objectForKey:@"snippet"];
+                    VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                    [self.videoModels addObject:videoModel];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tableView reloadData];
+                });
+            }
+            NSLog(@"Data = %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+        }
+    }];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -32,24 +61,22 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+    return self.videoModels.count;
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
+    cell.textLabel.text = [self.videoModels objectAtIndex:indexPath.row].videoTitle;
     // Configure the cell...
     
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.
