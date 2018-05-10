@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+@class ThumbnailModel;
+
 @interface VideoModel : NSObject
 
 @property (strong, nonatomic, readonly) NSString *videoId;
-@property (strong, nonatomic, readonly) NSURL *thumbnailURL;
+@property (strong, nonatomic, readonly) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
 @property (strong, nonatomic, readonly) NSString *videoTitle;
 @property (strong, nonatomic, readonly) NSString *videoDescription;
 @property (strong, nonatomic, readonly) NSDate *publishedAt;
