@@ -34,9 +34,11 @@
         NSDictionary<NSString *, id> *thumbnailsDict = [snippet objectForKey:@"thumbnails"];
         NSMutableDictionary<NSString *,ThumbnailModel *> *temp = [[NSMutableDictionary alloc] init];
         for (NSString *key in thumbnailsDict.allKeys) {
-            
-            ThumbnailModel *thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:[thumbnailsDict objectForKey:key]];
-            [temp setObject:thumbnail forKey:key];
+            for (NSString *quality in thumbnailsDict.allKeys) {
+                NSDictionary *thumbDict = [thumbnailsDict objectForKey:quality];
+                ThumbnailModel *thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:[thumbDict objectForKey:key]];
+                [temp setObject:thumbnail forKey:quality];
+            }
         }
         
         self.thumbnails = temp.copy;
