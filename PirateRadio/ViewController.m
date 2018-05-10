@@ -8,7 +8,9 @@
 
 #import "ViewController.h"
 
+
 @interface ViewController ()
+@property (strong, nonatomic) NSDictionary *jsonDict;
 
 @end
 
@@ -16,14 +18,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    NSDictionary *playerVars = @{
+                                 @"playsinline" : @1,
+                                 };
+    [self.youtubePlayer loadWithVideoId:@"XR7Ev14vUh8" playerVars:playerVars];
+    self.youtubePlayer.delegate = self;
+    NSData *data;
+    NSError *error;
+    self.jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    if (error) {
+        NSLog(@"%@", [error description]);
+    }
+    else {
+        
+    }
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 @end
