@@ -9,6 +9,7 @@
 #import "SearchTableViewController.h"
 #import "YoutubeConnectionManager.h"
 #import "VideoModel.h"
+#import "ThumbnailModel.h"
 
 @interface SearchTableViewController ()
 
@@ -71,7 +72,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
-    cell.textLabel.text = [self.videoModels objectAtIndex:indexPath.row].videoTitle;
+    VideoModel *videoModel = [self.videoModels objectAtIndex:indexPath.row];
+    UIImage *thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"default"].url]];
+    cell.imageView.image = thumbnail;
+    cell.textLabel.text = videoModel.videoTitle;
     // Configure the cell...
     
     return cell;

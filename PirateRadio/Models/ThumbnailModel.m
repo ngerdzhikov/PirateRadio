@@ -21,7 +21,7 @@
 - (instancetype)initWithJSONDictionary:(NSDictionary<NSString *, id> *)jsonDict {
     self = [super init];
     if (self) {
-        self.url = [jsonDict objectForKey:@"url"];
+        self.url = [NSURL URLWithString:[jsonDict objectForKey:@"url"]];
         self.width = ((NSNumber *)[jsonDict objectForKey:@"width"]).unsignedIntegerValue;
         self.height = ((NSNumber *)[jsonDict objectForKey:@"height"]).unsignedIntegerValue;
     }
