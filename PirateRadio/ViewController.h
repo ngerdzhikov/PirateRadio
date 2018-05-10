@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "YTPlayerView.h"
 
-@interface ViewController : UIViewController
 
+@interface ViewController : UIViewController<YTPlayerViewDelegate>
+
+@property (strong, nonatomic) NSURLSession *session;
+@property (strong, nonatomic) IBOutlet YTPlayerView *youtubePlayer;
 
 @end
 

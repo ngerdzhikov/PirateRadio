@@ -7,25 +7,43 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */; };
+		06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */; };
+		06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */; };
+		06BE0CBC20A46054007D9319 /* VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CBB20A46054007D9319 /* VideoModel.m */; };
+		06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
-		06FC536C20A335CF003238BF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536B20A335CF003238BF /* ViewController.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
 		06FC537120A335D4003238BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537020A335D4003238BF /* Assets.xcassets */; };
 		06FC537420A335D4003238BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537220A335D4003238BF /* LaunchScreen.storyboard */; };
 		06FC537720A335D4003238BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC537620A335D4003238BF /* main.m */; };
+		1CC395A674ECF35F2D55F5B4 /* libPods-PirateRadio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE5D4BCF5E0478913DE84BBD /* libPods-PirateRadio.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06BE0CA920A446C5007D9319 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = PirateRadio/Utilities/Constants.h; sourceTree = "<group>"; };
+		06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTableViewController.h; sourceTree = "<group>"; };
+		06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchTableViewController.m; sourceTree = "<group>"; };
+		06BE0CB320A44FDA007D9319 /* YoutubePlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubePlayerViewController.h; sourceTree = "<group>"; };
+		06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubePlayerViewController.m; sourceTree = "<group>"; };
+		06BE0CB620A46019007D9319 /* SearchResultTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResultTableViewCell.h; sourceTree = "<group>"; };
+		06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultTableViewCell.m; sourceTree = "<group>"; };
+		06BE0CBA20A46054007D9319 /* VideoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoModel.h; sourceTree = "<group>"; };
+		06BE0CBB20A46054007D9319 /* VideoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoModel.m; sourceTree = "<group>"; };
+		06BE0CBD20A464AA007D9319 /* Protocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Protocols.h; sourceTree = "<group>"; };
+		06BE0CC520A4981C007D9319 /* YoutubeConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YoutubeConnectionManager.h; sourceTree = "<group>"; };
+		06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YoutubeConnectionManager.m; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06FC536720A335CF003238BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		06FC536820A335CF003238BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		06FC536A20A335CF003238BF /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		06FC536B20A335CF003238BF /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		06FC536E20A335CF003238BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		06FC537020A335D4003238BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		06FC537320A335D4003238BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		06FC537520A335D4003238BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		06FC537620A335D4003238BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6182B3E40876F8DD259C92ED /* Pods-PirateRadio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PirateRadio.release.xcconfig"; path = "Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio.release.xcconfig"; sourceTree = "<group>"; };
+		891BF603A8EEF8432313DA09 /* Pods-PirateRadio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PirateRadio.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio.debug.xcconfig"; sourceTree = "<group>"; };
+		AE5D4BCF5E0478913DE84BBD /* libPods-PirateRadio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PirateRadio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,17 +51,62 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CC395A674ECF35F2D55F5B4 /* libPods-PirateRadio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06BE0CAA20A4474F007D9319 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				06BE0CA920A446C5007D9319 /* Constants.h */,
+				06BE0CBD20A464AA007D9319 /* Protocols.h */,
+			);
+			name = Utilities;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		06BE0CAF20A44F9D007D9319 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */,
+				06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */,
+				06BE0CB320A44FDA007D9319 /* YoutubePlayerViewController.h */,
+				06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */,
+				06BE0CB620A46019007D9319 /* SearchResultTableViewCell.h */,
+				06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		06BE0CB920A46034007D9319 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				06BE0CBA20A46054007D9319 /* VideoModel.h */,
+				06BE0CBB20A46054007D9319 /* VideoModel.m */,
+			);
+			name = Models;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		06BE0CC420A4981B007D9319 /* Connections */ = {
+			isa = PBXGroup;
+			children = (
+				06BE0CC520A4981C007D9319 /* YoutubeConnectionManager.h */,
+				06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */,
+			);
+			path = Connections;
+			sourceTree = "<group>";
+		};
 		06FC535B20A335CF003238BF = {
 			isa = PBXGroup;
 			children = (
 				06FC536620A335CF003238BF /* PirateRadio */,
 				06FC536520A335CF003238BF /* Products */,
+				49EE55990CC85C7D69AC7271 /* Pods */,
+				A28ABB5990062DFC0AC5AE40 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,10 +121,12 @@
 		06FC536620A335CF003238BF /* PirateRadio */ = {
 			isa = PBXGroup;
 			children = (
+				06BE0CC420A4981B007D9319 /* Connections */,
+				06BE0CB920A46034007D9319 /* Models */,
+				06BE0CAA20A4474F007D9319 /* Utilities */,
+				06BE0CAF20A44F9D007D9319 /* ViewControllers */,
 				06FC536720A335CF003238BF /* AppDelegate.h */,
 				06FC536820A335CF003238BF /* AppDelegate.m */,
-				06FC536A20A335CF003238BF /* ViewController.h */,
-				06FC536B20A335CF003238BF /* ViewController.m */,
 				06FC536D20A335CF003238BF /* Main.storyboard */,
 				06FC537020A335D4003238BF /* Assets.xcassets */,
 				06FC537220A335D4003238BF /* LaunchScreen.storyboard */,
@@ -71,6 +136,23 @@
 			path = PirateRadio;
 			sourceTree = "<group>";
 		};
+		49EE55990CC85C7D69AC7271 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				891BF603A8EEF8432313DA09 /* Pods-PirateRadio.debug.xcconfig */,
+				6182B3E40876F8DD259C92ED /* Pods-PirateRadio.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A28ABB5990062DFC0AC5AE40 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AE5D4BCF5E0478913DE84BBD /* libPods-PirateRadio.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -78,9 +160,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 06FC537A20A335D4003238BF /* Build configuration list for PBXNativeTarget "PirateRadio" */;
 			buildPhases = (
+				A9D7D7ABE758C03E7042B822 /* [CP] Check Pods Manifest.lock */,
 				06FC536020A335CF003238BF /* Sources */,
 				06FC536120A335CF003238BF /* Frameworks */,
 				06FC536220A335CF003238BF /* Resources */,
+				B915BC823511F14478752E2D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -136,14 +220,57 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A9D7D7ABE758C03E7042B822 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PirateRadio-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B915BC823511F14478752E2D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio-resources.sh",
+				"${PODS_ROOT}/youtube-ios-player-helper/youtube-ios-player-helper/Assets.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		06FC536020A335CF003238BF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				06FC536C20A335CF003238BF /* ViewController.m in Sources */,
+				06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */,
 				06FC537720A335D4003238BF /* main.m in Sources */,
+				06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
+				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
+				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
+				06BE0CBC20A46054007D9319 /* VideoModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,9 +408,12 @@
 		};
 		06FC537B20A335D4003238BF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 891BF603A8EEF8432313DA09 /* Pods-PirateRadio.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PirateRadio/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -291,15 +421,19 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.nemetschek.PirateRadio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		06FC537C20A335D4003238BF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6182B3E40876F8DD259C92ED /* Pods-PirateRadio.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PirateRadio/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -307,6 +441,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.nemetschek.PirateRadio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

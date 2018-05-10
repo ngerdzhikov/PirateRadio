@@ -1,0 +1,7 @@
+Pods/
+*.lock
+*.xcbkptlist
+*.xcworkspacedata
+PirateRadio.xcodeproj/xcuserdata/a-teamuser.xcuserdatad/xcschemes/xcschememanagement.plist
+PirateRadio.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+PirateRadio.xcodeproj/xcuserdata/a-teamuser.xcuserdatad/xcschemes/xcschememanagement.plist
