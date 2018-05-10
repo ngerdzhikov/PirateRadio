@@ -10,8 +10,10 @@
 		06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */; };
 		06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */; };
 		06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */; };
-		06BE0CBC20A46054007D9319 /* VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CBB20A46054007D9319 /* VideoModel.m */; };
 		06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */; };
+		06BE0CCA20A4A106007D9319 /* NSURL+URLWithQueryItems.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */; };
+		06BE0CD320A4A6B4007D9319 /* ThumbnailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CD020A4A6B4007D9319 /* ThumbnailModel.m */; };
+		06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CD220A4A6B4007D9319 /* VideoModel.m */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
 		06FC537120A335D4003238BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537020A335D4003238BF /* Assets.xcassets */; };
@@ -28,11 +30,15 @@
 		06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubePlayerViewController.m; sourceTree = "<group>"; };
 		06BE0CB620A46019007D9319 /* SearchResultTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResultTableViewCell.h; sourceTree = "<group>"; };
 		06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultTableViewCell.m; sourceTree = "<group>"; };
-		06BE0CBA20A46054007D9319 /* VideoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoModel.h; sourceTree = "<group>"; };
-		06BE0CBB20A46054007D9319 /* VideoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoModel.m; sourceTree = "<group>"; };
 		06BE0CBD20A464AA007D9319 /* Protocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Protocols.h; sourceTree = "<group>"; };
 		06BE0CC520A4981C007D9319 /* YoutubeConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YoutubeConnectionManager.h; sourceTree = "<group>"; };
 		06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YoutubeConnectionManager.m; sourceTree = "<group>"; };
+		06BE0CC820A4A106007D9319 /* NSURL+URLWithQueryItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSURL+URLWithQueryItems.h"; path = "PirateRadio/Utilities/NSURL+URLWithQueryItems.h"; sourceTree = "<group>"; };
+		06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSURL+URLWithQueryItems.m"; path = "PirateRadio/Utilities/NSURL+URLWithQueryItems.m"; sourceTree = "<group>"; };
+		06BE0CCF20A4A6B4007D9319 /* ThumbnailModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailModel.h; sourceTree = "<group>"; };
+		06BE0CD020A4A6B4007D9319 /* ThumbnailModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumbnailModel.m; sourceTree = "<group>"; };
+		06BE0CD120A4A6B4007D9319 /* VideoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoModel.h; sourceTree = "<group>"; };
+		06BE0CD220A4A6B4007D9319 /* VideoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoModel.m; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06FC536720A335CF003238BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		06FC536820A335CF003238BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -63,6 +69,8 @@
 			children = (
 				06BE0CA920A446C5007D9319 /* Constants.h */,
 				06BE0CBD20A464AA007D9319 /* Protocols.h */,
+				06BE0CC820A4A106007D9319 /* NSURL+URLWithQueryItems.h */,
+				06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -81,16 +89,6 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
-		06BE0CB920A46034007D9319 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				06BE0CBA20A46054007D9319 /* VideoModel.h */,
-				06BE0CBB20A46054007D9319 /* VideoModel.m */,
-			);
-			name = Models;
-			path = ..;
-			sourceTree = "<group>";
-		};
 		06BE0CC420A4981B007D9319 /* Connections */ = {
 			isa = PBXGroup;
 			children = (
@@ -98,6 +96,17 @@
 				06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */,
 			);
 			path = Connections;
+			sourceTree = "<group>";
+		};
+		06BE0CCE20A4A6B4007D9319 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				06BE0CCF20A4A6B4007D9319 /* ThumbnailModel.h */,
+				06BE0CD020A4A6B4007D9319 /* ThumbnailModel.m */,
+				06BE0CD120A4A6B4007D9319 /* VideoModel.h */,
+				06BE0CD220A4A6B4007D9319 /* VideoModel.m */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		06FC535B20A335CF003238BF = {
@@ -122,7 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				06BE0CC420A4981B007D9319 /* Connections */,
-				06BE0CB920A46034007D9319 /* Models */,
+				06BE0CCE20A4A6B4007D9319 /* Models */,
 				06BE0CAA20A4474F007D9319 /* Utilities */,
 				06BE0CAF20A44F9D007D9319 /* ViewControllers */,
 				06FC536720A335CF003238BF /* AppDelegate.h */,
@@ -264,13 +273,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06BE0CD320A4A6B4007D9319 /* ThumbnailModel.m in Sources */,
 				06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */,
 				06FC537720A335D4003238BF /* main.m in Sources */,
+				06BE0CCA20A4A106007D9319 /* NSURL+URLWithQueryItems.m in Sources */,
 				06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */,
+				06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
-				06BE0CBC20A46054007D9319 /* VideoModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
