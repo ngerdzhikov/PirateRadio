@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */; };
 		06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */; };
 		06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */; };
@@ -23,6 +24,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubeDownloadManager.h; sourceTree = "<group>"; };
+		062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubeDownloadManager.m; sourceTree = "<group>"; };
 		06BE0CA920A446C5007D9319 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = PirateRadio/Utilities/Constants.h; sourceTree = "<group>"; };
 		06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTableViewController.h; sourceTree = "<group>"; };
 		06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchTableViewController.m; sourceTree = "<group>"; };
@@ -94,6 +97,8 @@
 			children = (
 				06BE0CC520A4981C007D9319 /* YoutubeConnectionManager.h */,
 				06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */,
+				062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */,
+				062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */,
 			);
 			path = Connections;
 			sourceTree = "<group>";
@@ -280,6 +285,7 @@
 				06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */,
 				06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
+				062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */,
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
 			);
