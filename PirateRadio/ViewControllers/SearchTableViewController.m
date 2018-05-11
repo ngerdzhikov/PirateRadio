@@ -8,12 +8,14 @@
 
 #import "SearchTableViewController.h"
 #import "YoutubeConnectionManager.h"
+#import "SearchResultTableViewCell.h"
 #import "VideoModel.h"
 #import "ThumbnailModel.h"
 
 @interface SearchTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModels;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
 @end
 
@@ -21,8 +23,64 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.tableView.tableHeaderView = self.searchBar;
+    self.searchBar.delegate = self;
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+    
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.videoModels.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 240.0f;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
+    VideoModel *videoModel = [self.videoModels objectAtIndex:indexPath.row];
+    UIImage *thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"default"].url]];
+    cell.videoImage.image = thumbnail;
+    cell.videoTitle.text = videoModel.videoTitle;
+    cell.channelTitle.text = videoModel.channelTitle;
+    cell.dateUploaded.text = videoModel.publishedAt;
+    
+
+    return cell;
+}
+
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    NSString *searchText = searchBar.text;
+    if (![searchText isEqualToString:@""]) {
+        NSArray<NSString *> *keywords = [searchText componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        [self makeSearchWithKeywords:keywords];
+    }
+}
+- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar {
+    NSLog(@"Test");
+}
+
+- (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
     self.videoModels = [[NSMutableArray alloc] init];
-    [YoutubeConnectionManager makeYoutubeSearchRequestWithKeywords:@[@"gucic",@"gang"] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [YoutubeConnectionManager makeYoutubeSearchRequestWithKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error = %@", error.localizedDescription);
         }
@@ -47,40 +105,7 @@
             NSLog(@"Data = %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
         }
     }];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.videoModels.count;
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
-    VideoModel *videoModel = [self.videoModels objectAtIndex:indexPath.row];
-    UIImage *thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"default"].url]];
-    cell.imageView.image = thumbnail;
-    cell.textLabel.text = videoModel.videoTitle;
-    // Configure the cell...
-    
-    return cell;
-}
-
 
 /*
 // Override to support conditional editing of the table view.

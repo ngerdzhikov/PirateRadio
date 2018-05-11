@@ -16,7 +16,7 @@
 @property (strong, nonatomic, readonly) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
 @property (strong, nonatomic, readonly) NSString *videoTitle;
 @property (strong, nonatomic, readonly) NSString *videoDescription;
-@property (strong, nonatomic, readonly) NSDate *publishedAt;
+@property (strong, nonatomic, readonly) NSString *publishedAt;
 @property (strong, nonatomic, readonly) NSString *channelTitle;
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet andVideoId:(NSString *)videoId;
