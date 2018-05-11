@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+@class DownloadModel;
+
 @interface YoutubeDownloadManager : NSObject<NSURLSessionDownloadDelegate>
 
-- (void) downloadDataFromURL:(NSURL *)url;
 + (instancetype)sharedInstance;
+- (void) downloadVideoWithDownloadModel:(DownloadModel *)download;
 
 @end

@@ -11,6 +11,7 @@
 #import "SearchResultTableViewCell.h"
 #import "VideoModel.h"
 #import "ThumbnailModel.h"
+#import "YoutubePlayerViewController.h"
 
 @interface SearchTableViewController ()
 
@@ -56,7 +57,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
     VideoModel *videoModel = [self.videoModels objectAtIndex:indexPath.row];
-    UIImage *thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"default"].url]];
+    UIImage *thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
     cell.videoImage.image = thumbnail;
     cell.videoTitle.text = videoModel.videoTitle;
     cell.channelTitle.text = videoModel.channelTitle;
@@ -72,6 +73,13 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
+    //[self.navigationController pushViewController:youtubePlayer animated:YES];
+    youtubePlayer.videoModel = self.videoModels[indexPath.row];
+    [self.navigationController pushViewController:youtubePlayer animated:YES];
+}
+
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     NSString *searchText = searchBar.text;
@@ -79,9 +87,6 @@
         NSArray<NSString *> *keywords = [searchText componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [self makeSearchWithKeywords:keywords];
     }
-}
-- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar {
-    NSLog(@"Test");
 }
 
 - (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
@@ -112,6 +117,14 @@
         }
     }];
 }
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == self.videoModels.count) {
+        
+    }
+}
+
+
 
 /*
 // Override to support conditional editing of the table view.

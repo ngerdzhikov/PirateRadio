@@ -7,7 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VideoModel.h"
+#import "YTPlayerView.h"
+#import "DownloadButtonWebView.h"
 
-@interface YoutubePlayerViewController : UIViewController
+@interface YoutubePlayerViewController : UIViewController <YTPlayerViewDelegate>
+
+@property (strong, nonatomic) VideoModel *videoModel;
+@property (weak, nonatomic) IBOutlet YTPlayerView *youtubePlayer;
+@property (weak, nonatomic) IBOutlet UILabel *videoTitle;
+@property (weak, nonatomic) IBOutlet UILabel *videoDescription;
+@property (weak, nonatomic) IBOutlet DownloadButtonWebView *downloadButtonWebView;
+
+
 
 @end

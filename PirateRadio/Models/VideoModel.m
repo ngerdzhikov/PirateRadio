@@ -37,12 +37,12 @@
             ThumbnailModel *thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:thumbDict];
             [temp setObject:thumbnail forKey:quality];
         }
-        
         self.thumbnails = temp.copy;
         self.channelTitle = [snippet objectForKey:@"channelTitle"];
     }
     
     return self;
 }
+
 
 @end
