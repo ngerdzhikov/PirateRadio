@@ -60,9 +60,15 @@
     cell.videoImage.image = thumbnail;
     cell.videoTitle.text = videoModel.videoTitle;
     cell.channelTitle.text = videoModel.channelTitle;
-    cell.dateUploaded.text = videoModel.publishedAt;
     
-
+    NSArray<NSString *> *dateArr = [videoModel.publishedAt componentsSeparatedByString:@"-"];
+    NSString *dateString = [dateArr[2] substringToIndex:2];
+    dateString = [dateString stringByAppendingString:@"."];
+    dateString = [dateString stringByAppendingString:dateArr[1]];
+    dateString = [dateString stringByAppendingString:@"."];
+    dateString = [dateString stringByAppendingString:dateArr[0]];
+    cell.dateUploaded.text = dateString;
+    
     return cell;
 }
 
