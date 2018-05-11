@@ -8,6 +8,10 @@
 
 #import "YoutubePlayerViewController.h"
 #import "YoutubeConnectionManager.h"
+#import "YoutubeDownloadManager.h"
+#import "NSURL+URLWithQueryItems.h"
+
+#define DOWNLOAD_BUTTON_URL_PREFIX @"https://youtube7.download/mini.php"
 
 @interface YoutubePlayerViewController ()
 
@@ -17,8 +21,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    NSDictionary *playerVars = @{
+                                 @"playsinline" : @1,
+                                 };
+    [self.youtubePlayer loadWithVideoId:self.videoModel.videoId playerVars:playerVars];
+    self.youtubePlayer.delegate = self;
+    self.videoTitle.text = self.videoModel.videoTitle;
+    self.videoDescription.text = self.videoModel.videoDescription;
     
+    NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.videoModel.videoId];
+    NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
+    [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
+//    [self.downloadButtonWebView setNavigationDelegate:self.downloadButtonWebView];
+    self.downloadButtonWebView.videoModel = self.videoModel;
+}
+
+- (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
+    [self.youtubePlayer playVideo];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -26,6 +45,8 @@
     // Dispose of any resources that can be recreated.
 
 }
+
+
 
 /*
 #pragma mark - Navigation

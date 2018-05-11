@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -31,32 +32,48 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="239.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jQl-dV-OHO">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jQl-dV-OHO">
                                             <rect key="frame" x="16" y="14" width="343" height="150"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="150" id="Jhq-QT-ITy"/>
+                                                <constraint firstAttribute="width" constant="343" id="rk4-Zi-7Hy"/>
+                                            </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Gorillaz - Clint Eastwood (Official Video)" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RVP-pz-Ff4">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gorillaz - Clint Eastwood (Official Video)" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RVP-pz-Ff4">
                                             <rect key="frame" x="16" y="172" width="343" height="32"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="32" id="7TQ-5E-qnf"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q42-oN-uOP">
-                                            <rect key="frame" x="16" y="212" width="180" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q42-oN-uOP">
+                                            <rect key="frame" x="16" y="212" width="180" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p4W-om-Dst">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p4W-om-Dst">
                                             <rect key="frame" x="228" y="212" width="131" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="p4W-om-Dst" secondAttribute="trailing" constant="16" id="1jX-nb-jaU"/>
+                                        <constraint firstItem="RVP-pz-Ff4" firstAttribute="leading" secondItem="nke-Fs-MrR" secondAttribute="leading" constant="16" id="DAj-rk-VyI"/>
+                                        <constraint firstItem="jQl-dV-OHO" firstAttribute="centerX" secondItem="nke-Fs-MrR" secondAttribute="centerX" id="LIU-bc-BZW"/>
+                                        <constraint firstItem="p4W-om-Dst" firstAttribute="width" secondItem="nke-Fs-MrR" secondAttribute="height" multiplier="131:239" id="PVF-3v-onr"/>
+                                        <constraint firstItem="p4W-om-Dst" firstAttribute="leading" secondItem="q42-oN-uOP" secondAttribute="trailing" constant="32" id="Q8i-Fh-1Gm"/>
+                                        <constraint firstAttribute="trailing" secondItem="RVP-pz-Ff4" secondAttribute="trailing" constant="16" id="Vat-Oe-UEf"/>
+                                        <constraint firstItem="jQl-dV-OHO" firstAttribute="top" secondItem="nke-Fs-MrR" secondAttribute="top" constant="14" id="a4E-u5-SzE"/>
+                                        <constraint firstItem="p4W-om-Dst" firstAttribute="top" secondItem="RVP-pz-Ff4" secondAttribute="bottom" constant="8" id="cXv-cX-mK3"/>
+                                        <constraint firstItem="q42-oN-uOP" firstAttribute="top" secondItem="RVP-pz-Ff4" secondAttribute="bottom" constant="8" id="g8y-6J-5qg"/>
+                                        <constraint firstItem="RVP-pz-Ff4" firstAttribute="top" secondItem="jQl-dV-OHO" secondAttribute="bottom" constant="8" id="lWi-HK-t9u"/>
+                                        <constraint firstItem="q42-oN-uOP" firstAttribute="leading" secondItem="nke-Fs-MrR" secondAttribute="leading" constant="16" id="nbE-rX-o23"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="channelTitle" destination="q42-oN-uOP" id="fOt-Rg-dLd"/>
@@ -99,20 +116,55 @@
         <!--Youtube Player View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="YoutubePlayerViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="YoutubePlayerViewController" id="BYZ-38-t0r" customClass="YoutubePlayerViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TKF-pN-KYO" customClass="YTPlayerView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TKF-pN-KYO" customClass="YTPlayerView">
                                 <rect key="frame" x="0.0" y="66" width="375" height="247"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Long Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FD1-yy-9Dc">
+                                <rect key="frame" x="150" y="359" width="75.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Very Long Description" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W8R-wW-9n8">
+                                <rect key="frame" x="103" y="395" width="169" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <wkWebView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ofl-Cu-cc8" customClass="DownloadButtonWebView">
+                                <rect key="frame" x="67" y="456" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="FD1-yy-9Dc" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="5nn-UH-iZO"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="TKF-pN-KYO" secondAttribute="bottom" constant="354" id="HIN-Dm-im7"/>
+                            <constraint firstItem="W8R-wW-9n8" firstAttribute="top" secondItem="FD1-yy-9Dc" secondAttribute="bottom" constant="15" id="S2i-L5-aUB"/>
+                            <constraint firstItem="TKF-pN-KYO" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="XbS-ym-xr2"/>
+                            <constraint firstItem="W8R-wW-9n8" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="b6z-St-R3R"/>
+                            <constraint firstItem="TKF-pN-KYO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dYs-fW-izW"/>
+                            <constraint firstItem="TKF-pN-KYO" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="46" id="tT4-bs-9QD"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="downloadButtonWebView" destination="ofl-Cu-cc8" id="14A-04-cid"/>
+                        <outlet property="videoDescription" destination="W8R-wW-9n8" id="gS1-7Z-Rao"/>
+                        <outlet property="videoTitle" destination="FD1-yy-9Dc" id="T7R-8O-v29"/>
+                        <outlet property="youtubePlayer" destination="TKF-pN-KYO" id="2QN-M2-sXg"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

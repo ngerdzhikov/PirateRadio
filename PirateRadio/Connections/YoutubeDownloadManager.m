@@ -7,14 +7,17 @@
 //
 
 #import "YoutubeDownloadManager.h"
+#import "VideoModel.h"
+#import "DownloadModel.h"
+
+@interface YoutubeDownloadManager ()
+
+@property (strong, nonatomic) NSMutableDictionary<NSURLSessionDownloadTask *, DownloadModel *> *downloads;
+@property (strong, nonatomic) NSURLSession *session;
+
+@end
 
 @implementation YoutubeDownloadManager
-
-- (void) downloadDataFromURL:(NSURL *)url {
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"youtubeDownload"] delegate:self delegateQueue:nil];
-    NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:url];
-    [downloadTask resume];
-}
 
 + (instancetype)sharedInstance {
     static YoutubeDownloadManager *sharedMyManager = nil;
@@ -25,16 +28,38 @@
     return sharedMyManager;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.downloads = [[NSMutableDictionary alloc] init];
+        self.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"youtubeDownload"] delegate:self delegateQueue:nil];
+    }
+    return self;
+}
+
+- (void) downloadVideoWithDownloadModel:(DownloadModel *)download {
+    
+    NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:download.URL];
+    [self.downloads setObject:download forKey:downloadTask];
+    
+    [downloadTask resume];
+}
+
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location {
-    NSLog(@"Finished Downloading at %@",[location description]);
+    
     NSFileManager *fileManager = NSFileManager.defaultManager;
-    NSURL *saveTo = [fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-    saveTo = [saveTo URLByAppendingPathComponent:@"test.mp3"];
+    
+    DownloadModel *download = self.downloads[downloadTask];
+    
     NSError *error;
-    [fileManager moveItemAtURL:location toURL:saveTo error:&error];
+    [fileManager moveItemAtURL:location toURL:download.localURLWithTimeStamp error:&error];
     
     if (error) {
-        
+        NSLog(@"error = %@", error.localizedDescription);
+    }
+    else {
+        [self.downloads removeObjectForKey:downloadTask];
     }
 }
 
