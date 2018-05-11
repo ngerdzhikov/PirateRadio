@@ -15,7 +15,7 @@
 @property (strong, nonatomic) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
 @property (strong, nonatomic) NSString *videoTitle;
 @property (strong, nonatomic) NSString *videoDescription;
-@property (strong, nonatomic) NSDate *publishedAt;
+@property (strong, nonatomic) NSString *publishedAt;
 @property (strong, nonatomic) NSString *channelTitle;
 
 @end
@@ -29,8 +29,7 @@
         self.videoId = videoId;
         self.videoTitle = [snippet objectForKey:@"title"];
         self.videoDescription = [snippet objectForKey:@"description"];
-        self.publishedAt = (NSDate *)[snippet objectForKey:@"publishedAt"];
-        
+        self.publishedAt = [snippet objectForKey:@"publishedAt"];
         NSDictionary<NSString *, id> *thumbnailsDict = [snippet objectForKey:@"thumbnails"];
         NSMutableDictionary<NSString *,ThumbnailModel *> *temp = [[NSMutableDictionary alloc] init];
         for (NSString *quality in thumbnailsDict.allKeys) {
