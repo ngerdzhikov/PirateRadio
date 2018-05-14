@@ -32,7 +32,6 @@
     NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.videoModel.videoId];
     NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
     [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
-//    [self.downloadButtonWebView setNavigationDelegate:self.downloadButtonWebView];
     self.downloadButtonWebView.videoModel = self.videoModel;
 }
 
