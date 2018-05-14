@@ -7,12 +7,13 @@
 //
 
 #import "SavedMusicTableViewController.h"
+#import "SavedMusicTableViewCell.h"
 
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray *mp3Files;
 @property (strong, nonatomic) AVQueuePlayer *player;
-@property (strong, nonatomic) NSMutableArray<AVPlayerItem *> *playerItems;
+@property (strong, nonatomic) NSMutableArray *isPlaying;
 
 @end
 
@@ -21,8 +22,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.mp3Files = [[NSMutableArray alloc] init];
-    self.playerItems = [[NSMutableArray alloc] init];
     self.player = [[AVQueuePlayer alloc] init];
+    self.isPlaying = [[NSMutableArray alloc] init];
+    [self loadAssetsForPlayer];
+    
+}
+
+- (void)loadAssetsForPlayer {
     NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     NSArray* dirs = [NSFileManager.defaultManager contentsOfDirectoryAtURL:sourcePath includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
     [dirs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -30,9 +36,7 @@
         NSString *extension = [[filename pathExtension] lowercaseString];
         if ([extension isEqualToString:@"mp3"]) {
             [self.mp3Files addObject:filename];
-            AVAsset *asset = [AVAsset assetWithURL:[self.mp3Files lastObject]];
-            AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
-            [self.playerItems addObject:item];
+            [self.isPlaying addObject:[NSNumber numberWithInt:0]];
         }
     }];
 }
@@ -54,18 +58,37 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
-    cell.textLabel.text = [[self.mp3Files[indexPath.row] lastPathComponent] stringByDeletingPathExtension];
-    // Configure the cell...
+    SavedMusicTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
+    cell.musicTitle.text = [[self.mp3Files[indexPath.row] lastPathComponent] stringByDeletingPathExtension];
+    cell.playButton.tag = indexPath.row;
+//    [cell.playButton addTarget:self action:@selector(playButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
     return cell;
 }
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.player replaceCurrentItemWithPlayerItem:self.playerItems[indexPath.row]];
-    [self.player play];
-    
+- (IBAction)playButtonTap:(UIButton*)button {
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.mp3Files[button.tag] options:nil];
+    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
+    if (self.isPlaying[button.tag] == [NSNumber numberWithInt:1]) {
+        [self.player pause];
+        button.titleLabel.text = @"Paused";
+        self.isPlaying[button.tag] = [NSNumber numberWithInt:0];
+    }
+    else {
+        if (![((AVURLAsset*)self.player.currentItem.asset).URL isEqual:asset.URL]) {
+            [self.player replaceCurrentItemWithPlayerItem:item];
+        }
+        self.isPlaying[button.tag] = [NSNumber numberWithInt:1];
+        [self.player play];
+        button.titleLabel.text = @"Play";
+    }
 }
+
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    AVAsset *asset = [AVAsset assetWithURL:self.mp3Files[indexPath.row]];
+//    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
+//    [self.player replaceCurrentItemWithPlayerItem:item];
+//
+//}
 
 
 
