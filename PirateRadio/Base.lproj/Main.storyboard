@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kVL-M7-4KV">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="2Nk-aF-eeV">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -125,50 +125,90 @@
                                 <rect key="frame" x="0.0" y="66" width="375" height="247"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Long Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FD1-yy-9Dc">
-                                <rect key="frame" x="150" y="359" width="75.5" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FD1-yy-9Dc">
+                                <rect key="frame" x="150" y="323" width="75.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Very Long Description" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W8R-wW-9n8">
-                                <rect key="frame" x="103" y="395" width="169" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <wkWebView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ofl-Cu-cc8" customClass="DownloadButtonWebView">
-                                <rect key="frame" x="67" y="456" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ofl-Cu-cc8" customClass="DownloadButtonWebView">
+                                <rect key="frame" x="67" y="517" width="240" height="100"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="VHy-hu-0l9"/>
+                                </constraints>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXr-Ir-JqJ">
+                                <rect key="frame" x="16" y="352" width="343" height="128"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="343" id="g2h-9h-YMz"/>
+                                    <constraint firstAttribute="height" constant="128" id="lZ9-Sa-7dR"/>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo con</string>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="FD1-yy-9Dc" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="5nn-UH-iZO"/>
+                            <constraint firstItem="FD1-yy-9Dc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ApV-dM-6m9"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="TKF-pN-KYO" secondAttribute="bottom" constant="354" id="HIN-Dm-im7"/>
-                            <constraint firstItem="W8R-wW-9n8" firstAttribute="top" secondItem="FD1-yy-9Dc" secondAttribute="bottom" constant="15" id="S2i-L5-aUB"/>
+                            <constraint firstItem="ofl-Cu-cc8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="67" id="Oka-Lv-3Sd"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="XbS-ym-xr2"/>
-                            <constraint firstItem="W8R-wW-9n8" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="b6z-St-R3R"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dYs-fW-izW"/>
+                            <constraint firstItem="ofl-Cu-cc8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mob-v5-Tdm"/>
+                            <constraint firstItem="FD1-yy-9Dc" firstAttribute="top" secondItem="TKF-pN-KYO" secondAttribute="bottom" constant="10" id="rPd-CT-HQ1"/>
+                            <constraint firstItem="ofl-Cu-cc8" firstAttribute="top" secondItem="OXr-Ir-JqJ" secondAttribute="bottom" constant="37" id="sNU-zE-YIM"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="46" id="tT4-bs-9QD"/>
+                            <constraint firstItem="OXr-Ir-JqJ" firstAttribute="top" secondItem="FD1-yy-9Dc" secondAttribute="bottom" constant="8" id="vwu-pw-Dd0"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ofl-Cu-cc8" secondAttribute="bottom" constant="50" id="ySF-Dy-U6g"/>
+                            <constraint firstItem="OXr-Ir-JqJ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="yST-Bh-wRD"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="downloadButtonWebView" destination="ofl-Cu-cc8" id="14A-04-cid"/>
-                        <outlet property="videoDescription" destination="W8R-wW-9n8" id="gS1-7Z-Rao"/>
+                        <outlet property="videoDescription" destination="OXr-Ir-JqJ" id="uZZ-Wp-yWF"/>
                         <outlet property="videoTitle" destination="FD1-yy-9Dc" id="T7R-8O-v29"/>
                         <outlet property="youtubePlayer" destination="TKF-pN-KYO" id="2QN-M2-sXg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="117.59999999999999" y="118.29085457271366"/>
+            <point key="canvasLocation" x="108" y="117"/>
+        </scene>
+        <!--Saved Music Table View Controller-->
+        <scene sceneID="9kh-Wj-VSY">
+            <objects>
+                <tableViewController id="2Nk-aF-eeV" customClass="SavedMusicTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="EKQ-5c-cnv">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="savedMusicCell" id="v3P-ns-ykC">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="v3P-ns-ykC" id="wpQ-HM-VUx">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="2Nk-aF-eeV" id="7Iw-HK-hzS"/>
+                            <outlet property="delegate" destination="2Nk-aF-eeV" id="DsB-6K-ljA"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yvL-Wp-4xe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="934" y="117"/>
         </scene>
     </scenes>
 </document>
