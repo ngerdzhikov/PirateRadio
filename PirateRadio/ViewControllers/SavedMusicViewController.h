@@ -10,6 +10,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
 
-@interface SavedMusicTableViewController : UITableViewController
+@class MusicControllerView;
+
+@interface SavedMusicViewController : UIViewController <UITableViewDataSource>
+
 
 @end
