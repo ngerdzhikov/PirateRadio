@@ -32,11 +32,9 @@
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
-    NSLog(@"decidePolicyForNavigationResponse");
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)navigationResponse.response;
-    BOOL isMp3 = [[[httpResponse allHeaderFields] objectForKey:@"Content-Type"] isEqualToString:@"audio/mpeg"];
-    BOOL isMp32 = [[[httpResponse allHeaderFields] objectForKey:@"Content-Type"] isEqualToString:@"application/force-download"];
-    if (isMp3 || isMp32) {
+    NSString *contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
+    if ([contentType isEqualToString:@"audio/mpeg"] || [contentType isEqualToString:@"application/force-download"]) {
         
         DownloadModel *download = [[DownloadModel alloc] initWithVideoModel:self.videoModel andURL:httpResponse.URL];
         [YoutubeDownloadManager.sharedInstance downloadVideoWithDownloadModel:download];
