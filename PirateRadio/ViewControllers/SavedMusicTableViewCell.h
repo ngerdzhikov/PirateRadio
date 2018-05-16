@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class MHRadialProgressView;
+
 @interface SavedMusicTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *musicTitle;
-@property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UIView *progressPlaceHolderView;
 
 @end

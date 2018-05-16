@@ -12,7 +12,8 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    // Initialization code
+    self.progressPlaceHolderView.center = self.contentView.center;
+    [self.contentView bringSubviewToFront:self.progressPlaceHolderView];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
