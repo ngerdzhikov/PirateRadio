@@ -10,6 +10,7 @@
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
+		0679121D20AB0CD7005F2854 /* Icons South St.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0679121C20AB0CD7005F2854 /* Icons South St.ttf */; };
 		06B1B9CA20A974500019B0CC /* SavedMusicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
 		06B4C52620AACFBF00FA96E7 /* MusicControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B4C52520AACFBF00FA96E7 /* MusicControllerView.m */; };
@@ -35,6 +36,7 @@
 		062E7EA920A5E911006F1221 /* DownloadModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadModel.m; sourceTree = "<group>"; };
 		062E7EAF20A5F4B1006F1221 /* DownloadButtonWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadButtonWebView.h; sourceTree = "<group>"; };
 		062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadButtonWebView.m; sourceTree = "<group>"; };
+		0679121C20AB0CD7005F2854 /* Icons South St.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Icons South St.ttf"; sourceTree = "<group>"; };
 		06B1B9C820A974500019B0CC /* SavedMusicViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicViewController.h; sourceTree = "<group>"; };
 		06B1B9C920A974500019B0CC /* SavedMusicViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicViewController.m; sourceTree = "<group>"; };
 		06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewCell.h; sourceTree = "<group>"; };
@@ -93,6 +95,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		0679121B20AB0CD7005F2854 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				0679121C20AB0CD7005F2854 /* Icons South St.ttf */,
+			);
+			name = Fonts;
+			path = ../../Downloads/Fonts;
+			sourceTree = "<group>";
+		};
 		06BE0CAA20A4474F007D9319 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,6 +160,7 @@
 		06FC535B20A335CF003238BF = {
 			isa = PBXGroup;
 			children = (
+				0679121B20AB0CD7005F2854 /* Fonts */,
 				06FC536620A335CF003238BF /* PirateRadio */,
 				06FC536520A335CF003238BF /* Products */,
 				49EE55990CC85C7D69AC7271 /* Pods */,
@@ -264,6 +276,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0679121D20AB0CD7005F2854 /* Icons South St.ttf in Resources */,
 				06FC537420A335D4003238BF /* LaunchScreen.storyboard in Resources */,
 				06FC537120A335D4003238BF /* Assets.xcassets in Resources */,
 				06FC536F20A335CF003238BF /* Main.storyboard in Resources */,
@@ -298,10 +311,12 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/MBCircularProgressBar/MBCircularProgressBar.bundle",
 				"${PODS_ROOT}/youtube-ios-player-helper/youtube-ios-player-helper/Assets.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MBCircularProgressBar.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -475,10 +490,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PirateRadio/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.nemetschek.PirateRadio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -495,10 +507,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PirateRadio/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.nemetschek.PirateRadio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

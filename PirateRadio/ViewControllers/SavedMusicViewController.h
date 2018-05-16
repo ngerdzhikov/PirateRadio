@@ -12,7 +12,7 @@
 
 @class MusicControllerView;
 
-@interface SavedMusicViewController : UIViewController <UITableViewDataSource>
+@interface SavedMusicViewController : UITableViewController
 
 
 @end

@@ -113,7 +113,6 @@
                     [self.tableView reloadData];
                 });
             }
-            NSLog(@"Data = %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
         }
     }];
 }

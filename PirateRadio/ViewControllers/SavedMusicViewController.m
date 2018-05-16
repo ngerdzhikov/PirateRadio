@@ -9,14 +9,15 @@
 #import "SavedMusicViewController.h"
 #import "SavedMusicTableViewCell.h"
 #import "MusicControllerView.h"
+#import <MBCircularProgressBar/MBCircularProgressBarView.h>
+
 
 @interface SavedMusicViewController ()
 
 @property (strong, nonatomic) NSMutableArray *mp3Files;
 @property (strong, nonatomic) AVPlayer *player;
-@property (strong, nonatomic) NSMutableArray *isSongPlaying;
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet MusicControllerView *musicControllerView;
+@property (strong, nonatomic) NSIndexPath *indexOfPlayingSong;
 
 @property BOOL isPlayerPlaying;
 
@@ -28,21 +29,24 @@
     [super viewDidLoad];
     self.mp3Files = [[NSMutableArray alloc] init];
     self.player = [[AVPlayer alloc] init];
-    self.isSongPlaying = [[NSMutableArray alloc] init];
     [self loadAssetsForPlayer];
     self.musicControllerView.songTimeProgress.progress = 0.5f;
     self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    
     __weak SavedMusicViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
-    
 }
 
 - (void)updateProgressBar {
     double time = CMTimeGetSeconds(self.player.currentTime);
     double duration = CMTimeGetSeconds(self.player.currentItem.duration);
     [self.musicControllerView.songTimeProgress setProgress:(time/duration) animated:YES];
+    SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:self.indexOfPlayingSong];
+    MBCircularProgressBarView *progressView = (MBCircularProgressBarView*)cell.progressPlaceHolderView.subviews[0];
+    progressView.value = time/duration*100;
 }
 
 
@@ -54,7 +58,6 @@
         NSString *extension = [[filename pathExtension] lowercaseString];
         if ([extension isEqualToString:@"mp3"]) {
             [self.mp3Files addObject:filename];
-            [self.isSongPlaying addObject:[NSNumber numberWithInt:0]];
         }
     }];
 }
@@ -74,38 +77,97 @@
     return self.mp3Files.count;
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
     SavedMusicTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
-    cell.musicTitle.text = [[self.mp3Files[indexPath.row] lastPathComponent] stringByDeletingPathExtension];
-    cell.playButton.tag = indexPath.row;
+    NSString *fileName = [[self.mp3Files[indexPath.row] lastPathComponent] stringByDeletingPathExtension];
+    cell.musicTitle.text = fileName;
+    MBCircularProgressBarView *circleProgressBar = [self createCircularProgressBarWithFrame:cell.progressPlaceHolderView.bounds];
+    circleProgressBar.tag = indexPath.row;
 
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellPlayButtonTap:)];
+    [circleProgressBar addGestureRecognizer:tap];
+    [cell.progressPlaceHolderView addSubview:circleProgressBar];
     
     return cell;
 }
-- (IBAction)cellPlayButtonTap:(UIButton*)button {
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.mp3Files[button.tag] options:nil];
+
+- (MBCircularProgressBarView *) createCircularProgressBarWithFrame:(CGRect) frame {
+    MBCircularProgressBarView *circleProgressBar = [[MBCircularProgressBarView alloc] initWithFrame:frame];
+    circleProgressBar.backgroundColor = [UIColor clearColor];
+    circleProgressBar.progressColor = [UIColor blueColor];
+    circleProgressBar.progressStrokeColor = [UIColor blueColor];
+    circleProgressBar.emptyLineColor = [UIColor clearColor];
+    circleProgressBar.emptyLineStrokeColor = [UIColor clearColor];
+    circleProgressBar.progressLineWidth = 3;
+    circleProgressBar.showValueString = YES;
+    circleProgressBar.showUnitString = YES;
+    circleProgressBar.value = 0;
+    circleProgressBar.unitString = @"c";
+    circleProgressBar.unitFontSize = 15;
+    circleProgressBar.valueFontName = @"Icons South St";
+    circleProgressBar.unitFontName = @"Icons South St";
+    return circleProgressBar;
+}
+
+- (void)cellPlayButtonTap:(UITapGestureRecognizer *)recognizer {
+    NSInteger index = recognizer.view.tag;
+    
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.mp3Files[index] options:nil];
     AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
-    if (self.isSongPlaying[button.tag] == [NSNumber numberWithInt:1]) {
-        [self.player pause];
-        self.isPlayerPlaying = NO;
-//        [button setTitle:@"Play" forState:UIControlStateNormal];
-        self.isSongPlaying[button.tag] = [NSNumber numberWithInt:0];
+    
+    if (self.isPlayerPlaying) {
+        if (![((AVURLAsset*)self.player.currentItem.asset).URL isEqual:asset.URL]) {
+            [self.player replaceCurrentItemWithPlayerItem:item];
+            self.musicControllerView.songName.text = [[self.mp3Files[index] lastPathComponent] stringByDeletingPathExtension];
+            [self clearCurrentCellProgress];
+            self.indexOfPlayingSong = [NSIndexPath indexPathForRow:index inSection:0];
+            self.isPlayerPlaying = YES;
+            [self setPlayOrPauseButtonForCurrentCell:NO];
+        }
+        else {
+            [self.player pause];
+            self.isPlayerPlaying = NO;
+            [self setPlayOrPauseButtonForCurrentCell:YES];
+        }
     }
     else {
         if (![((AVURLAsset*)self.player.currentItem.asset).URL isEqual:asset.URL]) {
             [self.player replaceCurrentItemWithPlayerItem:item];
+            self.musicControllerView.songName.text = [[self.mp3Files[index] lastPathComponent] stringByDeletingPathExtension];
+            [self clearCurrentCellProgress];
+            self.indexOfPlayingSong = [NSIndexPath indexPathForRow:index inSection:0];
+            [self.player play];
+            self.isPlayerPlaying = YES;
         }
-        self.musicControllerView.songName.text = [[self.mp3Files[button.tag] lastPathComponent] stringByDeletingPathExtension];
-        self.isSongPlaying[button.tag] = [NSNumber numberWithInt:1];
-        [self.player play];
-        self.isPlayerPlaying = YES;
-        [self.musicControllerView.playButton setTitle:@"Pause" forState:UIControlStateNormal];
-//        [button setTitle:@"Pause" forState:UIControlStateNormal];
+        else {
+            [self.player play];
+            self.isPlayerPlaying = YES;
+        }
+        [self setPlayOrPauseButtonForCurrentCell:NO];
     }
-    [self.tableView reloadData];
 }
+
+- (void)clearCurrentCellProgress {
+    if (self.indexOfPlayingSong) {
+        SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:self.indexOfPlayingSong];
+        MBCircularProgressBarView *progressView = cell.progressPlaceHolderView.subviews[0];
+        progressView.value = 0;
+        progressView.unitString = @"c";
+    }
+}
+
+- (void)setPlayOrPauseButtonForCurrentCell:(BOOL) play {
+    SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:self.indexOfPlayingSong];
+    MBCircularProgressBarView *progressView = cell.progressPlaceHolderView.subviews[0];
+    if (play) {
+        progressView.unitString = @"c";
+    }
+    else {
+        progressView.unitString = @"d";
+    }
+}
+
+#pragma mark - music view button actions
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
     if (self.isPlayerPlaying) {
@@ -128,29 +190,6 @@
 - (IBAction)nextBtnTap:(id)sender {
     
 }
-
-
-//
-//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-//    return self.musicControllerView;
-//}
-//
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-//    return 90.0f;
-//}
-
-
-
-
-
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    AVAsset *asset = [AVAsset assetWithURL:self.mp3Files[indexPath.row]];
-//    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
-//    [self.player replaceCurrentItemWithPlayerItem:item];
-//
-//}
-
 
 
 /*

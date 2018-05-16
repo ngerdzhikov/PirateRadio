@@ -7,4 +7,5 @@ target 'PirateRadio' do
 
   # Pods for PirateRadio
   pod "youtube-ios-player-helper", "~> 0.1.1"
+  pod "MBCircularProgressBar"
 end
