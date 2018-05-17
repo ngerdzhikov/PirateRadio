@@ -21,6 +21,7 @@
 		06BE0CCA20A4A106007D9319 /* NSURL+URLWithQueryItems.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */; };
 		06BE0CD320A4A6B4007D9319 /* ThumbnailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CD020A4A6B4007D9319 /* ThumbnailModel.m */; };
 		06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CD220A4A6B4007D9319 /* VideoModel.m */; };
+		06D65A3120ADA94D000AC0FC /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3020ADA94D000AC0FC /* StartMenuViewController.m */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
 		06FC537120A335D4003238BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537020A335D4003238BF /* Assets.xcassets */; };
@@ -59,6 +60,8 @@
 		06BE0CD020A4A6B4007D9319 /* ThumbnailModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumbnailModel.m; sourceTree = "<group>"; };
 		06BE0CD120A4A6B4007D9319 /* VideoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoModel.h; sourceTree = "<group>"; };
 		06BE0CD220A4A6B4007D9319 /* VideoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoModel.m; sourceTree = "<group>"; };
+		06D65A2F20ADA94D000AC0FC /* StartMenuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
+		06D65A3020ADA94D000AC0FC /* StartMenuViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06FC536720A335CF003238BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		06FC536820A335CF003238BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -129,6 +132,8 @@
 				06B1B9C920A974500019B0CC /* SavedMusicViewController.m */,
 				06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */,
 				06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */,
+				06D65A2F20ADA94D000AC0FC /* StartMenuViewController.h */,
+				06D65A3020ADA94D000AC0FC /* StartMenuViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -337,6 +342,7 @@
 				062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */,
 				06BE0CCA20A4A106007D9319 /* NSURL+URLWithQueryItems.m in Sources */,
 				06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */,
+				06D65A3120ADA94D000AC0FC /* StartMenuViewController.m in Sources */,
 				06B4C52620AACFBF00FA96E7 /* MusicControllerView.m in Sources */,
 				06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
@@ -490,7 +496,10 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PirateRadio/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.nemetschek.PirateRadio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -507,7 +516,10 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PirateRadio/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.nemetschek.PirateRadio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

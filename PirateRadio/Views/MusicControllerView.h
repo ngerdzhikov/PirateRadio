@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *previousButton;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
 @property (weak, nonatomic) IBOutlet UIProgressView *songTimeProgress;
+@property (weak, nonatomic) IBOutlet UIImageView *songImage;
 
 
 @end
