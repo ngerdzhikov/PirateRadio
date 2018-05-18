@@ -17,6 +17,21 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    NSError *error;
+    NSURL *artworkDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    artworkDirectory = [artworkDirectory URLByAppendingPathComponent:@"artwork/"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:artworkDirectory.relativePath
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&error];
+    NSLog(@"Error artworkDirectory = %@", error);
+    NSURL *songsDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    songsDirectory = [songsDirectory URLByAppendingPathComponent:@"songs/"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:songsDirectory.relativePath
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&error];
+    NSLog(@"Error songsDirectory = %@", error);
     return YES;
 }
 

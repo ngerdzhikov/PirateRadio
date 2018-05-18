@@ -41,8 +41,7 @@ typedef enum {
     // Configure the view for the selected state
 }
 
--(void)onPlayButtonTap:(NSNotification *)notification
-{
+-(void)onPlayButtonTap:(NSNotification *)notification {
     NSDictionary<NSString *, id> *userInfo = notification.userInfo;
     if ([self isEqual:userInfo[@"cell"]])
     {
@@ -54,8 +53,7 @@ typedef enum {
     }
 }
 
--(void)onPauseButtonTap:(NSNotification *)notification
-{
+-(void)onPauseButtonTap:(NSNotification *)notification {
     NSDictionary<NSString *, id> *userInfo = notification.userInfo;
     if ([self isEqual:userInfo[@"cell"]])
     {
