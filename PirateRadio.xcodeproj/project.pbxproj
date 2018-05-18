@@ -22,6 +22,8 @@
 		06BE0CD320A4A6B4007D9319 /* ThumbnailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CD020A4A6B4007D9319 /* ThumbnailModel.m */; };
 		06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CD220A4A6B4007D9319 /* VideoModel.m */; };
 		06D65A3120ADA94D000AC0FC /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3020ADA94D000AC0FC /* StartMenuViewController.m */; };
+		06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3320ADD217000AC0FC /* ITunesRequestManager.m */; };
+		06D65A3720AEB4C5000AC0FC /* ITunesDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */; };
 		06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
@@ -63,6 +65,10 @@
 		06BE0CD220A4A6B4007D9319 /* VideoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoModel.m; sourceTree = "<group>"; };
 		06D65A2F20ADA94D000AC0FC /* StartMenuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
 		06D65A3020ADA94D000AC0FC /* StartMenuViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
+		06D65A3220ADD217000AC0FC /* ITunesRequestManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ITunesRequestManager.h; sourceTree = "<group>"; };
+		06D65A3320ADD217000AC0FC /* ITunesRequestManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ITunesRequestManager.m; sourceTree = "<group>"; };
+		06D65A3520AEB4C5000AC0FC /* ITunesDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ITunesDownloadManager.h; sourceTree = "<group>"; };
+		06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ITunesDownloadManager.m; sourceTree = "<group>"; };
 		06D65A3820AEE9FB000AC0FC /* LocalSongModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalSongModel.h; sourceTree = "<group>"; };
 		06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalSongModel.m; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -148,6 +154,10 @@
 				06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */,
 				062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */,
 				062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */,
+				06D65A3220ADD217000AC0FC /* ITunesRequestManager.h */,
+				06D65A3320ADD217000AC0FC /* ITunesRequestManager.m */,
+				06D65A3520AEB4C5000AC0FC /* ITunesDownloadManager.h */,
+				06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */,
 			);
 			path = Connections;
 			sourceTree = "<group>";
@@ -350,6 +360,7 @@
 				06D65A3120ADA94D000AC0FC /* StartMenuViewController.m in Sources */,
 				06B4C52620AACFBF00FA96E7 /* MusicControllerView.m in Sources */,
 				06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */,
+				06D65A3720AEB4C5000AC0FC /* ITunesDownloadManager.m in Sources */,
 				06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
 				062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */,
@@ -358,6 +369,7 @@
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
+				06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

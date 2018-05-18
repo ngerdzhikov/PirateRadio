@@ -18,7 +18,7 @@
 
 @implementation DownloadModel
 
-- (NSURL *) localURLWithTimeStamp {
+- (NSURL *)localURLWithTimeStamp {
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"HH:mm:ss";
@@ -26,12 +26,13 @@
     fileName = [fileName stringByAppendingPathExtension:@"mp3"];
     
     NSURL *fileURL = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-    fileURL = [fileURL URLByAppendingPathComponent:fileName];
+    fileURL = [[fileURL URLByAppendingPathComponent:@"songs"] URLByAppendingPathComponent:fileName];
     
     return fileURL;
 }
 
-- (instancetype) initWithVideoModel:(VideoModel *)videoModel andURL:(NSURL *)url {
+
+- (instancetype)initWithVideoModel:(VideoModel *)videoModel andURL:(NSURL *)url {
     self = [super init];
     if (self) {
         self.video = videoModel;
