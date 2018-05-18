@@ -50,7 +50,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 240.0f;
+    return 255.0f;
 }
 
 
@@ -62,6 +62,20 @@
     cell.videoTitle.text = videoModel.videoTitle;
     cell.channelTitle.text = videoModel.channelTitle;
     
+    NSString *duration;
+    if ([videoModel.videoDuration containsString:@"M"]) {
+        NSArray<NSString *> *components = [videoModel.videoDuration componentsSeparatedByString:@"M"];
+        duration = [components[0] substringFromIndex:2];
+        duration = [duration stringByAppendingString:@":"];
+        duration = [duration stringByAppendingString:[components[1] substringToIndex:components[1].length]];
+    }
+    else {
+        NSArray<NSString *> *components = [videoModel.videoDuration componentsSeparatedByString:@"S"];
+        duration = [components[0] substringFromIndex:2];
+    }
+    
+    cell.duration.text = duration;
+    NSLog(@"duration = %@", duration);
     NSArray<NSString *> *dateArr = [videoModel.publishedAt componentsSeparatedByString:@"-"];
     NSString *dateString = [dateArr[2] substringToIndex:2];
     dateString = [dateString stringByAppendingString:@"."];
@@ -109,13 +123,44 @@
                     VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
                     [self.videoModels addObject:videoModel];
                 }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tableView reloadData];
-                });
+                [self makeSearchForVideoDurationsWithVideoModels:self.videoModels];
             }
         }
     }];
 }
+
+- (void)makeSearchForVideoDurationsWithVideoModels:(NSArray<VideoModel *> *)videoModels {
+    NSMutableArray<NSString *> *videoIds = [[NSMutableArray alloc] init];
+    for (VideoModel *video in videoModels) {
+        [videoIds addObject:video.videoId];
+    }
+    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:[videoIds copy] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error searching for video durations = %@", error);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                int i = 0;
+                for (NSDictionary *item in items) {
+                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
+                    self.videoModels[i].videoDuration = duration;
+                    i++;
+                }
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }];
+}
+
+
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == self.videoModels.count) {

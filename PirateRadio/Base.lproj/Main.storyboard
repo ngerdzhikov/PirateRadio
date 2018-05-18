@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kVL-M7-4KV">
-    <device id="retina4_7" orientation="landscape">
+    <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -21,31 +21,31 @@
             <objects>
                 <tableViewController storyboardIdentifier="searchTableViewController" id="i60-AR-ka5" customClass="SearchTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="fKS-Bw-wOy">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <searchBar key="tableHeaderView" contentMode="redraw" id="0j7-Jo-IZ0">
-                            <rect key="frame" x="0.0" y="0.0" width="667" height="44"/>
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <textInputTraits key="textInputTraits"/>
                         </searchBar>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="videoCell" rowHeight="240" id="J8O-Od-s0X" customClass="SearchResultTableViewCell">
-                                <rect key="frame" x="0.0" y="72" width="667" height="240"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="videoCell" rowHeight="265" id="J8O-Od-s0X" customClass="SearchResultTableViewCell">
+                                <rect key="frame" x="0.0" y="72" width="375" height="265"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="J8O-Od-s0X" id="nke-Fs-MrR">
-                                    <rect key="frame" x="0.0" y="0.0" width="667" height="239.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="264.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jQl-dV-OHO">
-                                            <rect key="frame" x="162" y="14" width="343" height="150"/>
+                                            <rect key="frame" x="16" y="14" width="343" height="150"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="150" id="Jhq-QT-ITy"/>
                                                 <constraint firstAttribute="width" constant="343" id="rk4-Zi-7Hy"/>
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gorillaz - Clint Eastwood (Official Video)" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RVP-pz-Ff4">
-                                            <rect key="frame" x="16" y="172" width="635" height="32"/>
+                                            <rect key="frame" x="16" y="172" width="343" height="32"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="32" id="7TQ-5E-qnf"/>
                                             </constraints>
@@ -54,13 +54,19 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q42-oN-uOP">
-                                            <rect key="frame" x="16" y="212" width="472" height="20.5"/>
+                                            <rect key="frame" x="16" y="212" width="166" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p4W-om-Dst">
-                                            <rect key="frame" x="520" y="212" width="131" height="20"/>
+                                            <rect key="frame" x="214" y="212" width="145" height="20"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="02:02" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2YQ-I7-Kul">
+                                            <rect key="frame" x="210.5" y="233" width="45.5" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
@@ -69,6 +75,7 @@
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="p4W-om-Dst" secondAttribute="trailing" constant="16" id="1jX-nb-jaU"/>
                                         <constraint firstItem="RVP-pz-Ff4" firstAttribute="leading" secondItem="nke-Fs-MrR" secondAttribute="leading" constant="16" id="DAj-rk-VyI"/>
+                                        <constraint firstAttribute="trailing" secondItem="2YQ-I7-Kul" secondAttribute="trailing" constant="119" id="IWs-EO-3KY"/>
                                         <constraint firstItem="jQl-dV-OHO" firstAttribute="centerX" secondItem="nke-Fs-MrR" secondAttribute="centerX" id="LIU-bc-BZW"/>
                                         <constraint firstItem="p4W-om-Dst" firstAttribute="width" secondItem="nke-Fs-MrR" secondAttribute="height" multiplier="131:239" id="PVF-3v-onr"/>
                                         <constraint firstItem="p4W-om-Dst" firstAttribute="leading" secondItem="q42-oN-uOP" secondAttribute="trailing" constant="32" id="Q8i-Fh-1Gm"/>
@@ -78,11 +85,13 @@
                                         <constraint firstItem="q42-oN-uOP" firstAttribute="top" secondItem="RVP-pz-Ff4" secondAttribute="bottom" constant="8" id="g8y-6J-5qg"/>
                                         <constraint firstItem="RVP-pz-Ff4" firstAttribute="top" secondItem="jQl-dV-OHO" secondAttribute="bottom" constant="8" id="lWi-HK-t9u"/>
                                         <constraint firstItem="q42-oN-uOP" firstAttribute="leading" secondItem="nke-Fs-MrR" secondAttribute="leading" constant="16" id="nbE-rX-o23"/>
+                                        <constraint firstItem="2YQ-I7-Kul" firstAttribute="top" secondItem="p4W-om-Dst" secondAttribute="bottom" constant="1" id="qvG-xX-t1M"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="channelTitle" destination="q42-oN-uOP" id="fOt-Rg-dLd"/>
                                     <outlet property="dateUploaded" destination="p4W-om-Dst" id="LQU-rg-6ll"/>
+                                    <outlet property="duration" destination="2YQ-I7-Kul" id="IhH-xA-XPm"/>
                                     <outlet property="videoImage" destination="jQl-dV-OHO" id="3lo-Ml-g0b"/>
                                     <outlet property="videoTitle" destination="RVP-pz-Ff4" id="qeS-BC-9R3"/>
                                 </connections>
@@ -100,25 +109,25 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="81N-QJ-Sei" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="398" y="118"/>
+            <point key="canvasLocation" x="397.60000000000002" y="117.39130434782609"/>
         </scene>
         <!--Start Menu View Controller-->
         <scene sceneID="5Yj-fS-p7j">
             <objects>
                 <viewController useStoryboardIdentifierAsRestorationIdentifier="YES" id="ch9-DN-qKg" customClass="StartMenuViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="iTM-sC-mLz">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VIw-d2-bqx">
-                                <rect key="frame" x="290" y="171" width="87" height="30"/>
+                                <rect key="frame" x="144" y="203" width="87" height="30"/>
                                 <state key="normal" title="Saved Music"/>
                                 <connections>
                                     <action selector="savedMusicButtonTap:" destination="ch9-DN-qKg" eventType="touchUpInside" id="wAG-8p-Oxt"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RSW-xV-P8c">
-                                <rect key="frame" x="279" y="256" width="109" height="30"/>
+                                <rect key="frame" x="133" y="288" width="109" height="30"/>
                                 <state key="normal" title="Youtube Search"/>
                                 <connections>
                                     <action selector="youtubeSearchButtonTap:" destination="ch9-DN-qKg" eventType="touchUpInside" id="W5N-bf-c2v"/>
@@ -145,7 +154,7 @@
             <objects>
                 <navigationController id="kVL-M7-4KV" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="J0I-q8-kEn">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="32"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -161,21 +170,21 @@
             <objects>
                 <viewController storyboardIdentifier="YoutubePlayerViewController" id="BYZ-38-t0r" customClass="YoutubePlayerViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TKF-pN-KYO" customClass="YTPlayerView">
-                                <rect key="frame" x="0.0" y="66" width="667" height="247"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TKF-pN-KYO" customClass="YTPlayerView">
+                                <rect key="frame" x="0.0" y="66" width="375" height="247"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Long Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FD1-yy-9Dc">
-                                <rect key="frame" x="296" y="323" width="75" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FD1-yy-9Dc">
+                                <rect key="frame" x="150" y="323" width="75" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ofl-Cu-cc8" customClass="DownloadButtonWebView">
-                                <rect key="frame" x="67" y="225" width="533" height="100"/>
+                                <rect key="frame" x="67" y="517" width="241" height="100"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="VHy-hu-0l9"/>
@@ -185,8 +194,8 @@
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" directionalLockEnabled="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXr-Ir-JqJ">
-                                <rect key="frame" x="162" y="352" width="343" height="128"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXr-Ir-JqJ">
+                                <rect key="frame" x="16" y="352" width="343" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="343" id="g2h-9h-YMz"/>
@@ -230,19 +239,19 @@
             <objects>
                 <tableViewController storyboardIdentifier="savedMusicViewController" id="TOK-IF-rUe" customClass="SavedMusicViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="qAN-Nk-8aS">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="savedMusicCell" id="tez-yI-kaT" customClass="SavedMusicTableViewCell">
-                                <rect key="frame" x="0.0" y="28" width="667" height="44"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tez-yI-kaT" id="tuS-lF-y18">
-                                    <rect key="frame" x="0.0" y="0.0" width="667" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E9M-2Z-aqg">
-                                            <rect key="frame" x="606" y="0.0" width="45" height="45"/>
+                                            <rect key="frame" x="314" y="0.0" width="45" height="45"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="45" id="8Ji-Vn-A3j"/>
                                                 <constraint firstAttribute="height" constant="45" id="ba8-xI-yZN"/>
