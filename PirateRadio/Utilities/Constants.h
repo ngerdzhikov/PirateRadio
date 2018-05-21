@@ -11,6 +11,7 @@
 
 #define NOTIFICATION_PLAY_BUTTON_PRESSED  @"NotificationPlayButtonPressed"
 #define NOTIFICATION_PAUSE_BUTTON_PRESSED @"NotificationPauseButtonPressed"
+#define NOTIFICATION_VALUE_CHANGED @"NotificationValueChanged"
 
 #define BUTTON_TITLE_PLAY_STRING  @"c"
 #define BUTTON_TITLE_PAUSE_STRING @"d"
