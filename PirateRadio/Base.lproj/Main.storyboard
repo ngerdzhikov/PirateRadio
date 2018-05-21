@@ -82,6 +82,7 @@
                                         <constraint firstAttribute="trailing" secondItem="RVP-pz-Ff4" secondAttribute="trailing" constant="16" id="Vat-Oe-UEf"/>
                                         <constraint firstItem="jQl-dV-OHO" firstAttribute="top" secondItem="nke-Fs-MrR" secondAttribute="top" constant="14" id="a4E-u5-SzE"/>
                                         <constraint firstItem="p4W-om-Dst" firstAttribute="top" secondItem="RVP-pz-Ff4" secondAttribute="bottom" constant="8" id="cXv-cX-mK3"/>
+                                        <constraint firstItem="2YQ-I7-Kul" firstAttribute="leading" secondItem="nke-Fs-MrR" secondAttribute="leading" constant="249.66666666666666" id="dbe-f0-uRh"/>
                                         <constraint firstItem="q42-oN-uOP" firstAttribute="top" secondItem="RVP-pz-Ff4" secondAttribute="bottom" constant="8" id="g8y-6J-5qg"/>
                                         <constraint firstItem="RVP-pz-Ff4" firstAttribute="top" secondItem="jQl-dV-OHO" secondAttribute="bottom" constant="8" id="lWi-HK-t9u"/>
                                         <constraint firstItem="q42-oN-uOP" firstAttribute="leading" secondItem="nke-Fs-MrR" secondAttribute="leading" constant="16" id="nbE-rX-o23"/>
@@ -332,20 +333,12 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUz-x6-6Hs">
-                            <rect key="frame" x="66" y="55" width="59" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <state key="normal" title="Previous"/>
-                            <connections>
-                                <action selector="previousBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="iUk-i1-L74"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zh1-of-FlN">
-                            <rect key="frame" x="306" y="54" width="30" height="35"/>
+                            <rect key="frame" x="81" y="54" width="30" height="35"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" name="IconsSouthSt" family="Icons South St" pointSize="17"/>
                             <state key="normal" title="b"/>
                             <connections>
-                                <action selector="nextBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="dXr-4j-Vc5"/>
+                                <action selector="previousBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="iUk-i1-L74"/>
                             </connections>
                         </button>
                         <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.20000000298023224" translatesAutoresizingMaskIntoConstraints="NO" id="cXw-AG-t4Q">
@@ -372,6 +365,15 @@
                             <rect key="frame" x="87" y="93" width="250" height="187"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
+                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zh1-of-FlN">
+                            <rect key="frame" x="307" y="54" width="30" height="35"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" name="IconsSouthSt" family="Icons South St" pointSize="17"/>
+                            <state key="normal" title="b"/>
+                            <connections>
+                                <action selector="nextBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="dXr-4j-Vc5"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <accessibility key="accessibilityConfiguration" identifier="MusicControllerView"/>

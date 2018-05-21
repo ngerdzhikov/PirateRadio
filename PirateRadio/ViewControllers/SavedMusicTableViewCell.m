@@ -65,7 +65,7 @@ typedef enum {
 - (void)setMediaPlayBackState:(EnumCellMediaPlaybackState) playbackState {
     if (playbackState == EnumCellMediaPlaybackStatePlay) {
         self.circleProgressBar.unitString = BUTTON_TITLE_PLAY_STRING;
-        self.circleProgressBar.textOffset = CGPointMake(0, 0);
+        self.circleProgressBar.textOffset = CGPointMake(0, -0.5);
     }
     else {
         self.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
@@ -84,6 +84,7 @@ typedef enum {
     circleProgressBar.emptyLineStrokeColor = [UIColor clearColor];
     circleProgressBar.progressLineWidth = 3;
     circleProgressBar.showValueString = YES;
+    circleProgressBar.textOffset = CGPointMake(0, -0.5);
     circleProgressBar.emptyLineColor = [UIColor grayColor];
     circleProgressBar.showUnitString = YES;
     circleProgressBar.value = 0;

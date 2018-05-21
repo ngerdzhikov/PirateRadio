@@ -39,6 +39,9 @@
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
+    
+    //flips previousPlayButton because font is missing the icon icon for that
+    [self.musicControllerView.previousButton setTransform:CGAffineTransformMakeRotation(-M_PI)];
 }
 
 - (void)updateProgressBar {
@@ -58,7 +61,6 @@
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicControllerView addGestureRecognizer:pan];
     [self.navigationController.view addSubview:self.musicControllerView];
-    [self loadFirstItemForPlayerAtBeginning];
 }
 
 - (void)loadFirstItemForPlayerAtBeginning {
@@ -80,6 +82,9 @@
             [self.songs addObject:localSong];
         }
     }];
+    if (self.songs.count > 0) {
+        [self loadFirstItemForPlayerAtBeginning];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
