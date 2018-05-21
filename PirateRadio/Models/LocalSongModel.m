@@ -45,7 +45,7 @@
 }
 
 -(void)extractArtistNameAndSongTitleFromSongURL:(NSURL *)songURL {
-    NSString *song = [[songURL lastPathComponent] stringByDeletingPathExtension];
+    NSString *song = [[[songURL lastPathComponent] stringByDeletingPathExtension] stringByRemovingPercentEncoding];
     NSArray<NSString *> *components = [song componentsSeparatedByString:@" - "];
     if (components.count > 1) {
         self.artistName = components[0];

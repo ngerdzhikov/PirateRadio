@@ -56,7 +56,7 @@
     NSURL *localURL = download.localURLWithTimeStamp;
     
     NSError *error;
-    [fileManager moveItemAtURL:location toURL:localURL error:&error];
+    [fileManager moveItemAtURL:location toURL:localURL.absoluteURL error:&error];
     
     if (error) {
         NSLog(@"error = %@", error.localizedDescription);
