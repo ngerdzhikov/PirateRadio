@@ -47,6 +47,9 @@
     [self.musicControllerView.songTimeProgress setProgress:(time/duration) animated:NO];
     SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:self.indexPathOfLastPlayedSong];
     cell.circleProgressBar.value = time / duration * 100;
+    if (cell.circleProgressBar.value >= 10) {
+        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_VALUE_CHANGED object:cell.circleProgressBar userInfo:[NSDictionary dictionaryWithObject:cell.circleProgressBar forKey:@"progressBar"]];
+    }
 }
 
 - (void)configureMusicControllerView {
@@ -114,7 +117,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    LocalSongModel *song = self.songs[self.indexPathOfLastPlayedSong.row];
+    LocalSongModel *song = self.songs[indexPath.row];
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         if (indexPath != self.indexPathOfLastPlayedSong){
             NSError *error;
@@ -151,7 +154,7 @@
     
     AVURLAsset *assetToPlay = [[AVURLAsset alloc] initWithURL:self.songs[indexPath.row].localSongURL options:nil];
     AVPlayerItem *itemToPlay = [AVPlayerItem playerItemWithAsset:assetToPlay];
-    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(nextBtnTap:) name:AVPlayerItemDidPlayToEndTimeNotification object:itemToPlay];
     SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     
     if ([indexPath isEqual:self.indexPathOfLastPlayedSong]) {
@@ -237,6 +240,7 @@
 - (void)replacePlayerSongWithSongAtIndexPath:(NSIndexPath *)indexPath {
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.songs[indexPath.row].localSongURL options:nil];
     AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(nextBtnTap:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
     [self.player replaceCurrentItemWithPlayerItem:item];
     self.indexPathOfLastPlayedSong = indexPath;
     [self setMusicPlayerSongNameAndImage];
