@@ -24,14 +24,12 @@
                               withIntermediateDirectories:YES
                                                attributes:nil
                                                     error:&error];
-    NSLog(@"Error artworkDirectory = %@", error);
     NSURL *songsDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     songsDirectory = [songsDirectory URLByAppendingPathComponent:@"songs/"];
     [[NSFileManager defaultManager] createDirectoryAtPath:songsDirectory.relativePath
                               withIntermediateDirectories:YES
                                                attributes:nil
                                                     error:&error];
-    NSLog(@"Error songsDirectory = %@", error);
     return YES;
 }
 
