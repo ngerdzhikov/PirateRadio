@@ -33,7 +33,8 @@
     NSString *modifiedTitle = title;
     modifiedTitle = [title stringByTrimmingCharactersInSet:NSCharacterSet.symbolCharacterSet];
     NSError *err;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(\\[|\\()Official(\\s*\\w*)*(\\]|\\))" options:NSRegularExpressionCaseInsensitive error:&err];
+    //@"(\\[|\\()Official(\\s*\\w*)*(\\]|\\))
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(\\[|\\()(\\s*)Official(\\s*\\w*)*(\\]|\\))" options:NSRegularExpressionCaseInsensitive error:&err];
     if (err) {
         NSLog(@"Error = %@", err);
     }
@@ -50,6 +51,10 @@
         self.artistName = components[0];
         self.songTitle = [self extractedSongTitleFromString:[components[1] substringToIndex:components[1].length - 8]];
     }
+    else {
+        self.artistName = @"Uknown artist";
+        self.songTitle = [self extractedSongTitleFromString:[song substringToIndex:song.length - 8]];
+    }
 }
 
 -(NSURL *)localArtworkURL {
@@ -61,8 +66,15 @@
     return artworkURL;
 }
 
--(NSArray<NSString *> *)keywords {
+-(NSArray<NSString *> *)keywordsFromTitle {
     return [self.songTitle componentsSeparatedByString:@" "];
+}
+
+-(NSArray<NSString *> *)keywordsFromAuthorAndTitle {
+    NSMutableArray<NSString *> *keywords = [[NSMutableArray alloc] init];
+    [keywords addObjectsFromArray:[self.artistName componentsSeparatedByString:@" "]];
+    [keywords addObjectsFromArray:[self.songTitle componentsSeparatedByString:@" "]];
+    return keywords;
 }
 
 @end

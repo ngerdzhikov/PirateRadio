@@ -17,6 +17,7 @@
 
 -(instancetype) initWithLocalSongURL:(NSURL *)songURL;
 -(NSURL *)localArtworkURL;
--(NSArray<NSString *> *)keywords;
+-(NSArray<NSString *> *)keywordsFromTitle;
+-(NSArray<NSString *> *)keywordsFromAuthorAndTitle;
 
 @end
