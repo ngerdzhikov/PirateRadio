@@ -10,7 +10,6 @@
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
-		0679121D20AB0CD7005F2854 /* Icons South St.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0679121C20AB0CD7005F2854 /* Icons South St.ttf */; };
 		06B1B9CA20A974500019B0CC /* SavedMusicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
 		06B4C52620AACFBF00FA96E7 /* MusicControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B4C52520AACFBF00FA96E7 /* MusicControllerView.m */; };
@@ -25,6 +24,7 @@
 		06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3320ADD217000AC0FC /* ITunesRequestManager.m */; };
 		06D65A3720AEB4C5000AC0FC /* ITunesDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */; };
 		06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */; };
+		06D65A3E20B31318000AC0FC /* Icons South St.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 06D65A3D20B31317000AC0FC /* Icons South St.ttf */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
 		06FC537120A335D4003238BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537020A335D4003238BF /* Assets.xcassets */; };
@@ -40,7 +40,6 @@
 		062E7EA920A5E911006F1221 /* DownloadModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadModel.m; sourceTree = "<group>"; };
 		062E7EAF20A5F4B1006F1221 /* DownloadButtonWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadButtonWebView.h; sourceTree = "<group>"; };
 		062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadButtonWebView.m; sourceTree = "<group>"; };
-		0679121C20AB0CD7005F2854 /* Icons South St.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Icons South St.ttf"; sourceTree = "<group>"; };
 		06B1B9C820A974500019B0CC /* SavedMusicViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicViewController.h; sourceTree = "<group>"; };
 		06B1B9C920A974500019B0CC /* SavedMusicViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicViewController.m; sourceTree = "<group>"; };
 		06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewCell.h; sourceTree = "<group>"; };
@@ -71,6 +70,7 @@
 		06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ITunesDownloadManager.m; sourceTree = "<group>"; };
 		06D65A3820AEE9FB000AC0FC /* LocalSongModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalSongModel.h; sourceTree = "<group>"; };
 		06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalSongModel.m; sourceTree = "<group>"; };
+		06D65A3D20B31317000AC0FC /* Icons South St.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Icons South St.ttf"; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06FC536720A335CF003238BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		06FC536820A335CF003238BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -105,15 +105,6 @@
 				06B4C52520AACFBF00FA96E7 /* MusicControllerView.m */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		0679121B20AB0CD7005F2854 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				0679121C20AB0CD7005F2854 /* Icons South St.ttf */,
-			);
-			name = Fonts;
-			path = ../../Downloads/Fonts;
 			sourceTree = "<group>";
 		};
 		06BE0CAA20A4474F007D9319 /* Utilities */ = {
@@ -177,10 +168,25 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		06D65A3B20B31317000AC0FC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				06D65A3C20B31317000AC0FC /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		06D65A3C20B31317000AC0FC /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				06D65A3D20B31317000AC0FC /* Icons South St.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		06FC535B20A335CF003238BF = {
 			isa = PBXGroup;
 			children = (
-				0679121B20AB0CD7005F2854 /* Fonts */,
 				06FC536620A335CF003238BF /* PirateRadio */,
 				06FC536520A335CF003238BF /* Products */,
 				49EE55990CC85C7D69AC7271 /* Pods */,
@@ -204,6 +210,7 @@
 				06BE0CCE20A4A6B4007D9319 /* Models */,
 				06BE0CAA20A4474F007D9319 /* Utilities */,
 				06BE0CAF20A44F9D007D9319 /* ViewControllers */,
+				06D65A3B20B31317000AC0FC /* Resources */,
 				06FC536720A335CF003238BF /* AppDelegate.h */,
 				06FC536820A335CF003238BF /* AppDelegate.m */,
 				06FC536D20A335CF003238BF /* Main.storyboard */,
@@ -297,7 +304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0679121D20AB0CD7005F2854 /* Icons South St.ttf in Resources */,
+				06D65A3E20B31318000AC0FC /* Icons South St.ttf in Resources */,
 				06FC537420A335D4003238BF /* LaunchScreen.storyboard in Resources */,
 				06FC537120A335D4003238BF /* Assets.xcassets in Resources */,
 				06FC536F20A335CF003238BF /* Main.storyboard in Resources */,
