@@ -41,7 +41,7 @@
 
 
 - (void)downloadArtworkForLocalSongModel:(LocalSongModel *)localSong {
-    [ITunesRequestManager makeItunesSearchRequestWithKeywords:localSong.keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [ITunesRequestManager makeItunesSearchRequestWithKeywords:localSong.keywordsFromAuthorAndTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSError *serializationError;
         NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
         if (serializationError) {
