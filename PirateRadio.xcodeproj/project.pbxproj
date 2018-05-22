@@ -25,6 +25,7 @@
 		06D65A3720AEB4C5000AC0FC /* ITunesDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */; };
 		06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */; };
 		06D65A3E20B31318000AC0FC /* Icons South St.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 06D65A3D20B31317000AC0FC /* Icons South St.ttf */; };
+		06D65A4320B3F811000AC0FC /* ImageCacher.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A4220B3F811000AC0FC /* ImageCacher.m */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
 		06FC537120A335D4003238BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537020A335D4003238BF /* Assets.xcassets */; };
@@ -71,6 +72,8 @@
 		06D65A3820AEE9FB000AC0FC /* LocalSongModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalSongModel.h; sourceTree = "<group>"; };
 		06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalSongModel.m; sourceTree = "<group>"; };
 		06D65A3D20B31317000AC0FC /* Icons South St.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Icons South St.ttf"; sourceTree = "<group>"; };
+		06D65A4120B3F811000AC0FC /* ImageCacher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageCacher.h; sourceTree = "<group>"; };
+		06D65A4220B3F811000AC0FC /* ImageCacher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageCacher.m; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06FC536720A335CF003238BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		06FC536820A335CF003238BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -114,6 +117,8 @@
 				06BE0CBD20A464AA007D9319 /* Protocols.h */,
 				06BE0CC820A4A106007D9319 /* NSURL+URLWithQueryItems.h */,
 				06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */,
+				06D65A4120B3F811000AC0FC /* ImageCacher.h */,
+				06D65A4220B3F811000AC0FC /* ImageCacher.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -372,6 +377,7 @@
 				06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
 				062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */,
+				06D65A4320B3F811000AC0FC /* ImageCacher.m in Sources */,
 				06B1B9CA20A974500019B0CC /* SavedMusicViewController.m in Sources */,
 				062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */,
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,

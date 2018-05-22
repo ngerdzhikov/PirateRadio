@@ -12,6 +12,7 @@
 #import "VideoModel.h"
 #import "ThumbnailModel.h"
 #import "YoutubePlayerViewController.h"
+#import "ImageCacher.h"
 
 @interface SearchTableViewController ()
 
@@ -57,7 +58,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
     VideoModel *videoModel = [self.videoModels objectAtIndex:indexPath.row];
-    UIImage *thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
+    UIImage *thumbnail = [ImageCacher.sharedInstance imageForVideoId:videoModel.videoId];
+    if (!thumbnail) {
+        thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
+    }
     cell.videoImage.image = thumbnail;
     cell.videoTitle.text = videoModel.videoTitle;
     cell.channelTitle.text = videoModel.channelTitle;
@@ -75,7 +79,6 @@
     }
     
     cell.duration.text = duration;
-    NSLog(@"duration = %@", duration);
     NSArray<NSString *> *dateArr = [videoModel.publishedAt componentsSeparatedByString:@"-"];
     NSString *dateString = [dateArr[2] substringToIndex:2];
     dateString = [dateString stringByAppendingString:@"."];

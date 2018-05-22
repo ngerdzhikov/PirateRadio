@@ -30,8 +30,7 @@
     return sharedMyManager;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.downloads = [[NSMutableDictionary alloc] init];
