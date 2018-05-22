@@ -28,6 +28,7 @@
     self.youtubePlayer.delegate = self;
     self.videoTitle.text = self.videoModel.videoTitle;
     self.videoDescription.text = self.videoModel.videoDescription;
+    self.videoViews.text = [self.videoModel.videoViews stringByAppendingString:@" views"];
     
     NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.videoModel.videoId];
     NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];

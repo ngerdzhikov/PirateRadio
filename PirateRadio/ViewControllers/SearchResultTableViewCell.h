@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *channelTitle;
 @property (weak, nonatomic) IBOutlet UILabel *dateUploaded;
 @property (weak, nonatomic) IBOutlet UILabel *duration;
+@property (weak, nonatomic) IBOutlet UILabel *views;
 
 
 @end

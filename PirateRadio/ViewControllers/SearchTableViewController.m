@@ -65,7 +65,7 @@
     cell.videoImage.image = thumbnail;
     cell.videoTitle.text = videoModel.videoTitle;
     cell.channelTitle.text = videoModel.channelTitle;
-    
+    cell.views.text = videoModel.videoViews;
     NSString *duration;
     if ([videoModel.videoDuration containsString:@"M"]) {
         NSArray<NSString *> *components = [videoModel.videoDuration componentsSeparatedByString:@"M"];
@@ -152,7 +152,9 @@
                 int i = 0;
                 for (NSDictionary *item in items) {
                     NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
+                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
                     self.videoModels[i].videoDuration = duration;
+                    self.videoModels[i].videoViews = views;
                     i++;
                 }
             }
@@ -171,7 +173,10 @@
     }
 }
 
-
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    UITableView *suggestionsTable = [[UITableView alloc] initWithFrame:CGRectMake(0, (self.searchBar.frame.origin.y + self.searchBar.frame.size.height),
+                                                                                  self.view.frame.size.width, 200)];
+}
 
 /*
 // Override to support conditional editing of the table view.

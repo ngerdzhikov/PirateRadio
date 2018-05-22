@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *videoTitle;
 @property (weak, nonatomic) IBOutlet DownloadButtonWebView *downloadButtonWebView;
 @property (weak, nonatomic) IBOutlet UITextView *videoDescription;
+@property (weak, nonatomic) IBOutlet UILabel *videoViews;
 
 
 

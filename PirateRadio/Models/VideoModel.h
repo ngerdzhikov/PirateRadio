@@ -19,6 +19,7 @@
 @property (strong, nonatomic, readonly) NSString *publishedAt;
 @property (strong, nonatomic, readonly) NSString *channelTitle;
 @property (strong, nonatomic) NSString *videoDuration;
+@property (strong, nonatomic) NSString *videoViews;
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet andVideoId:(NSString *)videoId;
 
