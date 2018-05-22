@@ -10,7 +10,7 @@
 
 @interface ImageCacher ()
 
-@property (strong, nonatomic) NSCache *imageCacher;
+@property (strong, nonatomic) NSCache *cache;
 
 @end
 
@@ -28,17 +28,17 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.imageCacher = [[NSCache alloc] init];
+        self.cache = [[NSCache alloc] init];
     }
     return self;
 }
 
 - (void)cacheImage:(UIImage *)image forVideoId:(NSString *)videoId {
-    [self.imageCacher setObject:image forKey:videoId];
+    [self.cache setObject:image forKey:videoId];
 }
 
 - (UIImage *)imageForVideoId:(NSString *)videoId {
-    return [self.imageCacher objectForKey:videoId];
+    return [self.cache objectForKey:videoId];
 }
 
 @end
