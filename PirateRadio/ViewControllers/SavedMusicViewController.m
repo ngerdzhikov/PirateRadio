@@ -39,9 +39,6 @@
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
-    
-    //flips previousPlayButton because font is missing the icon icon for that
-    [self.musicControllerView.previousButton setTransform:CGAffineTransformMakeRotation(-M_PI)];
 }
 
 - (void)updateProgressBar {
@@ -140,7 +137,6 @@
                         self.indexPathOfLastPlayedSong = [NSIndexPath indexPathForRow:(self.indexPathOfLastPlayedSong.row - 1) inSection:self.indexPathOfLastPlayedSong.section];
                     }
                 }
-                [self.tableView reloadData];
             }
         }
         else {
@@ -255,12 +251,12 @@
 
 - (void)playButtonTap:(NSNotification *)notification {
     [self.player play];
-    [self.musicControllerView.playButton setTitle:BUTTON_TITLE_PAUSE_STRING forState:UIControlStateNormal];
+    [self.musicControllerView.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
 }
 
 - (void)pauseButtonTap:(NSNotification *)notification {
     [self.player pause];
-    [self.musicControllerView.playButton setTitle:BUTTON_TITLE_PLAY_STRING forState:UIControlStateNormal];
+    [self.musicControllerView.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
 }
 
 - (void)setMusicPlayerSongNameAndImage {
