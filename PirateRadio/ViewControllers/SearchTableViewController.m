@@ -16,13 +16,13 @@
 #import "ImageCacher.h"
 #import "DGActivityIndicatorView.h"
 
-@interface SearchTableViewController ()<UIPopoverPresentationControllerDelegate>
+@interface SearchTableViewController ()<UISearchBarDelegate, UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModels;
 @property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
 @property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
 @property (strong, nonatomic) UIVisualEffectView *blurEffectView;
-
+@property (weak, nonatomic) UISearchBar *searchBar;
 
 @end
 
@@ -30,24 +30,28 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView.tableHeaderView = self.searchBar;
+    
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    
+    self.navigationItem.searchController = searchController;
+    self.searchBar = self.navigationItem.searchController.searchBar;
     self.searchBar.delegate = self;
+    
+    UIBarButtonItem *searchButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(displaySearchBar)];
+    self.navigationItem.rightBarButtonItem = searchButton;
+    
     self.searchHistory = [[NSUserDefaults.standardUserDefaults objectForKey:@"searchHistory"] mutableCopy];
     if (!self.searchHistory) {
         self.searchHistory = [[NSMutableArray alloc] init];
     }
-   self.searchSuggestions = [[NSMutableArray alloc] init];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.searchSuggestions = [[NSMutableArray alloc] init];
+    self.tableView.showsVerticalScrollIndicator = YES;
+    [self makeSearchForMostPopularVideos];
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -63,7 +67,6 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 255.0f;
 }
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
@@ -97,10 +100,6 @@
     dateString = [dateString stringByAppendingString:dateArr[0]];
     cell.dateUploaded.text = dateString;
     
-    if (indexPath.row == 0) {
-        [self stopAnimation];
-    }
-    
     return cell;
 }
 
@@ -110,22 +109,20 @@
     [self.navigationController pushViewController:youtubePlayer animated:YES];
 }
 
-
-
 - (void)startAnimation {
     if (!UIAccessibilityIsReduceTransparencyEnabled()) {
-        self.view.backgroundColor = [UIColor grayColor];
-        
+//        self.view.backgroundColor = [UIColor whiteColor];
+
         UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
         self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        self.blurEffectView.frame = self.view.bounds;
-        self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        
+        self.blurEffectView.frame = self.navigationController.view.bounds;
+//        self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
         [self.view addSubview:self.blurEffectView];
     }
     self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
     self.activityIndicatorView.tintColor = [UIColor blackColor];
-    self.activityIndicatorView.frame = CGRectMake(self.navigationController.view.frame.origin.x/2-10, self.navigationController.view.frame.origin.y/2, self.view.bounds.size.width, self.view.bounds.size.height);
+    self.activityIndicatorView.frame = CGRectMake((self.tableView.frame.origin.x - self.activityIndicatorView.frame.size.width) / 2, self.tableView.frame.origin.y / 2, self.view.bounds.size.width, self.view.bounds.size.height);
     [self.navigationController.view addSubview:self.activityIndicatorView];
     [self.activityIndicatorView startAnimating];
 }
@@ -136,11 +133,6 @@
     [self.activityIndicatorView removeFromSuperview];
     [self.blurEffectView removeFromSuperview];
 }
-
-
-
-
-
 
 - (void)makeSearchWithString:(NSString *)string {
     if (![string isEqualToString:@""]) {
@@ -161,6 +153,9 @@
     [self.searchHistory insertObject:self.searchBar.text atIndex:0];
 }
 
+- (void)displaySearchBar {
+    self.navigationItem.hidesSearchBarWhenScrolling = !self.navigationItem.hidesSearchBarWhenScrolling;
+}
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [self makeSearchWithString:searchBar.text];
@@ -181,13 +176,22 @@
             }
             else {
                 NSArray *items = [responseDict objectForKey:@"items"];
-                for (NSDictionary *item in items) {
-                    NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
-                    NSDictionary *snippet = [item objectForKey:@"snippet"];
-                    VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                    [self.videoModels addObject:videoModel];
+                if (items.count == 0) {
+                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
+                    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                    [self presentViewController:alertController animated:YES completion:^{
+                        [self stopAnimation];
+                    }];
                 }
-                [self makeSearchForVideoDurationsWithVideoModels:self.videoModels];
+                else {
+                    for (NSDictionary *item in items) {
+                        NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
+                        NSDictionary *snippet = [item objectForKey:@"snippet"];
+                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                        [self.videoModels addObject:videoModel];
+                    }
+                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModels];
+                }
             }
         }
     }];
@@ -221,6 +225,7 @@
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
+            [self stopAnimation];
             [self.tableView reloadData];
         });
     }];
@@ -287,7 +292,6 @@
             for (NSString *suggestion in responseArray[1]) {
                 [self.searchSuggestions addObject:suggestion];
             }
-            NSLog(@"suggestions = %@", self.searchSuggestions);
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.searchSuggestionsTable.tableView reloadData];
@@ -319,17 +323,6 @@
 }
 */
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
 
 /*
 // Override to support rearranging the table view.
