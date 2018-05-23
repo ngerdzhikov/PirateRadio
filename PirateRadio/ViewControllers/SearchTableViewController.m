@@ -14,11 +14,14 @@
 #import "YoutubePlayerViewController.h"
 #import "SearchSuggestionsTableViewController.h"
 #import "ImageCacher.h"
+#import "DGActivityIndicatorView.h"
 
 @interface SearchTableViewController ()<UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModels;
 @property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
+@property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
+@property (strong, nonatomic) UIVisualEffectView *blurEffectView;
 
 
 @end
@@ -94,6 +97,10 @@
     dateString = [dateString stringByAppendingString:dateArr[0]];
     cell.dateUploaded.text = dateString;
     
+    if (indexPath.row == 0) {
+        [self stopAnimation];
+    }
+    
     return cell;
 }
 
@@ -103,8 +110,41 @@
     [self.navigationController pushViewController:youtubePlayer animated:YES];
 }
 
+
+
+- (void)startAnimation {
+    if (!UIAccessibilityIsReduceTransparencyEnabled()) {
+        self.view.backgroundColor = [UIColor grayColor];
+        
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        self.blurEffectView.frame = self.view.bounds;
+        self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        
+        [self.view addSubview:self.blurEffectView];
+    }
+    self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
+    self.activityIndicatorView.tintColor = [UIColor blackColor];
+    self.activityIndicatorView.frame = CGRectMake(self.navigationController.view.frame.origin.x/2-10, self.navigationController.view.frame.origin.y/2, self.view.bounds.size.width, self.view.bounds.size.height);
+    [self.navigationController.view addSubview:self.activityIndicatorView];
+    [self.activityIndicatorView startAnimating];
+}
+
+
+- (void)stopAnimation {
+    [self.activityIndicatorView stopAnimating];
+    [self.activityIndicatorView removeFromSuperview];
+    [self.blurEffectView removeFromSuperview];
+}
+
+
+
+
+
+
 - (void)makeSearchWithString:(NSString *)string {
     if (![string isEqualToString:@""]) {
+        [self startAnimation];
         NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [self makeSearchWithKeywords:keywords];
     }

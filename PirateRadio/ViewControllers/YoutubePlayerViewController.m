@@ -10,10 +10,14 @@
 #import "YoutubeConnectionManager.h"
 #import "YoutubeDownloadManager.h"
 #import "NSURL+URLWithQueryItems.h"
+#import "DGActivityIndicatorView.h"
 
 #define DOWNLOAD_BUTTON_URL_PREFIX @"https://youtube7.download/mini.php"
 
 @interface YoutubePlayerViewController ()
+
+@property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
+@property (strong, nonatomic) UIVisualEffectView *blurEffectView;
 
 @end
 
@@ -21,6 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self startAnimation];
     NSDictionary *playerVars = @{
                                  @"playsinline" : @1,
                                  };
@@ -38,7 +43,34 @@
 
 - (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
     [self.youtubePlayer playVideo];
+    [self stopAnimation];
 }
+
+- (void)startAnimation {
+    if (!UIAccessibilityIsReduceTransparencyEnabled()) {
+        self.view.backgroundColor = [UIColor whiteColor];
+        
+        UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+        self.blurEffectView.frame = self.view.bounds;
+        self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        
+        [self.view addSubview:self.blurEffectView];
+    }
+    self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
+    self.activityIndicatorView.tintColor = [UIColor blackColor];
+    self.activityIndicatorView.frame = CGRectMake(self.navigationController.view.frame.origin.x/2-10, self.navigationController.view.frame.origin.y/2, self.view.bounds.size.width, self.view.bounds.size.height);
+    [self.navigationController.view addSubview:self.activityIndicatorView];
+    [self.activityIndicatorView startAnimating];
+}
+
+
+- (void)stopAnimation {
+    [self.activityIndicatorView stopAnimating];
+    [self.activityIndicatorView removeFromSuperview];
+    [self.blurEffectView removeFromSuperview];
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
