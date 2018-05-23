@@ -33,7 +33,7 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseButtonTap:) name:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
     
     [self loadSongsFromDisk];
-    [self configureMusicControllerView];
+    [self.navigationController.view addSubview:self.musicControllerView];
     
     __weak SavedMusicViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
@@ -57,10 +57,12 @@
 
 - (void)configureMusicControllerView {
     self.musicControllerView.songTimeProgress.progress = 0.0f;
+    
+    self.musicControllerView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.musicControllerView.frame.size.height);
     [self.musicControllerView setCenter:(CGPointMake(self.view.frame.size.width / 2, (self.view.frame.size.height + 65)))];
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicControllerView addGestureRecognizer:pan];
-    [self.navigationController.view addSubview:self.musicControllerView];
+    
 }
 
 - (void)loadFirstItemForPlayerAtBeginning {
@@ -270,6 +272,10 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [self.musicControllerView removeFromSuperview];
+}
+
+- (void)viewDidLayoutSubviews {
+    [self configureMusicControllerView];
 }
 
 @end

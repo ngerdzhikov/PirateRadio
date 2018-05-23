@@ -10,6 +10,8 @@
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
+		063EDF3920B43DFD00630747 /* SearchSuggestionsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */; };
+		063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3A20B43E3100630747 /* ImageCacher.m */; };
 		06B1B9CA20A974500019B0CC /* SavedMusicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
 		06B4C52620AACFBF00FA96E7 /* MusicControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B4C52520AACFBF00FA96E7 /* MusicControllerView.m */; };
@@ -25,13 +27,12 @@
 		06D65A3720AEB4C5000AC0FC /* ITunesDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3620AEB4C5000AC0FC /* ITunesDownloadManager.m */; };
 		06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */; };
 		06D65A3E20B31318000AC0FC /* Icons South St.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 06D65A3D20B31317000AC0FC /* Icons South St.ttf */; };
-		06D65A4320B3F811000AC0FC /* ImageCacher.m in Sources */ = {isa = PBXBuildFile; fileRef = 06D65A4220B3F811000AC0FC /* ImageCacher.m */; };
 		06FC536920A335CF003238BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC536820A335CF003238BF /* AppDelegate.m */; };
 		06FC536F20A335CF003238BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC536D20A335CF003238BF /* Main.storyboard */; };
 		06FC537120A335D4003238BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537020A335D4003238BF /* Assets.xcassets */; };
 		06FC537420A335D4003238BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 06FC537220A335D4003238BF /* LaunchScreen.storyboard */; };
 		06FC537720A335D4003238BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FC537620A335D4003238BF /* main.m */; };
-		1CC395A674ECF35F2D55F5B4 /* libPods-PirateRadio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE5D4BCF5E0478913DE84BBD /* libPods-PirateRadio.a */; };
+		5A14E8C8719E3454E5B8D4CA /* libPods-PirateRadio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DBDE799839541C9F2DE21F7E /* libPods-PirateRadio.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,12 +42,17 @@
 		062E7EA920A5E911006F1221 /* DownloadModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadModel.m; sourceTree = "<group>"; };
 		062E7EAF20A5F4B1006F1221 /* DownloadButtonWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadButtonWebView.h; sourceTree = "<group>"; };
 		062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadButtonWebView.m; sourceTree = "<group>"; };
+		063EDF3720B43DFD00630747 /* SearchSuggestionsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchSuggestionsTableViewController.h; sourceTree = "<group>"; };
+		063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchSuggestionsTableViewController.m; sourceTree = "<group>"; };
+		063EDF3A20B43E3100630747 /* ImageCacher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageCacher.m; path = PirateRadio/Utilities/ImageCacher.m; sourceTree = "<group>"; };
+		063EDF3B20B43E3200630747 /* ImageCacher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageCacher.h; path = PirateRadio/Utilities/ImageCacher.h; sourceTree = "<group>"; };
 		06B1B9C820A974500019B0CC /* SavedMusicViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicViewController.h; sourceTree = "<group>"; };
 		06B1B9C920A974500019B0CC /* SavedMusicViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicViewController.m; sourceTree = "<group>"; };
 		06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewCell.h; sourceTree = "<group>"; };
 		06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicTableViewCell.m; sourceTree = "<group>"; };
 		06B4C52420AACFBF00FA96E7 /* MusicControllerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MusicControllerView.h; sourceTree = "<group>"; };
 		06B4C52520AACFBF00FA96E7 /* MusicControllerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MusicControllerView.m; sourceTree = "<group>"; };
+		06BBC52820B541EC00BAC667 /* Protocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Protocols.h; path = PirateRadio/Utilities/Protocols.h; sourceTree = "<group>"; };
 		06BE0CA920A446C5007D9319 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = PirateRadio/Utilities/Constants.h; sourceTree = "<group>"; };
 		06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTableViewController.h; sourceTree = "<group>"; };
 		06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchTableViewController.m; sourceTree = "<group>"; };
@@ -54,7 +60,6 @@
 		06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubePlayerViewController.m; sourceTree = "<group>"; };
 		06BE0CB620A46019007D9319 /* SearchResultTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResultTableViewCell.h; sourceTree = "<group>"; };
 		06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResultTableViewCell.m; sourceTree = "<group>"; };
-		06BE0CBD20A464AA007D9319 /* Protocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Protocols.h; sourceTree = "<group>"; };
 		06BE0CC520A4981C007D9319 /* YoutubeConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YoutubeConnectionManager.h; sourceTree = "<group>"; };
 		06BE0CC620A4981C007D9319 /* YoutubeConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YoutubeConnectionManager.m; sourceTree = "<group>"; };
 		06BE0CC820A4A106007D9319 /* NSURL+URLWithQueryItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSURL+URLWithQueryItems.h"; path = "PirateRadio/Utilities/NSURL+URLWithQueryItems.h"; sourceTree = "<group>"; };
@@ -72,8 +77,6 @@
 		06D65A3820AEE9FB000AC0FC /* LocalSongModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalSongModel.h; sourceTree = "<group>"; };
 		06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalSongModel.m; sourceTree = "<group>"; };
 		06D65A3D20B31317000AC0FC /* Icons South St.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Icons South St.ttf"; sourceTree = "<group>"; };
-		06D65A4120B3F811000AC0FC /* ImageCacher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageCacher.h; sourceTree = "<group>"; };
-		06D65A4220B3F811000AC0FC /* ImageCacher.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageCacher.m; sourceTree = "<group>"; };
 		06FC536420A335CF003238BF /* PirateRadio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PirateRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06FC536720A335CF003238BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		06FC536820A335CF003238BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -84,7 +87,7 @@
 		06FC537620A335D4003238BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6182B3E40876F8DD259C92ED /* Pods-PirateRadio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PirateRadio.release.xcconfig"; path = "Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio.release.xcconfig"; sourceTree = "<group>"; };
 		891BF603A8EEF8432313DA09 /* Pods-PirateRadio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PirateRadio.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PirateRadio/Pods-PirateRadio.debug.xcconfig"; sourceTree = "<group>"; };
-		AE5D4BCF5E0478913DE84BBD /* libPods-PirateRadio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PirateRadio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBDE799839541C9F2DE21F7E /* libPods-PirateRadio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PirateRadio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CC395A674ECF35F2D55F5B4 /* libPods-PirateRadio.a in Frameworks */,
+				5A14E8C8719E3454E5B8D4CA /* libPods-PirateRadio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,12 +116,12 @@
 		06BE0CAA20A4474F007D9319 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				06BBC52820B541EC00BAC667 /* Protocols.h */,
 				06BE0CA920A446C5007D9319 /* Constants.h */,
-				06BE0CBD20A464AA007D9319 /* Protocols.h */,
 				06BE0CC820A4A106007D9319 /* NSURL+URLWithQueryItems.h */,
 				06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */,
-				06D65A4120B3F811000AC0FC /* ImageCacher.h */,
-				06D65A4220B3F811000AC0FC /* ImageCacher.m */,
+				063EDF3B20B43E3200630747 /* ImageCacher.h */,
+				063EDF3A20B43E3100630747 /* ImageCacher.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -139,6 +142,8 @@
 				06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */,
 				06D65A2F20ADA94D000AC0FC /* StartMenuViewController.h */,
 				06D65A3020ADA94D000AC0FC /* StartMenuViewController.m */,
+				063EDF3720B43DFD00630747 /* SearchSuggestionsTableViewController.h */,
+				063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -239,7 +244,7 @@
 		A28ABB5990062DFC0AC5AE40 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AE5D4BCF5E0478913DE84BBD /* libPods-PirateRadio.a */,
+				DBDE799839541C9F2DE21F7E /* libPods-PirateRadio.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -255,7 +260,7 @@
 				06FC536020A335CF003238BF /* Sources */,
 				06FC536120A335CF003238BF /* Frameworks */,
 				06FC536220A335CF003238BF /* Resources */,
-				B915BC823511F14478752E2D /* [CP] Copy Pods Resources */,
+				C54A13E1819E225678C3694E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -337,7 +342,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B915BC823511F14478752E2D /* [CP] Copy Pods Resources */ = {
+		C54A13E1819E225678C3694E /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -372,18 +377,19 @@
 				06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */,
 				06D65A3120ADA94D000AC0FC /* StartMenuViewController.m in Sources */,
 				06B4C52620AACFBF00FA96E7 /* MusicControllerView.m in Sources */,
+				063EDF3920B43DFD00630747 /* SearchSuggestionsTableViewController.m in Sources */,
 				06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */,
 				06D65A3720AEB4C5000AC0FC /* ITunesDownloadManager.m in Sources */,
 				06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
 				062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */,
-				06D65A4320B3F811000AC0FC /* ImageCacher.m in Sources */,
 				06B1B9CA20A974500019B0CC /* SavedMusicViewController.m in Sources */,
 				062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */,
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
 				06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */,
+				063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

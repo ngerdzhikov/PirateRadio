@@ -57,7 +57,7 @@
         
         [self.view addSubview:self.blurEffectView];
     }
-    self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
+    self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeCookieTerminator];
     self.activityIndicatorView.tintColor = [UIColor blackColor];
     self.activityIndicatorView.frame = CGRectMake(self.navigationController.view.frame.origin.x/2-10, self.navigationController.view.frame.origin.y/2, self.view.bounds.size.width, self.view.bounds.size.height);
     [self.navigationController.view addSubview:self.activityIndicatorView];
