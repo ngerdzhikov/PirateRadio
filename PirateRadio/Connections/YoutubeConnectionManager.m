@@ -43,6 +43,19 @@
     [self.class makeGetRequestWithURLRequest:request withCompletion:completion];
 }
 
++ (void)makeYoutubeRequestForMostPopularVideosWithCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
+     NSURL *url = [NSURL URLWithString:YOUTUBE_API_VIDEO_DURATION_REQUEST_PREFIX];
+    NSArray<NSURLQueryItem *> *queryItems = @[
+                                              [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails,statistics"],
+                                              [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
+                                              [NSURLQueryItem queryItemWithName:@"chart" value:@"mostPopular"],
+                                              [NSURLQueryItem queryItemWithName:@"regionCode" value:@"BG"]
+                                              ];
+    url = [url URLByAppendingQueryItems:queryItems];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [self.class makeGetRequestWithURLRequest:request withCompletion:completion];
+}
+
 + (void)makeSuggestionsSearchWithPrefix:(NSString *)prefix andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
     NSURL *url = [NSURL URLWithString:SEARCH_SUGGESTION_REQUEST_PREFIX];
     NSArray<NSURLQueryItem *> *queryItems = @[

@@ -226,6 +226,40 @@
     }];
 }
 
+- (void)makeSearchForMostPopularVideos {
+    [self startAnimation];
+    self.videoModels = [[NSMutableArray alloc] init];
+    [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error = %@", error.localizedDescription);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                for (NSDictionary *item in items) {
+                    NSString *videoId = [item objectForKey:@"id"];
+                    NSDictionary *snippet = [item objectForKey:@"snippet"];
+                    VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
+                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
+                    videoModel.videoDuration = duration;
+                    videoModel.videoViews = views;
+                    [self.videoModels addObject:videoModel];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self stopAnimation];
+                    [self.tableView reloadData];
+                });
+            }
+        }
+    }];
+}
+
 - (void)presentSearchSuggestoinsTableView {
     self.searchSuggestionsTable = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SearchSuggestionsTableViewController"];
     self.searchSuggestionsTable.delegate = self;
