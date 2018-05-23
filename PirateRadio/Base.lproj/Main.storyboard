@@ -9,11 +9,6 @@
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="Icons South St.ttf">
-            <string>IconsSouthSt</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--Search Suggestions Table View Controller-->
         <scene sceneID="RBH-8c-7Qi">
@@ -377,10 +372,9 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUz-x6-6Hs">
-                            <rect key="frame" x="81" y="54" width="30" height="35"/>
-                            <fontDescription key="fontDescription" name="IconsSouthSt" family="Icons South St" pointSize="17"/>
-                            <state key="normal" title="b"/>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUz-x6-6Hs">
+                            <rect key="frame" x="81" y="54" width="36" height="36"/>
+                            <state key="normal" image="previous_button_icon"/>
                             <connections>
                                 <action selector="previousBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="iUk-i1-L74"/>
                             </connections>
@@ -388,10 +382,9 @@
                         <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.20000000298023224" translatesAutoresizingMaskIntoConstraints="NO" id="cXw-AG-t4Q">
                             <rect key="frame" x="20" y="48" width="374" height="2"/>
                         </progressView>
-                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OSK-C1-WNs">
-                            <rect key="frame" x="182" y="55" width="50" height="30"/>
-                            <fontDescription key="fontDescription" name="IconsSouthSt" family="Icons South St" pointSize="17"/>
-                            <state key="normal" title="c"/>
+                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OSK-C1-WNs">
+                            <rect key="frame" x="189" y="52" width="36" height="36"/>
+                            <state key="normal" image="play_button_icon"/>
                             <connections>
                                 <action selector="musicControllerPlayBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="cLa-Z0-A1o"/>
                             </connections>
@@ -403,16 +396,15 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GzL-15-2zn">
-                            <rect key="frame" x="82" y="98" width="250" height="187"/>
+                            <rect key="frame" x="82" y="99" width="250" height="187"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="187" id="cHw-tX-alD"/>
                                 <constraint firstAttribute="width" secondItem="GzL-15-2zn" secondAttribute="height" multiplier="250:187" id="tCL-e1-3V9"/>
                             </constraints>
                         </imageView>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zh1-of-FlN">
-                            <rect key="frame" x="307" y="54" width="30" height="35"/>
-                            <fontDescription key="fontDescription" name="IconsSouthSt" family="Icons South St" pointSize="17"/>
-                            <state key="normal" title="b"/>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zh1-of-FlN">
+                            <rect key="frame" x="301" y="54" width="36" height="36"/>
+                            <state key="normal" image="next_button_icon"/>
                             <connections>
                                 <action selector="nextBtnTap:" destination="TOK-IF-rUe" eventType="touchUpInside" id="dXr-4j-Vc5"/>
                             </connections>
@@ -450,4 +442,9 @@
             <point key="canvasLocation" x="-583" y="118"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="next_button_icon" width="36" height="36"/>
+        <image name="play_button_icon" width="36" height="36"/>
+        <image name="previous_button_icon" width="36" height="36"/>
+    </resources>
 </document>
