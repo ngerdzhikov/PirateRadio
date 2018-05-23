@@ -10,6 +10,7 @@
 
 #define YOUTUBE_API_SEARCH_PREFIX @"https://www.googleapis.com/youtube/v3/search"
 #define YOUTUBE_API_VIDEO_DURATION_REQUEST_PREFIX @"https://www.googleapis.com/youtube/v3/videos"
+#define SEARCH_SUGGESTION_REQUEST_PREFIX @"http://clients1.google.com/complete/search"
 
 @implementation YoutubeConnectionManager
 
@@ -36,6 +37,19 @@
                                               [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails,statistics"],
                                               [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
                                               [NSURLQueryItem queryItemWithName:@"id" value:[videoIds componentsJoinedByString:@","]]
+                                              ];
+    url = [url URLByAppendingQueryItems:queryItems];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [self.class makeGetRequestWithURLRequest:request withCompletion:completion];
+}
+
++ (void)makeSuggestionsSearchWithPrefix:(NSString *)prefix andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
+    NSURL *url = [NSURL URLWithString:SEARCH_SUGGESTION_REQUEST_PREFIX];
+    NSArray<NSURLQueryItem *> *queryItems = @[
+                                              [NSURLQueryItem queryItemWithName:@"output" value:@"firefox"],
+                                              [NSURLQueryItem queryItemWithName:@"hl" value:@"en"],
+                                              [NSURLQueryItem queryItemWithName:@"ds" value:@"yt"],
+                                              [NSURLQueryItem queryItemWithName:@"q" value:prefix]
                                               ];
     url = [url URLByAppendingQueryItems:queryItems];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];

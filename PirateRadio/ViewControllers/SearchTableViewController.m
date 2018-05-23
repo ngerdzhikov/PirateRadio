@@ -12,12 +12,14 @@
 #import "VideoModel.h"
 #import "ThumbnailModel.h"
 #import "YoutubePlayerViewController.h"
+#import "SearchSuggestionsTableViewController.h"
 #import "ImageCacher.h"
 
-@interface SearchTableViewController ()
+@interface SearchTableViewController ()<UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModels;
-@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
+
 
 @end
 
@@ -27,6 +29,11 @@
     [super viewDidLoad];
     self.tableView.tableHeaderView = self.searchBar;
     self.searchBar.delegate = self;
+    self.searchHistory = [[NSUserDefaults.standardUserDefaults objectForKey:@"searchHistory"] mutableCopy];
+    if (!self.searchHistory) {
+        self.searchHistory = [[NSMutableArray alloc] init];
+    }
+   self.searchSuggestions = [[NSMutableArray alloc] init];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -92,18 +99,32 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
-    //[self.navigationController pushViewController:youtubePlayer animated:YES];
     youtubePlayer.videoModel = self.videoModels[indexPath.row];
     [self.navigationController pushViewController:youtubePlayer animated:YES];
 }
 
-
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    NSString *searchText = searchBar.text;
-    if (![searchText isEqualToString:@""]) {
-        NSArray<NSString *> *keywords = [searchText componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+- (void)makeSearchWithString:(NSString *)string {
+    if (![string isEqualToString:@""]) {
+        NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [self makeSearchWithKeywords:keywords];
     }
+    self.searchBar.text = string;
+    [self.searchBar resignFirstResponder];
+    [self manageSearchHistory];
+    [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+}
+
+- (void)manageSearchHistory {
+    if ([self.searchHistory containsObject:self.searchBar.text]) {
+        [self.searchHistory removeObject:self.searchBar.text];
+    }
+    [self.searchHistory insertObject:self.searchBar.text atIndex:0];
+}
+
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [self makeSearchWithString:searchBar.text];
+    [self.searchBar resignFirstResponder];
 }
 
 - (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
@@ -165,19 +186,57 @@
     }];
 }
 
-
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == self.videoModels.count) {
-        
-    }
+- (void)presentSearchSuggestoinsTableView {
+    self.searchSuggestionsTable = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SearchSuggestionsTableViewController"];
+    self.searchSuggestionsTable.delegate = self;
+    self.searchSuggestionsTable.modalPresentationStyle = UIModalPresentationPopover;
+    self.searchSuggestionsTable.popoverPresentationController.sourceView = self.searchBar;
+    self.searchSuggestionsTable.popoverPresentationController.sourceRect = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, self.searchBar.frame.size.width, self.searchBar.frame.size.height);
+    self.searchSuggestionsTable.popoverPresentationController.delegate = self;
+    [self presentViewController:self.searchSuggestionsTable animated:YES completion:nil];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    UITableView *suggestionsTable = [[UITableView alloc] initWithFrame:CGRectMake(0, (self.searchBar.frame.origin.y + self.searchBar.frame.size.height),
-                                                                                  self.view.frame.size.width, 200)];
+    [self presentSearchSuggestoinsTableView];
 }
 
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    [YoutubeConnectionManager makeSuggestionsSearchWithPrefix:searchText andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSError *serializationError;
+        NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&serializationError];
+        if (serializationError) {
+            NSLog(@"serializationError = %@", serializationError);
+            [self.searchSuggestions removeAllObjects];
+        }
+        else {
+            [self.searchSuggestions removeAllObjects];
+            for (NSString *suggestion in responseArray[1]) {
+                [self.searchSuggestions addObject:suggestion];
+            }
+            NSLog(@"suggestions = %@", self.searchSuggestions);
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.searchSuggestionsTable.tableView reloadData];
+        });
+    }];
+}
+
+
+
+- (UIModalPresentationStyle) adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
+    return UIModalPresentationNone;
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [NSUserDefaults.standardUserDefaults setObject:self.searchHistory forKey:@"searchHistory"];
+    [NSUserDefaults.standardUserDefaults synchronize];
+}
+
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
+    [self.searchBar resignFirstResponder];
+}
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
