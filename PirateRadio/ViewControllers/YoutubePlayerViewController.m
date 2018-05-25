@@ -33,7 +33,13 @@
     self.youtubePlayer.delegate = self;
     self.videoTitle.text = self.videoModel.videoTitle;
     self.videoDescription.text = self.videoModel.videoDescription;
-    self.videoViews.text = [self.videoModel.videoViews stringByAppendingString:@" views"];
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
+    numberFormatter.groupingSeparator = groupingSeparator;
+    numberFormatter.groupingSize = 3;
+    numberFormatter.alwaysShowsDecimalSeparator = NO;
+    numberFormatter.usesGroupingSeparator = YES;
+    self.videoViews.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:self.videoModel.videoViews]];
     
     NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.videoModel.videoId];
     NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
