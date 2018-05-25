@@ -16,6 +16,12 @@
 #import "ImageCacher.h"
 #import "DGActivityIndicatorView.h"
 
+typedef enum {
+    EnumLastSearchTypeWithKeywords,
+    EnumLastSearchTypeSuggestions
+}EnumLastSearchType;
+
+
 @interface SearchTableViewController ()<UISearchBarDelegate, UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) NSMutableDictionary<NSString *, VideoModel *> *videoModelsDict;
@@ -26,6 +32,7 @@
 @property (weak, nonatomic) UISearchBar *searchBar;
 @property (strong, nonatomic) NSString *nextPageToken;
 @property BOOL isNextPageEnabled;
+@property EnumLastSearchType lastSearchType;
 
 @end
 
@@ -109,9 +116,21 @@
     [self.navigationController pushViewController:youtubePlayer animated:YES];
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == self.videoModelsArray.count - 1 && self.isNextPageEnabled) {
-        [self searchWithNextPageToken:self.nextPageToken];
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGFloat offset = scrollView.contentOffset.y;
+    CGFloat maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
+    
+    if (self.isNextPageEnabled && ((maximumOffset - offset) <= 100)) {
+        self.isNextPageEnabled = NO;
+        if (self.lastSearchType == EnumLastSearchTypeSuggestions) {
+            [self makeSearchForMostPopularVideos];
+        }
+        else if (self.lastSearchType == EnumLastSearchTypeWithKeywords) {
+            [self startAnimation];
+            self.lastSearchType = EnumLastSearchTypeWithKeywords;
+            NSArray<NSString *> *keywords = [self.searchBar.text componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            [self makeSearchWithKeywords:keywords];
+        }
     }
 }
 
@@ -154,6 +173,7 @@
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    self.nextPageToken = @"";
     [self makeSearchWithString:searchBar.text];
     [self.searchBar resignFirstResponder];
 }
@@ -187,11 +207,13 @@
 - (void)makeSearchWithString:(NSString *)string {
     if (![string isEqualToString:@""]) {
         [self startAnimation];
+        self.nextPageToken = nil;
+        self.lastSearchType = EnumLastSearchTypeWithKeywords;
         NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         self.videoModelsDict = [[NSMutableDictionary alloc] init];
         self.videoModelsArray = [[NSMutableArray alloc] init];
-        [self.videoModelsArray removeAllObjects];
         [self makeSearchWithKeywords:keywords];
+//        [self.tableView setContentOffset:CGPointZero];
     }
     self.searchBar.text = string;
     [self.searchBar resignFirstResponder];
@@ -257,17 +279,18 @@
                     self.videoModelsDict[videoId].videoViews = views;
                 }
             }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self stopAnimation];
+                [self.tableView reloadData];
+            });
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self stopAnimation];
-            [self.tableView reloadData];
-        });
     }];
 }
 
 - (void)makeSearchForMostPopularVideos {
+    self.lastSearchType = EnumLastSearchTypeSuggestions;
     [self startAnimation];
-    [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithNextPageToken:self.nextPageToken andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error = %@", error.localizedDescription);
         }
@@ -293,45 +316,6 @@
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self stopAnimation];
-                    [self.tableView reloadData];
-                });
-            }
-        }
-    }];
-}
-
-- (void)searchWithNextPageToken:(NSString *)nextPageToken {
-    [YoutubeConnectionManager makeSearchWithNextPageToken:nextPageToken andKeywords:[self.searchBar.text componentsSeparatedByString:@" "] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Error = %@", error.localizedDescription);
-        }
-        else {
-            NSError *serializationError;
-            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
-            if (serializationError) {
-                NSLog(@"Error = %@", serializationError.localizedDescription);
-            }
-            else {
-                NSArray *items = [responseDict objectForKey:@"items"];
-                self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
-                if (items.count == 0) {
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
-                    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-                    [self presentViewController:alertController animated:YES completion:^{
-                        [self stopAnimation];
-                    }];
-                }
-                else {
-                    for (NSDictionary *item in items) {
-                        NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
-                        NSDictionary *snippet = [item objectForKey:@"snippet"];
-                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                        [self.videoModelsArray addObject:videoModel];
-                        [self.videoModelsDict setObject:videoModel forKey:videoId];
-                    }
-                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModelsArray];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
                     [self.tableView reloadData];
                 });
             }
