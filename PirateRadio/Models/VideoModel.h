@@ -22,6 +22,6 @@
 @property (strong, nonatomic) NSString *videoViews;
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet andVideoId:(NSString *)videoId;
-
+- (NSString *)formattedDuration;
 
 @end

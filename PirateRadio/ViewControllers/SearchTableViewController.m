@@ -78,27 +78,21 @@
     cell.videoImage.image = thumbnail;
     cell.videoTitle.text = videoModel.videoTitle;
     cell.channelTitle.text = videoModel.channelTitle;
-    cell.views.text = videoModel.videoViews;
-    NSString *duration;
-    if ([videoModel.videoDuration containsString:@"M"]) {
-        NSArray<NSString *> *components = [videoModel.videoDuration componentsSeparatedByString:@"M"];
-        duration = [components[0] substringFromIndex:2];
-        duration = [duration stringByAppendingString:@":"];
-        duration = [duration stringByAppendingString:[components[1] substringToIndex:components[1].length]];
-    }
-    else {
-        NSArray<NSString *> *components = [videoModel.videoDuration componentsSeparatedByString:@"S"];
-        duration = [components[0] substringFromIndex:2];
-    }
     
-    cell.duration.text = duration;
-    NSArray<NSString *> *dateArr = [videoModel.publishedAt componentsSeparatedByString:@"-"];
-    NSString *dateString = [dateArr[2] substringToIndex:2];
-    dateString = [dateString stringByAppendingString:@"."];
-    dateString = [dateString stringByAppendingString:dateArr[1]];
-    dateString = [dateString stringByAppendingString:@"."];
-    dateString = [dateString stringByAppendingString:dateArr[0]];
-    cell.dateUploaded.text = dateString;
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
+    numberFormatter.groupingSeparator = groupingSeparator;
+    numberFormatter.groupingSize = 3;
+    numberFormatter.alwaysShowsDecimalSeparator = NO;
+    numberFormatter.usesGroupingSeparator = YES;
+    cell.views.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:videoModel.videoViews]];
+    
+    cell.duration.text = videoModel.formattedDuration;
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+    NSDate *date = [dateFormatter dateFromString:videoModel.publishedAt];
+    cell.dateUploaded.text = [[dateFormatter stringFromDate:date] componentsSeparatedByString:@"T"][0];
     
     return cell;
 }
