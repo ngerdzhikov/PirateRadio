@@ -18,11 +18,14 @@
 
 @interface SearchTableViewController ()<UISearchBarDelegate, UIPopoverPresentationControllerDelegate>
 
-@property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModels;
+@property (strong, nonatomic) NSMutableDictionary<NSString *, VideoModel *> *videoModelsDict;
+@property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModelsArray;
 @property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
 @property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
 @property (strong, nonatomic) UIVisualEffectView *blurEffectView;
 @property (weak, nonatomic) UISearchBar *searchBar;
+@property (strong, nonatomic) NSString *nextPageToken;
+@property BOOL isNextPageEnabled;
 
 @end
 
@@ -44,7 +47,10 @@
     if (!self.searchHistory) {
         self.searchHistory = [[NSMutableArray alloc] init];
     }
+    self.isNextPageEnabled = NO;
     self.searchSuggestions = [[NSMutableArray alloc] init];
+    self.videoModelsDict = [[NSMutableDictionary alloc] init];
+    self.videoModelsArray = [[NSMutableArray alloc] init];
     self.tableView.showsVerticalScrollIndicator = YES;
     [self makeSearchForMostPopularVideos];
 }
@@ -61,7 +67,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.videoModels.count;
+    return self.videoModelsArray.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -70,7 +76,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
-    VideoModel *videoModel = [self.videoModels objectAtIndex:indexPath.row];
+    VideoModel *videoModel = self.videoModelsArray[indexPath.row];
     UIImage *thumbnail = [ImageCacher.sharedInstance imageForVideoId:videoModel.videoId];
     if (!thumbnail) {
         thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
@@ -99,19 +105,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
-    youtubePlayer.videoModel = self.videoModels[indexPath.row];
+    youtubePlayer.videoModel = self.videoModelsArray[indexPath.row];
     [self.navigationController pushViewController:youtubePlayer animated:YES];
 }
 
-- (void)startAnimation {
-    if (!UIAccessibilityIsReduceTransparencyEnabled()) {
-//        self.view.backgroundColor = [UIColor whiteColor];
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == self.videoModelsArray.count - 1 && self.isNextPageEnabled) {
+        [self searchWithNextPageToken:self.nextPageToken];
+    }
+}
 
+#pragma mark Animation
+
+- (void)startAnimation {
+    self.isNextPageEnabled = NO;
+    if (!UIAccessibilityIsReduceTransparencyEnabled()) {
         UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
         self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
         self.blurEffectView.frame = self.navigationController.view.bounds;
-//        self.blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
         [self.view addSubview:self.blurEffectView];
     }
     self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
@@ -123,22 +134,13 @@
 
 
 - (void)stopAnimation {
+    self.isNextPageEnabled = YES;
     [self.activityIndicatorView stopAnimating];
     [self.activityIndicatorView removeFromSuperview];
     [self.blurEffectView removeFromSuperview];
 }
 
-- (void)makeSearchWithString:(NSString *)string {
-    if (![string isEqualToString:@""]) {
-        [self startAnimation];
-        NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        [self makeSearchWithKeywords:keywords];
-    }
-    self.searchBar.text = string;
-    [self.searchBar resignFirstResponder];
-    [self manageSearchHistory];
-    [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
-}
+#pragma mark HistoryAndSearchBarDelegate
 
 - (void)manageSearchHistory {
     if ([self.searchHistory containsObject:self.searchBar.text]) {
@@ -154,119 +156,6 @@
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [self makeSearchWithString:searchBar.text];
     [self.searchBar resignFirstResponder];
-}
-
-- (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
-    self.videoModels = [[NSMutableArray alloc] init];
-    [YoutubeConnectionManager makeYoutubeSearchRequestWithKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Error = %@", error.localizedDescription);
-        }
-        else {
-            NSError *serializationError;
-            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
-            if (serializationError) {
-                NSLog(@"Error = %@", serializationError.localizedDescription);
-            }
-            else {
-                NSArray *items = [responseDict objectForKey:@"items"];
-                if (items.count == 0) {
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
-                    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-                    [self presentViewController:alertController animated:YES completion:^{
-                        [self stopAnimation];
-                    }];
-                }
-                else {
-                    for (NSDictionary *item in items) {
-                        NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
-                        NSDictionary *snippet = [item objectForKey:@"snippet"];
-                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                        [self.videoModels addObject:videoModel];
-                    }
-                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModels];
-                }
-            }
-        }
-    }];
-}
-
-- (void)makeSearchForVideoDurationsWithVideoModels:(NSArray<VideoModel *> *)videoModels {
-    NSMutableArray<NSString *> *videoIds = [[NSMutableArray alloc] init];
-    for (VideoModel *video in videoModels) {
-        [videoIds addObject:video.videoId];
-    }
-    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:[videoIds copy] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Error searching for video durations = %@", error);
-        }
-        else {
-            NSError *serializationError;
-            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
-            if (serializationError) {
-                NSLog(@"Error = %@", serializationError.localizedDescription);
-            }
-            else {
-                NSArray *items = [responseDict objectForKey:@"items"];
-                int i = 0;
-                for (NSDictionary *item in items) {
-                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
-                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
-                    self.videoModels[i].videoDuration = duration;
-                    self.videoModels[i].videoViews = views;
-                    i++;
-                }
-            }
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self stopAnimation];
-            [self.tableView reloadData];
-        });
-    }];
-}
-
-- (void)makeSearchForMostPopularVideos {
-    [self startAnimation];
-    self.videoModels = [[NSMutableArray alloc] init];
-    [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Error = %@", error.localizedDescription);
-        }
-        else {
-            NSError *serializationError;
-            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
-            if (serializationError) {
-                NSLog(@"Error = %@", serializationError.localizedDescription);
-            }
-            else {
-                NSArray *items = [responseDict objectForKey:@"items"];
-                for (NSDictionary *item in items) {
-                    NSString *videoId = [item objectForKey:@"id"];
-                    NSDictionary *snippet = [item objectForKey:@"snippet"];
-                    VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
-                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
-                    videoModel.videoDuration = duration;
-                    videoModel.videoViews = views;
-                    [self.videoModels addObject:videoModel];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self stopAnimation];
-                    [self.tableView reloadData];
-                });
-            }
-        }
-    }];
-}
-
-- (void)presentSearchSuggestoinsTableView {
-    self.searchSuggestionsTable = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SearchSuggestionsTableViewController"];
-    self.searchSuggestionsTable.delegate = self;
-    self.searchSuggestionsTable.modalPresentationStyle = UIModalPresentationPopover;
-    self.searchSuggestionsTable.popoverPresentationController.sourceView = self.searchBar;
-    self.searchSuggestionsTable.popoverPresentationController.sourceRect = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, self.searchBar.frame.size.width, self.searchBar.frame.size.height);
-    self.searchSuggestionsTable.popoverPresentationController.delegate = self;
-    [self presentViewController:self.searchSuggestionsTable animated:YES completion:nil];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
@@ -293,6 +182,172 @@
     }];
 }
 
+#pragma mark Searching
+
+- (void)makeSearchWithString:(NSString *)string {
+    if (![string isEqualToString:@""]) {
+        [self startAnimation];
+        NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        self.videoModelsDict = [[NSMutableDictionary alloc] init];
+        self.videoModelsArray = [[NSMutableArray alloc] init];
+        [self.videoModelsArray removeAllObjects];
+        [self makeSearchWithKeywords:keywords];
+    }
+    self.searchBar.text = string;
+    [self.searchBar resignFirstResponder];
+    [self manageSearchHistory];
+    [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+}
+
+- (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
+    [YoutubeConnectionManager makeYoutubeSearchRequestWithKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error = %@", error.localizedDescription);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                if (items.count == 0) {
+                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
+                    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                    [self presentViewController:alertController animated:YES completion:^{
+                        [self stopAnimation];
+                    }];
+                }
+                else {
+                    for (NSDictionary *item in items) {
+                        NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
+                        NSDictionary *snippet = [item objectForKey:@"snippet"];
+                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                        [self.videoModelsArray addObject:videoModel];
+                        [self.videoModelsDict setObject:videoModel forKey:videoId];
+                    }
+                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModelsArray];
+                }
+            }
+        }
+    }];
+}
+
+- (void)makeSearchForVideoDurationsWithVideoModels:(NSMutableArray<VideoModel *> *)videoModels {
+    NSMutableArray<NSString *> *videoIds = [[NSMutableArray alloc] initWithArray:[videoModels valueForKey:@"videoId"]];
+    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:[videoIds copy] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error searching for video durations = %@", error);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                for (NSDictionary *item in items) {
+                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
+                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
+                    NSString *videoId = [item objectForKey:@"id"];
+                    self.videoModelsDict[videoId].videoDuration = duration;
+                    self.videoModelsDict[videoId].videoViews = views;
+                }
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self stopAnimation];
+            [self.tableView reloadData];
+        });
+    }];
+}
+
+- (void)makeSearchForMostPopularVideos {
+    [self startAnimation];
+    [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error = %@", error.localizedDescription);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                for (NSDictionary *item in items) {
+                    NSString *videoId = [item objectForKey:@"id"];
+                    NSDictionary *snippet = [item objectForKey:@"snippet"];
+                    VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
+                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
+                    videoModel.videoDuration = duration;
+                    videoModel.videoViews = views;
+                    [self.videoModelsArray addObject:videoModel];
+                    [self.videoModelsDict setObject:videoModel forKey:videoId];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self stopAnimation];
+                    [self.tableView reloadData];
+                });
+            }
+        }
+    }];
+}
+
+- (void)searchWithNextPageToken:(NSString *)nextPageToken {
+    [YoutubeConnectionManager makeSearchWithNextPageToken:nextPageToken andKeywords:[self.searchBar.text componentsSeparatedByString:@" "] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error = %@", error.localizedDescription);
+        }
+        else {
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            else {
+                NSArray *items = [responseDict objectForKey:@"items"];
+                self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                if (items.count == 0) {
+                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
+                    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                    [self presentViewController:alertController animated:YES completion:^{
+                        [self stopAnimation];
+                    }];
+                }
+                else {
+                    for (NSDictionary *item in items) {
+                        NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
+                        NSDictionary *snippet = [item objectForKey:@"snippet"];
+                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                        [self.videoModelsArray addObject:videoModel];
+                        [self.videoModelsDict setObject:videoModel forKey:videoId];
+                    }
+                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModelsArray];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tableView reloadData];
+                });
+            }
+        }
+    }];
+}
+
+- (void)presentSearchSuggestoinsTableView {
+    self.searchSuggestionsTable = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SearchSuggestionsTableViewController"];
+    self.searchSuggestionsTable.delegate = self;
+    self.searchSuggestionsTable.modalPresentationStyle = UIModalPresentationPopover;
+    self.searchSuggestionsTable.popoverPresentationController.sourceView = self.searchBar;
+    self.searchSuggestionsTable.popoverPresentationController.sourceRect = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, self.searchBar.frame.size.width, self.searchBar.frame.size.height);
+    self.searchSuggestionsTable.popoverPresentationController.delegate = self;
+    [self presentViewController:self.searchSuggestionsTable animated:YES completion:nil];
+}
 
 
 - (UIModalPresentationStyle) adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
