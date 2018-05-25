@@ -200,7 +200,7 @@
 }
 
 - (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
-    [YoutubeConnectionManager makeYoutubeSearchRequestWithKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [YoutubeConnectionManager makeSearchWithNextPageToken:self.nextPageToken andKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error = %@", error.localizedDescription);
         }
