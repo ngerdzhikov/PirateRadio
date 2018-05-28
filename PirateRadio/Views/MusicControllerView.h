@@ -8,13 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MusicControllerView : UIView
+@class SavedMusicTableViewController;
+@class LocalSongModel;
+
+@interface MusicControllerView : UIViewController
+
 @property (weak, nonatomic) IBOutlet UILabel *songName;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *previousButton;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
 @property (weak, nonatomic) IBOutlet UISlider *songTimeProgress;
 @property (weak, nonatomic) IBOutlet UIImageView *songImage;
+@property (strong, nonatomic) LocalSongModel *song;
 
+- (void)configureMusicControllerView;
 
 @end
