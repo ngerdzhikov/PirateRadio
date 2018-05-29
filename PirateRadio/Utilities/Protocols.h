@@ -20,4 +20,23 @@
 
 
 
+@class LocalSongModel;
+
+@protocol SavedMusicTableDelegate
+
+- (LocalSongModel *)previousSong;
+- (LocalSongModel *)nextSong;
+- (LocalSongModel *)firstSong;
+
+@end
+
+@protocol MusicPlayerDelegate
+
+- (void)replaceCurrentSongWithSong:(LocalSongModel *)song;
+- (BOOL)avPlayerStatusIsPlaying;
+
+@end
+
+
+
 #endif /* Protocols_h */

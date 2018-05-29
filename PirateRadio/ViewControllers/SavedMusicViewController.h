@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+@class SavedMusicTableViewController;
+@class MusicPlayerViewController;
+
 @interface SavedMusicViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UIView *tableViewContainer;

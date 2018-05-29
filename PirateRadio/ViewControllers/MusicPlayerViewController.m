@@ -6,12 +6,12 @@
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
-#import "MusicControllerView.h"
+#import "MusicPlayerViewController.h"
 #import <AVKit/AVKit.h>
 #import "LocalSongModel.h"
 #import "Constants.h"
 
-@interface MusicControllerView ()
+@interface MusicPlayerViewController ()
 
 @property (strong, nonatomic) AVPlayer *player;
 @property BOOL isSeekInProgress;
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation MusicControllerView
+@implementation MusicPlayerViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -31,11 +31,10 @@
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(playButtonTap:) name:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseButtonTap:) name:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(replaceSongFromNotification:) name:@"replaceSongFromNotification" object:nil];
     self.songTimeProgress.value = 0.0f;
     
     
-    __weak MusicControllerView *weakSelf = self;
+    __weak MusicPlayerViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
@@ -59,8 +58,7 @@
 //    [self setCenter:(CGPointMake(self.view.frame.size.width / 2, (self.view.frame.size.height + 65)))];
 }
 
-- (void)replaceSongFromNotification:(NSNotification *) notification {
-    LocalSongModel *song = [notification.userInfo objectForKey:@"song"];
+- (void)replaceCurrentSongWithSong:(LocalSongModel *)song {
     if (![self.song.localSongURL isEqual:song.localSongURL]) {
         self.song = song;
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.song.localSongURL options:nil];
@@ -92,11 +90,11 @@
 }
 
 - (IBAction)previousBtnTap:(id)sender {
-    [NSNotificationCenter.defaultCenter postNotificationName:@"previousButtonTap" object:nil];
+    [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate previousSong]];
 }
 
 - (IBAction)nextBtnTap:(id)sender {
-     [NSNotificationCenter.defaultCenter postNotificationName:@"nextButtonTap" object:nil];
+    [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate nextSong]];
 }
 
 
@@ -140,23 +138,19 @@
 - (void)stopPlayingAndSeekSmoothlyToTime:(CMTime)newChaseTime {
     [self.player pause];
     NSLog(@"time = %lf", CMTimeGetSeconds(newChaseTime));
-    if (CMTIME_COMPARE_INLINE(newChaseTime, !=, self.chaseTime))
-    {
+    if (CMTIME_COMPARE_INLINE(newChaseTime, !=, self.chaseTime)) {
         self.chaseTime = newChaseTime;
-        
-        if (!self.isSeekInProgress)
+        if (!self.isSeekInProgress) {
             [self trySeekToChaseTime];
+        }
     }
 }
 
 - (void)trySeekToChaseTime {
-    if (self.playerCurrentItemStatus == AVPlayerItemStatusUnknown)
-    {
+    if (self.playerCurrentItemStatus == AVPlayerItemStatusUnknown) {
         // wait until item becomes ready (KVO player.currentItem.status)
     }
-    else if (self.playerCurrentItemStatus == AVPlayerItemStatusReadyToPlay)
-    {
-        
+    else if (self.playerCurrentItemStatus == AVPlayerItemStatusReadyToPlay) {
         [self actuallySeekToTime];
     }
 }
@@ -166,14 +160,14 @@
     CMTime seekTimeInProgress = self.chaseTime;
     [self.player seekToTime:seekTimeInProgress toleranceBefore:kCMTimeZero
              toleranceAfter:kCMTimeZero completionHandler:
-     ^(BOOL isFinished)
-     {
+     ^(BOOL isFinished) {
          if (CMTIME_COMPARE_INLINE(seekTimeInProgress, ==, self.chaseTime)) {
              self.isSeekInProgress = NO;
              [self.player play];
          }
-         else
+         else{
              [self trySeekToChaseTime];
+         }
      }];
 }
 
@@ -203,6 +197,13 @@
                 break;
         }
     }
+}
+
+- (BOOL)avPlayerStatusIsPlaying {
+    if (self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

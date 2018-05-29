@@ -8,9 +8,12 @@
 
 #import "SavedMusicViewController.h"
 #import "SavedMusicTableViewController.h"
-#import "MusicControllerView.h"
+#import "MusicPlayerViewController.h"
 
 @interface SavedMusicViewController ()
+
+@property (strong, nonatomic) SavedMusicTableViewController *savedMusicTableView;
+@property (strong, nonatomic) MusicPlayerViewController *musicControllerView;
 
 @end
 
@@ -19,8 +22,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
-    [self.musicPlayerContainer addGestureRecognizer:pan];
-
+    self.savedMusicTableView = self.childViewControllers.firstObject;
+    self.musicControllerView = self.childViewControllers.lastObject;
+    [self.musicControllerView.view addGestureRecognizer:pan];
+    self.musicControllerView.savedMusicTableDelegate = self.savedMusicTableView;
+    self.savedMusicTableView.musicPlayerDelegate = self.musicControllerView;
 }
 
 - (void)didReceiveMemoryWarning {

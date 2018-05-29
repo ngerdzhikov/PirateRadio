@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
+#import "Protocols.h"
 
-@class MusicControllerView;
+@class MusicPlayerViewController;
 
-@interface SavedMusicTableViewController : UITableViewController
+@interface SavedMusicTableViewController : UITableViewController<SavedMusicTableDelegate>
+
+@property (weak, nonatomic) id<MusicPlayerDelegate> musicPlayerDelegate;
 
 @end

@@ -8,7 +8,7 @@
 
 #import "SavedMusicTableViewController.h"
 #import "SavedMusicTableViewCell.h"
-#import "MusicControllerView.h"
+#import "MusicPlayerViewController.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "Constants.h"
 #import "LocalSongModel.h"
@@ -29,10 +29,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(nextButtonTap:) name:@"nextButtonTap" object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(previousButtonTap:) name:@"previousButtonTap" object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateProgressBar:) name:@"progressBarValueChanged" object:nil];
-    [self loadSongsFromDisk];
+//    [self loadSongsFromDisk];
 }
 
 - (void)updateProgressBar:(NSNotification *)notification {
@@ -66,6 +64,7 @@
     if (self.songs.count > 0) {
         [self loadFirstItemForPlayerAtBeginning];
     }
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -140,7 +139,7 @@
     SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     
     if ([indexPath isEqual:self.indexPathOfLastPlayedSong]) {
-        if (self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying) {
+        if (self.musicPlayerDelegate.avPlayerStatusIsPlaying) {
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil userInfo:@{@"cell" : cell}];
         }
         else {
@@ -148,16 +147,17 @@
         }
     }
     else {
-        [NSNotificationCenter.defaultCenter postNotificationName:@"replaceSongFromNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:self.songs[indexPath.row] forKey:@"song"]];
+        [self.musicPlayerDelegate replaceCurrentSongWithSong:self.songs[indexPath.row]];
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil userInfo:@{@"cell" : cell}];
     }
     self.indexPathOfLastPlayedSong = indexPath;
 }
 
-#pragma mark - music view button actions
+- (LocalSongModel *)firstSong {
+    return self.songs[0];
+}
 
-
-- (void)previousButtonTap:(NSNotification *)notification {
+- (LocalSongModel *)previousSong {
     NSIndexPath *indexPath;
     if ((self.indexPathOfLastPlayedSong.row - 1) < 0) {
         indexPath = [NSIndexPath indexPathForRow:self.songs.count - 1 inSection:self.indexPathOfLastPlayedSong.section];
@@ -166,18 +166,20 @@
         indexPath = [NSIndexPath indexPathForRow:(self.indexPathOfLastPlayedSong.row - 1) inSection:self.indexPathOfLastPlayedSong.section];
     }
     [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil userInfo:@{@"cell" : [self.tableView cellForRowAtIndexPath:indexPath]}];
-    [NSNotificationCenter.defaultCenter postNotificationName:@"replaceSongFromNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:self.songs[indexPath.row] forKey:@"song"]];
     self.indexPathOfLastPlayedSong = indexPath;
+    return self.songs[indexPath.row];
 }
 
-- (void)nextButtonTap:(NSNotification *)notification {
+- (LocalSongModel *)nextSong {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(self.indexPathOfLastPlayedSong.row + 1) % self.songs.count inSection:self.indexPathOfLastPlayedSong.section];
     [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil userInfo:@{@"cell" : [self.tableView cellForRowAtIndexPath:indexPath]}];
-    [NSNotificationCenter.defaultCenter postNotificationName:@"replaceSongFromNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:self.songs[indexPath.row] forKey:@"song"]];
     self.indexPathOfLastPlayedSong = indexPath;
+    return self.songs[indexPath.row];
 }
 
-
-
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self loadSongsFromDisk];
+}
 
 @end
