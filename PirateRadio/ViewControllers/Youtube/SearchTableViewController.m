@@ -257,8 +257,8 @@ typedef enum {
 }
 
 - (void)makeSearchForVideoDurationsWithVideoModels:(NSMutableArray<VideoModel *> *)videoModels {
-    NSMutableArray<NSString *> *videoIds = [[NSMutableArray alloc] initWithArray:[videoModels valueForKey:@"videoId"]];
-    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:[videoIds copy] andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    NSArray<NSString *> *videoIds = [[NSArray alloc] initWithArray:[videoModels valueForKey:@"videoId"]];
+    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:videoIds andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error searching for video durations = %@", error);
         }

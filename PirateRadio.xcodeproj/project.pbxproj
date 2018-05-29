@@ -111,6 +111,36 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		069C32D520BD905E0079C5C5 /* SavedMusic */ = {
+			isa = PBXGroup;
+			children = (
+				069C32CB20BC071C0079C5C5 /* SavedMusicViewController.h */,
+				069C32CC20BC071C0079C5C5 /* SavedMusicViewController.m */,
+				069C32CE20BD797D0079C5C5 /* MusicPlayerViewController.h */,
+				069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */,
+				06B1B9C820A974500019B0CC /* SavedMusicTableViewController.h */,
+				06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */,
+				06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */,
+				06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */,
+			);
+			path = SavedMusic;
+			sourceTree = "<group>";
+		};
+		069C32D620BD90670079C5C5 /* Youtube */ = {
+			isa = PBXGroup;
+			children = (
+				06BE0CB320A44FDA007D9319 /* YoutubePlayerViewController.h */,
+				06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */,
+				06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */,
+				06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */,
+				06BE0CB620A46019007D9319 /* SearchResultTableViewCell.h */,
+				06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */,
+				063EDF3720B43DFD00630747 /* SearchSuggestionsTableViewController.h */,
+				063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */,
+			);
+			path = Youtube;
+			sourceTree = "<group>";
+		};
 		06BE0CAA20A4474F007D9319 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -128,22 +158,8 @@
 		06BE0CAF20A44F9D007D9319 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				06BE0CB320A44FDA007D9319 /* YoutubePlayerViewController.h */,
-				06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */,
-				06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */,
-				06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */,
-				06BE0CB620A46019007D9319 /* SearchResultTableViewCell.h */,
-				06BE0CB720A46019007D9319 /* SearchResultTableViewCell.m */,
-				06B1B9C820A974500019B0CC /* SavedMusicTableViewController.h */,
-				06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */,
-				06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */,
-				06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */,
-				063EDF3720B43DFD00630747 /* SearchSuggestionsTableViewController.h */,
-				063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */,
-				069C32CB20BC071C0079C5C5 /* SavedMusicViewController.h */,
-				069C32CC20BC071C0079C5C5 /* SavedMusicViewController.m */,
-				069C32CE20BD797D0079C5C5 /* MusicPlayerViewController.h */,
-				069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */,
+				069C32D620BD90670079C5C5 /* Youtube */,
+				069C32D520BD905E0079C5C5 /* SavedMusic */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

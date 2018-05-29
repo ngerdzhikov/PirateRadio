@@ -44,15 +44,22 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
     
     CGPoint newCenter = CGPointMake(self.view.frame.size.width/2, recognizer.view.center.y + translatedPoint.y);
-    CGRect tableViewFrame = CGRectMake(self.tableViewContainer.frame.origin.x, self.tableViewContainer.frame.origin.y, self.tableViewContainer.frame.size.width, self.view.frame.origin.y - CGRectGetMaxY(self.musicPlayerContainer.frame));
-    NSLog(@"newCenter y = %lf", newCenter.y);
-    if (newCenter.y >= ((CGRectGetMinY(self.tableViewContainer.frame) - self.musicPlayerContainer.frame.size.height) && newCenter.y <= (self.view.frame.size.height - 50))) {
+    CGRect tableViewFrame = self.tableViewContainer.frame;
+    tableViewFrame.size.height = self.tableViewContainer.frame.size.height + translatedPoint.y;
+    
+    if (newCenter.y >= 0 && newCenter.y <= 220) {
         recognizer.view.center = newCenter;
+        NSLog(@"newCenter y = %lf", newCenter.y);
         self.tableViewContainer.frame = tableViewFrame;
     }
     
     if (recognizer.state == UIGestureRecognizerStateEnded) {
-        recognizer.view.center = CGPointMake(self.view.frame.size.width/2, (CGRectGetMaxY(self.tableViewContainer.frame) + (self.musicPlayerContainer.frame.size.height/2)));
+        if (recognizer.view.center.y > self.musicPlayerContainer.frame.size.height/2) {
+            recognizer.view.center = CGPointMake(recognizer.view.center.x, 200);
+        }
+        else {
+            recognizer.view.center = CGPointMake(recognizer.view.center.x, 15);
+        }
     }
     [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
     
