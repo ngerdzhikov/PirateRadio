@@ -175,7 +175,6 @@ typedef enum {
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     self.nextPageToken = @"";
     [self makeSearchWithString:searchBar.text];
-    [self.searchBar resignFirstResponder];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
@@ -207,18 +206,18 @@ typedef enum {
 - (void)makeSearchWithString:(NSString *)string {
     if (![string isEqualToString:@""]) {
         [self startAnimation];
+        [ImageCacher.sharedInstance clearCache];
         self.nextPageToken = nil;
         self.lastSearchType = EnumLastSearchTypeWithKeywords;
         NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         self.videoModelsDict = [[NSMutableDictionary alloc] init];
         self.videoModelsArray = [[NSMutableArray alloc] init];
         [self makeSearchWithKeywords:keywords];
-//        [self.tableView setContentOffset:CGPointZero];
     }
     self.searchBar.text = string;
-    [self.searchBar resignFirstResponder];
     [self manageSearchHistory];
-    [self.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+    [self.searchSuggestionsTable dismissViewControllerAnimated:NO completion:nil];
+    self.navigationItem.searchController.active = NO;
 }
 
 - (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
@@ -342,11 +341,6 @@ typedef enum {
 - (void)viewWillDisappear:(BOOL)animated {
     [NSUserDefaults.standardUserDefaults setObject:self.searchHistory forKey:@"searchHistory"];
     [NSUserDefaults.standardUserDefaults synchronize];
-}
-
-
-- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
-    [self.searchBar resignFirstResponder];
 }
 /*
 // Override to support conditional editing of the table view.

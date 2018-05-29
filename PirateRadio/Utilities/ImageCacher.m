@@ -41,4 +41,8 @@
     return [self.cache objectForKey:videoId];
 }
 
+- (void)clearCache {
+    [self.cache removeAllObjects];
+}
+
 @end

@@ -11,10 +11,9 @@
 
 @interface ImageCacher : NSObject
 
-
-
 + (instancetype)sharedInstance;
 - (void)cacheImage:(UIImage *)image forVideoId:(NSString *)videoId;
 - (UIImage *)imageForVideoId:(NSString *)videoId;
+- (void)clearCache;
 
 @end
