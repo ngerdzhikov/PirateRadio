@@ -27,6 +27,9 @@
 - (LocalSongModel *)previousSong;
 - (LocalSongModel *)nextSong;
 - (LocalSongModel *)firstSong;
+- (void)updateProgressBar:(NSNumber *)value;
+- (void)onPlayButtonTap;
+- (void)onPauseButtonTap;
 
 @end
 
