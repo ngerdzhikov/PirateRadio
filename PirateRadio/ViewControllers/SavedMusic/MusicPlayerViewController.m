@@ -26,13 +26,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.player = [[AVPlayer alloc] init];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(timeProgressChanged:) name:@"timeProgressChanged" object:nil];
     [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(playButtonTap:) name:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseButtonTap:) name:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
     self.songTimeProgress.value = 0.0f;
-    
+    self.song = self.savedMusicTableDelegate.firstSong;
+    [self replaceCurrentSongWithSong:self.song];
     
     __weak MusicPlayerViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
@@ -46,7 +46,7 @@
         double time = CMTimeGetSeconds(self.player.currentTime);
         double duration = CMTimeGetSeconds(self.player.currentItem.duration);
         self.songTimeProgress.value = time;
-        [NSNotificationCenter.defaultCenter postNotificationName:@"progressBarValueChanged" object:nil userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:(time / duration)] forKey:@"value"]];
+        [self.savedMusicTableDelegate updateProgressBar:[NSNumber numberWithDouble:(time / duration)]];
     }
 }
 
@@ -83,9 +83,11 @@
 //    [NSNotificationCenter.defaultCenter postNotificationName:@"musicControllerPlayButtonTap" object:nil];
     if (self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying) {
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
+        [self.savedMusicTableDelegate onPauseButtonTap];
     }
     else {
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
+        [self.savedMusicTableDelegate onPlayButtonTap];
     }
 }
 
@@ -97,11 +99,6 @@
     [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate nextSong]];
 }
 
-
-- (void)timeProgressChanged:(NSNotification *)notification {
-    NSNumber *valueNumber = [notification.userInfo objectForKey:@"time"];
-    self.songTimeProgress.value = [valueNumber doubleValue];
-}
 
 - (void)playButtonTap:(NSNotification *)notification {
     [self.player play];
