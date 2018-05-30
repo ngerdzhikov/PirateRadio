@@ -27,20 +27,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.player = [[AVPlayer alloc] init];
-    [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
-    [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
+    [self configureMusicControllerView];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(playButtonTap:) name:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseButtonTap:) name:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
     self.songTimeProgress.value = 0.0f;
     self.song = self.savedMusicTableDelegate.firstSong;
     [self replaceCurrentSongWithSong:self.song];
+    self.songName.textAlignment = NSTextAlignmentCenter;
     
     __weak MusicPlayerViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
 }
-
 
 - (void)updateProgressBar {
     if (!self.isSliding) {
@@ -55,8 +54,6 @@
 - (void)configureMusicControllerView {
     [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
-//    self.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.musicControllerView.frame.size.height);
-//    [self setCenter:(CGPointMake(self.view.frame.size.width / 2, (self.view.frame.size.height + 65)))];
 }
 
 - (void)replaceCurrentSongWithSong:(LocalSongModel *)song {
@@ -64,10 +61,9 @@
         self.song = song;
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.song.localSongURL options:nil];
         AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
-        //    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(nextBtnTap:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
         [self.player replaceCurrentItemWithPlayerItem:item];
-        NSKeyValueObservingOptions options =
-        NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
+        NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
         
         // Register as an observer of the player item's status property
         [item addObserver:self
@@ -75,13 +71,11 @@
                   options:options
                   context:nil];
         [self setMusicPlayerSongNameAndImage];
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(nextBtnTap:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
     }
 }
 
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
-//    [NSNotificationCenter.defaultCenter postNotificationName:@"musicControllerPlayButtonTap" object:nil];
     if (self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying) {
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
         [self.savedMusicTableDelegate onPauseButtonTap];
@@ -98,6 +92,11 @@
 
 - (IBAction)nextBtnTap:(id)sender {
     [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate nextSong]];
+}
+
+- (void)itemDidEndPlaying:(NSNotification *)notification {
+    [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate nextSong]];
+    [self.player play];
 }
 
 
