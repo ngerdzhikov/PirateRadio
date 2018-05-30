@@ -11,6 +11,7 @@
 #import "YoutubeDownloadManager.h"
 #import "NSURL+URLWithQueryItems.h"
 #import "DGActivityIndicatorView.h"
+#import "Constants.h"
 
 #define DOWNLOAD_BUTTON_URL_PREFIX @"https://youtube7.download/mini.php"
 
@@ -80,6 +81,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self stopAnimation];
+    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
 }
 
 
@@ -87,6 +89,12 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 
+}
+
+- (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
+    if (state == kYTPlayerStatePlaying) {
+        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
+    }
 }
 
 
