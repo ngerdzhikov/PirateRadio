@@ -65,10 +65,11 @@
         else {
             recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tableViewHeight + self.musicPlayerHeight/2);
         }
-        CGRect newTableViewFrame = self.tableViewContainer.frame;
-        newTableViewFrame.size.height = recognizer.view.center.y - (self.musicPlayerHeight / 2);
-        self.tableViewContainer.frame = newTableViewFrame;
+        
     }
+    CGRect newTableViewFrame = self.tableViewContainer.frame;
+    newTableViewFrame.size.height = recognizer.view.center.y - (self.musicPlayerHeight / 2);
+    self.tableViewContainer.frame = newTableViewFrame;
     [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
     
     [UIView commitAnimations];
