@@ -9,4 +9,5 @@ target 'PirateRadio' do
   pod "youtube-ios-player-helper", "~> 0.1.1"
   pod "MBCircularProgressBar"
   pod 'DGActivityIndicatorView'
+  pod "AutoScrollLabel"
 end
