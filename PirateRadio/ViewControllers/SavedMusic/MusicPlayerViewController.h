@@ -11,10 +11,11 @@
 
 @class SavedMusicTableViewController;
 @class LocalSongModel;
+@class CBAutoScrollLabel;
 
 @interface MusicPlayerViewController : UIViewController<MusicPlayerDelegate>
 
-@property (weak, nonatomic) IBOutlet UILabel *songName;
+@property (weak, nonatomic) IBOutlet CBAutoScrollLabel *songName;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *previousButton;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;

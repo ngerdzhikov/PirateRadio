@@ -9,9 +9,12 @@
 #import "YoutubePlayerViewController.h"
 #import "YoutubeConnectionManager.h"
 #import "YoutubeDownloadManager.h"
+#import "DownloadButtonWebView.h"
+#import "VideoModel.h"
 #import "NSURL+URLWithQueryItems.h"
 #import "DGActivityIndicatorView.h"
 #import "Constants.h"
+#import "CBAutoScrollLabel.h"
 
 #define DOWNLOAD_BUTTON_URL_PREFIX @"https://youtube7.download/mini.php"
 
@@ -33,14 +36,18 @@
     [self.youtubePlayer loadWithVideoId:self.videoModel.videoId playerVars:playerVars];
     self.youtubePlayer.delegate = self;
     self.videoTitle.text = self.videoModel.videoTitle;
+    self.videoTitle.scrollSpeed = 15;
     self.videoDescription.text = self.videoModel.videoDescription;
+    if ([self.videoDescription.text isEqualToString:@""]) {
+        self.videoDescription.text = @"No description.";
+    }
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
     numberFormatter.groupingSeparator = groupingSeparator;
     numberFormatter.groupingSize = 3;
     numberFormatter.alwaysShowsDecimalSeparator = NO;
     numberFormatter.usesGroupingSeparator = YES;
-    self.videoViews.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:self.videoModel.videoViews]];
+    self.videoViews.text = [[numberFormatter stringFromNumber:[numberFormatter numberFromString:self.videoModel.videoViews]] stringByAppendingString:@" views"];
     
     NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.videoModel.videoId];
     NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
@@ -81,7 +88,6 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self stopAnimation];
-    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
 }
 
 

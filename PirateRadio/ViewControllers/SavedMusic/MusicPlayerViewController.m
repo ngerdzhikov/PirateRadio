@@ -10,6 +10,7 @@
 #import <AVKit/AVKit.h>
 #import "LocalSongModel.h"
 #import "Constants.h"
+#import "CBAutoScrollLabel.h"
 
 @interface MusicPlayerViewController ()
 

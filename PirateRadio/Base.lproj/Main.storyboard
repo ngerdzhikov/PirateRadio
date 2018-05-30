@@ -136,6 +136,23 @@
             <point key="canvasLocation" x="-2128" y="526"/>
         </scene>
         <!--Music-->
+        <scene sceneID="zjh-0Z-XIM">
+            <objects>
+                <navigationController id="WsQ-M8-PDq" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Music" id="lE1-1e-hE7"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rAd-b9-paB">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="C5O-cd-Wlr" kind="relationship" relationship="rootViewController" id="CQF-CP-cMq"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dbQ-t1-wOA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2897" y="-645"/>
+        </scene>
+        <!--Music-->
         <scene sceneID="6G5-fc-wHl">
             <objects>
                 <viewController id="C5O-cd-Wlr" customClass="SavedMusicViewController" sceneMemberID="viewController">
@@ -174,6 +191,7 @@
                         <viewLayoutGuide key="safeArea" id="cQB-UR-YVn"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Music" id="Wps-Y7-V5L"/>
+                    <navigationItem key="navigationItem" id="KMd-0G-LeW"/>
                     <connections>
                         <outlet property="musicPlayerContainer" destination="fek-re-3Qc" id="epr-xu-s7h"/>
                         <outlet property="musicPlayerHeightConstraint" destination="eDg-9R-nAP" id="dMY-6S-wER"/>
@@ -194,7 +212,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="C5O-cd-Wlr" kind="relationship" relationship="viewControllers" id="SYQ-um-b4q"/>
+                        <segue destination="WsQ-M8-PDq" kind="relationship" relationship="viewControllers" id="B07-KG-QGZ"/>
                         <segue destination="c5L-qN-WnR" kind="relationship" relationship="viewControllers" id="kVv-UB-10n"/>
                     </connections>
                 </tabBarController>
@@ -214,14 +232,8 @@
                                 <rect key="frame" x="0.0" y="52" width="414" height="330.66666666666669"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FD1-yy-9Dc">
-                                <rect key="frame" x="169.66666666666666" y="392.66666666666669" width="75" height="20.333333333333314"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ofl-Cu-cc8" customClass="DownloadButtonWebView">
-                                <rect key="frame" x="67" y="586" width="280" height="100"/>
+                                <rect key="frame" x="67" y="616" width="280" height="100"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="VHy-hu-0l9"/>
@@ -232,7 +244,7 @@
                                 </wkWebViewConfiguration>
                             </wkWebView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXr-Ir-JqJ">
-                                <rect key="frame" x="36" y="450" width="343" height="128"/>
+                                <rect key="frame" x="36" y="480" width="343" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="343" id="g2h-9h-YMz"/>
@@ -243,43 +255,51 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UVH-Sb-U08">
-                                <rect key="frame" x="186" y="421" width="42" height="21"/>
+                                <rect key="frame" x="36" y="451" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c1I-D0-oa0" customClass="CBAutoScrollLabel">
+                                <rect key="frame" x="36" y="402" width="343" height="41"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="41" id="Ge8-TM-4SW"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="UVH-Sb-U08" firstAttribute="top" secondItem="FD1-yy-9Dc" secondAttribute="bottom" constant="8" id="4Ic-nS-jdR"/>
-                            <constraint firstItem="FD1-yy-9Dc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ApV-dM-6m9"/>
+                            <constraint firstItem="c1I-D0-oa0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="36" id="1uH-lG-qWe"/>
+                            <constraint firstItem="UVH-Sb-U08" firstAttribute="top" secondItem="c1I-D0-oa0" secondAttribute="bottom" constant="8" id="4TP-kR-TBr"/>
+                            <constraint firstItem="OXr-Ir-JqJ" firstAttribute="top" secondItem="UVH-Sb-U08" secondAttribute="bottom" constant="8" id="EXo-xf-MJP"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="TKF-pN-KYO" secondAttribute="bottom" id="HIN-Dm-im7"/>
+                            <constraint firstItem="c1I-D0-oa0" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="O8C-0e-YT7"/>
                             <constraint firstItem="ofl-Cu-cc8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="67" id="Oka-Lv-3Sd"/>
-                            <constraint firstItem="UVH-Sb-U08" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Tb2-PU-iO7"/>
+                            <constraint firstItem="c1I-D0-oa0" firstAttribute="top" secondItem="TKF-pN-KYO" secondAttribute="bottom" constant="19.333333333333314" id="Qt2-LA-nzH"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="XbS-ym-xr2"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="UVH-Sb-U08" secondAttribute="trailing" constant="20" symbolic="YES" id="XnG-2c-f8M"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dYs-fW-izW"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="OXr-Ir-JqJ" secondAttribute="bottom" constant="158" id="kPu-uO-QyC"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="OXr-Ir-JqJ" secondAttribute="bottom" constant="128" id="kPu-uO-QyC"/>
                             <constraint firstItem="ofl-Cu-cc8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mob-v5-Tdm"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="32" id="qEY-vO-p4J"/>
-                            <constraint firstItem="FD1-yy-9Dc" firstAttribute="top" secondItem="TKF-pN-KYO" secondAttribute="bottom" constant="10" id="rPd-CT-HQ1"/>
                             <constraint firstItem="TKF-pN-KYO" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="tT4-bs-9QD"/>
-                            <constraint firstItem="OXr-Ir-JqJ" firstAttribute="top" secondItem="FD1-yy-9Dc" secondAttribute="bottom" constant="37" id="vwu-pw-Dd0"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ofl-Cu-cc8" secondAttribute="bottom" constant="50" id="ySF-Dy-U6g"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ofl-Cu-cc8" secondAttribute="bottom" constant="20" id="ySF-Dy-U6g"/>
                             <constraint firstItem="OXr-Ir-JqJ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="yST-Bh-wRD"/>
+                            <constraint firstItem="UVH-Sb-U08" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="36" id="yWl-hd-EL9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="TKF-pN-KYO"/>
-                                <exclude reference="FD1-yy-9Dc"/>
                                 <exclude reference="ofl-Cu-cc8"/>
                                 <exclude reference="OXr-Ir-JqJ"/>
+                                <exclude reference="c1I-D0-oa0"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="HIN-Dm-im7"/>
                                 <exclude reference="qEY-vO-p4J"/>
                                 <exclude reference="tT4-bs-9QD"/>
-                                <exclude reference="rPd-CT-HQ1"/>
-                                <exclude reference="HIN-Dm-im7"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=compact-widthClass=regular">
@@ -288,36 +308,35 @@
                                 <exclude reference="ofl-Cu-cc8"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="tT4-bs-9QD"/>
                                 <include reference="HIN-Dm-im7"/>
+                                <include reference="tT4-bs-9QD"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
                                 <include reference="TKF-pN-KYO"/>
-                                <include reference="FD1-yy-9Dc"/>
                                 <include reference="ofl-Cu-cc8"/>
                                 <include reference="OXr-Ir-JqJ"/>
+                                <include reference="c1I-D0-oa0"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="HIN-Dm-im7"/>
                                 <include reference="qEY-vO-p4J"/>
                                 <exclude reference="tT4-bs-9QD"/>
-                                <include reference="rPd-CT-HQ1"/>
-                                <exclude reference="HIN-Dm-im7"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
                         <outlet property="downloadButtonWebView" destination="ofl-Cu-cc8" id="14A-04-cid"/>
                         <outlet property="videoDescription" destination="OXr-Ir-JqJ" id="uZZ-Wp-yWF"/>
-                        <outlet property="videoTitle" destination="FD1-yy-9Dc" id="T7R-8O-v29"/>
+                        <outlet property="videoTitle" destination="c1I-D0-oa0" id="3bJ-uz-qZk"/>
                         <outlet property="videoViews" destination="UVH-Sb-U08" id="SLw-Ef-tXI"/>
                         <outlet property="youtubePlayer" destination="TKF-pN-KYO" id="2QN-M2-sXg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1402" y="526"/>
+            <point key="canvasLocation" x="-1402.8985507246377" y="525.81521739130437"/>
         </scene>
         <!--Saved Music Table View Controller-->
         <scene sceneID="m3B-cy-rmu">
@@ -383,19 +402,23 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="c2n-l8-OzO">
-                                <rect key="frame" x="82" y="13" width="250" height="273.33333333333331"/>
+                                <rect key="frame" x="82" y="13" width="250" height="273"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Song name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aE0-PH-62r">
-                                        <rect key="frame" x="0.0" y="0.0" width="250" height="20.333333333333332"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mzo-Pc-5ck" customClass="CBAutoScrollLabel">
+                                        <rect key="frame" x="0.0" y="0.0" width="250" height="20"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="vMn-3F-pUE"/>
+                                        </constraints>
+                                    </view>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minValue="0.0" maxValue="4" translatesAutoresizingMaskIntoConstraints="NO" id="CAd-3T-75d">
-                                        <rect key="frame" x="-2" y="20.333333333333336" width="254" height="31"/>
+                                        <rect key="frame" x="-2" y="20" width="254" height="31"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="yoZ-bO-Hh5"/>
+                                        </constraints>
                                     </slider>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="71" translatesAutoresizingMaskIntoConstraints="NO" id="fAd-x9-o1Z">
-                                        <rect key="frame" x="0.0" y="50.333333333333343" width="250" height="36"/>
+                                        <rect key="frame" x="0.0" y="50" width="250" height="36"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUz-x6-6Hs">
                                                 <rect key="frame" x="0.0" y="0.0" width="36" height="36"/>
@@ -429,7 +452,7 @@
                                         </subviews>
                                     </stackView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GzL-15-2zn">
-                                        <rect key="frame" x="0.0" y="86.333333333333314" width="250" height="187"/>
+                                        <rect key="frame" x="0.0" y="86" width="250" height="187"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="187" id="cHw-tX-alD"/>
                                             <constraint firstAttribute="width" secondItem="GzL-15-2zn" secondAttribute="height" multiplier="250:187" id="tCL-e1-3V9"/>
@@ -451,13 +474,13 @@
                         <outlet property="playButton" destination="OSK-C1-WNs" id="06W-Ej-B7z"/>
                         <outlet property="previousButton" destination="qUz-x6-6Hs" id="szC-TC-d03"/>
                         <outlet property="songImage" destination="GzL-15-2zn" id="o6c-HX-xJC"/>
-                        <outlet property="songName" destination="aE0-PH-62r" id="D3R-GB-l5n"/>
+                        <outlet property="songName" destination="mzo-Pc-5ck" id="JqS-qe-5pe"/>
                         <outlet property="songTimeProgress" destination="CAd-3T-75d" id="UZb-cz-ucD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rt2-SH-Y5u" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1587" y="-848"/>
+            <point key="canvasLocation" x="-1588.4057971014495" y="-848.64130434782612"/>
         </scene>
         <!--Youtube-->
         <scene sceneID="WgX-HI-Olx">
