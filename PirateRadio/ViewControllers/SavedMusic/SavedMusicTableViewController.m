@@ -109,6 +109,7 @@ typedef enum {
     }
     else {
         cell.circleProgressBar.unitString = BUTTON_TITLE_PLAY_STRING;
+        cell.circleProgressBar.value = 0;
         cell.circleProgressBar.textOffset = CGPointMake(0, -0.5);
     }
     
