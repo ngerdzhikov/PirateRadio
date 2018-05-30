@@ -22,8 +22,7 @@
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"HH:mm:ss";
-    NSString *fileName = [[self.video.videoTitle stringByAppendingString:[formatter stringFromDate:[NSDate date]]] stringByReplacingOccurrencesOfString:@"/" withString:@" |"];
-    fileName = [fileName stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+    NSString *fileName = [[self.video.videoTitle stringByAppendingString:[formatter stringFromDate:[NSDate date]]] stringByReplacingOccurrencesOfString:@"/" withString:@" "];
     fileName = [fileName stringByAppendingPathExtension:@"mp3"];
 
     
