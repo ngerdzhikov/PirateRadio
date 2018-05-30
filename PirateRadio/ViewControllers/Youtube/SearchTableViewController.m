@@ -214,10 +214,10 @@ typedef enum {
         self.videoModelsArray = [[NSMutableArray alloc] init];
         [self makeSearchWithKeywords:keywords];
     }
-    self.searchBar.text = string;
     [self manageSearchHistory];
     [self.searchSuggestionsTable dismissViewControllerAnimated:NO completion:nil];
     self.navigationItem.searchController.active = NO;
+    self.searchBar.text = string;
 }
 
 - (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
@@ -341,6 +341,10 @@ typedef enum {
 - (void)viewWillDisappear:(BOOL)animated {
     [NSUserDefaults.standardUserDefaults setObject:self.searchHistory forKey:@"searchHistory"];
     [NSUserDefaults.standardUserDefaults synchronize];
+}
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
+    self.navigationItem.searchController.active = NO;
 }
 /*
 // Override to support conditional editing of the table view.
