@@ -12,7 +12,7 @@
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
 		063EDF3920B43DFD00630747 /* SearchSuggestionsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */; };
 		063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3A20B43E3100630747 /* ImageCacher.m */; };
-		069C32CD20BC071C0079C5C5 /* SavedMusicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32CC20BC071C0079C5C5 /* SavedMusicViewController.m */; };
+		069C32CD20BC071C0079C5C5 /* SongListPlusPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32CC20BC071C0079C5C5 /* SongListPlusPlayerViewController.m */; };
 		069C32D420BD7A440079C5C5 /* MusicPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */; };
 		06B1B9CA20A974500019B0CC /* SavedMusicTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
@@ -46,8 +46,8 @@
 		063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchSuggestionsTableViewController.m; sourceTree = "<group>"; };
 		063EDF3A20B43E3100630747 /* ImageCacher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageCacher.m; path = PirateRadio/Utilities/ImageCacher.m; sourceTree = "<group>"; };
 		063EDF3B20B43E3200630747 /* ImageCacher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageCacher.h; path = PirateRadio/Utilities/ImageCacher.h; sourceTree = "<group>"; };
-		069C32CB20BC071C0079C5C5 /* SavedMusicViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicViewController.h; sourceTree = "<group>"; };
-		069C32CC20BC071C0079C5C5 /* SavedMusicViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicViewController.m; sourceTree = "<group>"; };
+		069C32CB20BC071C0079C5C5 /* SongListPlusPlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SongListPlusPlayerViewController.h; sourceTree = "<group>"; };
+		069C32CC20BC071C0079C5C5 /* SongListPlusPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SongListPlusPlayerViewController.m; sourceTree = "<group>"; };
 		069C32CE20BD797D0079C5C5 /* MusicPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicPlayerViewController.h; sourceTree = "<group>"; };
 		069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MusicPlayerViewController.m; sourceTree = "<group>"; };
 		06B1B9C820A974500019B0CC /* SavedMusicTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewController.h; sourceTree = "<group>"; };
@@ -114,8 +114,8 @@
 		069C32D520BD905E0079C5C5 /* SavedMusic */ = {
 			isa = PBXGroup;
 			children = (
-				069C32CB20BC071C0079C5C5 /* SavedMusicViewController.h */,
-				069C32CC20BC071C0079C5C5 /* SavedMusicViewController.m */,
+				069C32CB20BC071C0079C5C5 /* SongListPlusPlayerViewController.h */,
+				069C32CC20BC071C0079C5C5 /* SongListPlusPlayerViewController.m */,
 				069C32CE20BD797D0079C5C5 /* MusicPlayerViewController.h */,
 				069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */,
 				06B1B9C820A974500019B0CC /* SavedMusicTableViewController.h */,
@@ -402,7 +402,7 @@
 				069C32D420BD7A440079C5C5 /* MusicPlayerViewController.m in Sources */,
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
-				069C32CD20BC071C0079C5C5 /* SavedMusicViewController.m in Sources */,
+				069C32CD20BC071C0079C5C5 /* SongListPlusPlayerViewController.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
 				06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */,
 				063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */,
