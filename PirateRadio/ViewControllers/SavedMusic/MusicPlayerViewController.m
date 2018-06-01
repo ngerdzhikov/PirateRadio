@@ -223,7 +223,7 @@
     return self.song;
 }
 
-- (void)setMediaPlayPauseButton:(EnumCellMediaPlaybackState)state {
+- (void)setPlayerPlayPauseButtonState:(EnumCellMediaPlaybackState)state {
     [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
     if (state == EnumCellMediaPlaybackStatePause) {
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
