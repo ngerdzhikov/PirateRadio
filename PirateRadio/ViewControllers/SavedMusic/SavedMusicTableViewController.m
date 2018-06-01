@@ -82,12 +82,9 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellPlayButtonTap:)];
     [cell.circleProgressBar addGestureRecognizer:tap];
+   
 
-    NSInteger row = [self.songs indexOfObject:self.musicPlayerDelegate.nowPlaying];
-    NSIndexPath *indexOfLoaded = [NSIndexPath indexPathForRow:row inSection:0];
-    
-
-    if ([indexPath isEqual:indexOfLoaded] && self.musicPlayerDelegate.isPlaying) {
+    if ([indexPath isEqual:[self indexPathOfLastPlayed]] && self.musicPlayerDelegate.isPlaying) {
         cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
         cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
     }
@@ -109,13 +106,14 @@
     
     [self.musicPlayerDelegate pauseLoadedSong];
     [self.musicPlayerDelegate prepareSong:[self nextSongForSong:self.musicPlayerDelegate.nowPlaying]];
-    [self.musicPlayerDelegate setMediaPlayPauseButton:EnumCellMediaPlaybackStatePlay];
+    [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
     LocalSongModel *song = self.songs[indexPath.row];
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
         NSError *error;
         [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
-        if (song.localArtworkURL != nil) {
+        UIImage *artwork = [UIImage imageWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
+        if (artwork != nil) {
             [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
         }
         if (error) {
@@ -154,7 +152,7 @@
         [self.musicPlayerDelegate prepareSong:songToPlay];
         [self.musicPlayerDelegate playLoadedSong];
         
-        [self.musicPlayerDelegate setMediaPlayPauseButton:EnumCellMediaPlaybackStatePause];
+        [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
         [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
     }
     else {
@@ -162,13 +160,13 @@
             
             [self.musicPlayerDelegate pauseLoadedSong];
             
-            [self.musicPlayerDelegate setMediaPlayPauseButton:EnumCellMediaPlaybackStatePlay];
+            [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
             [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlay forCellAtIndexPath:indexPath];
         }
         else {
             [self.musicPlayerDelegate playLoadedSong];
             
-            [self.musicPlayerDelegate setMediaPlayPauseButton:EnumCellMediaPlaybackStatePause];
+            [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
             [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
         }
     }
