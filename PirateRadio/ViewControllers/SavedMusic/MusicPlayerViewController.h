@@ -22,7 +22,7 @@
 @property (weak, nonatomic) IBOutlet UISlider *songTimeProgress;
 @property (weak, nonatomic) IBOutlet UIImageView *songImage;
 @property (strong, nonatomic) LocalSongModel *song;
-@property (weak, nonatomic) id<SavedMusicTableDelegate> savedMusicTableDelegate;
+@property (weak, nonatomic) id<SongListDelegate> songListDelegate;
 
 - (void)configureMusicControllerView;
 

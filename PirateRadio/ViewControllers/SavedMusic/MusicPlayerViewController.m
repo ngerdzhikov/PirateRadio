@@ -25,28 +25,31 @@
 @implementation MusicPlayerViewController
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     self.player = [[AVPlayer alloc] init];
     [self configureMusicControllerView];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(playButtonTap:) name:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseButtonTap:) name:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
     self.songTimeProgress.value = 0.0f;
-    self.song = self.savedMusicTableDelegate.firstSong;
-    [self replaceCurrentSongWithSong:self.song];
+    
     self.songName.textAlignment = NSTextAlignmentCenter;
     
     __weak MusicPlayerViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
+    
+    
+}
+
 }
 
 - (void)updateProgressBar {
+    
     if (!self.isSliding) {
         double time = CMTimeGetSeconds(self.player.currentTime);
         double duration = CMTimeGetSeconds(self.player.currentItem.duration);
         self.songTimeProgress.value = time;
-        [self.savedMusicTableDelegate updateProgressBar:[NSNumber numberWithDouble:(time / duration)]];
+        [self.songListDelegate updateProgress:(time / duration) * 100 forSong:self.song];
     }
 }
 
@@ -56,7 +59,8 @@
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
 }
 
-- (void)replaceCurrentSongWithSong:(LocalSongModel *)song {
+- (void)prepareSong:(LocalSongModel *)song {
+    
     if (![self.song.localSongURL isEqual:song.localSongURL]) {
         self.song = song;
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.song.localSongURL options:nil];
@@ -66,56 +70,53 @@
         NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
         
         // Register as an observer of the player item's status property
-        [item addObserver:self
-               forKeyPath:@"status"
-                  options:options
-                  context:nil];
+        [item addObserver:self forKeyPath:@"status" options:options context:nil];
         [self setMusicPlayerSongNameAndImage];
     }
 }
 
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
-    if (self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying) {
-        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
-        [self.savedMusicTableDelegate onPauseButtonTap];
+    if (self.isPlaying) {
+        
+        [self pauseLoadedSong];
+        [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+        
+        [self.songListDelegate didPauseSong:self.song];
     }
     else {
-        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PLAY_BUTTON_PRESSED object:nil];
-        [self.savedMusicTableDelegate onPlayButtonTap];
+        
+        [self playLoadedSong];
+        [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
+        
+        [self.songListDelegate didStartPlayingSong:self.song];
     }
 }
 
 - (IBAction)previousBtnTap:(id)sender {
-    [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate previousSong]];
+    
+    [self.songListDelegate didRequestPreviousForSong:self.song];
 }
 
 - (IBAction)nextBtnTap:(id)sender {
-    [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate nextSong]];
+    
+    [self.songListDelegate didRequestNextForSong:self.song];
 }
 
 - (void)itemDidEndPlaying:(NSNotification *)notification {
-    [self replaceCurrentSongWithSong:[self.savedMusicTableDelegate nextSong]];
-    [self.player play];
-}
-
-
-- (void)playButtonTap:(NSNotification *)notification {
-    [self.player play];
-    [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
-}
-
-- (void)pauseButtonTap:(NSNotification *)notification {
-    [self.player pause];
-    [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+    
+    [self.songListDelegate didRequestNextForSong:self.song];
 }
 
 - (void)setMusicPlayerSongNameAndImage {
+    
     UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.song.localArtworkURL]];
     if (image) {
+        
         self.songImage.image = image;
     }
     else {
+        
         self.songImage.image = [UIImage imageNamed:@"unknown_artist_transperent"];
     }
     self.songName.text = self.song.songTitle;
@@ -123,27 +124,33 @@
 
 
 - (void)sliderIsSliding {
+    
     self.isSliding = YES;
 }
 
 -(void) sliderEndedSliding {
+    
     [self stopPlayingAndSeekSmoothlyToTime:CMTimeMake(self.songTimeProgress.value * 600, 600)];
     self.isSliding = NO;
 }
 
 
 - (void)stopPlayingAndSeekSmoothlyToTime:(CMTime)newChaseTime {
-    [self.player pause];
+    
+    [self pauseLoadedSong];
     NSLog(@"time = %lf", CMTimeGetSeconds(newChaseTime));
     if (CMTIME_COMPARE_INLINE(newChaseTime, !=, self.chaseTime)) {
+        
         self.chaseTime = newChaseTime;
         if (!self.isSeekInProgress) {
+            
             [self trySeekToChaseTime];
         }
     }
 }
 
 - (void)trySeekToChaseTime {
+    
     if (self.playerCurrentItemStatus == AVPlayerItemStatusUnknown) {
         // wait until item becomes ready (KVO player.currentItem.status)
     }
@@ -153,6 +160,7 @@
 }
 
 - (void)actuallySeekToTime {
+    
     self.isSeekInProgress = YES;
     CMTime seekTimeInProgress = self.chaseTime;
     [self.player seekToTime:seekTimeInProgress toleranceBefore:kCMTimeZero
@@ -168,10 +176,8 @@
      }];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context {
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+    
     if ([keyPath isEqualToString:@"status"]) {
         AVPlayerItemStatus status = AVPlayerItemStatusUnknown;
         // Get the status change from the change dictionary
@@ -196,11 +202,32 @@
     }
 }
 
-- (BOOL)avPlayerStatusIsPlaying {
-    if (self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying) {
-        return YES;
     }
-    return NO;
+    
+    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
+    [self.player play];
+}
+
+- (void)pauseLoadedSong {
+    [AVAudioSession.sharedInstance setActive:NO error:nil];
+    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
+    [self.player pause];
+}
+
+- (BOOL)isPlaying {
+    
+    return self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying;
+}
+
+- (LocalSongModel *)nowPlaying {
+    return self.song;
+}
+
+- (void)setMediaPlayPauseButton:(EnumCellMediaPlaybackState)state {
+    [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+    if (state == EnumCellMediaPlaybackStatePause) {
+        [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
+    }
 }
 
 @end
