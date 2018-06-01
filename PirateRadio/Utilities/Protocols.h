@@ -9,6 +9,12 @@
 #ifndef Protocols_h
 #define Protocols_h
 
+
+typedef enum {
+    EnumCellMediaPlaybackStatePlay,
+    EnumCellMediaPlaybackStatePause
+} EnumCellMediaPlaybackState;
+
 @protocol SearchSuggestionsDelegate
 
 @property (strong, nonatomic) NSMutableArray<NSString *> *searchSuggestions;
@@ -22,21 +28,24 @@
 
 @class LocalSongModel;
 
-@protocol SavedMusicTableDelegate
+@protocol SongListDelegate
 
-- (LocalSongModel *)previousSong;
-- (LocalSongModel *)nextSong;
-- (LocalSongModel *)firstSong;
-- (void)updateProgressBar:(NSNumber *)value;
-- (void)onPlayButtonTap;
-- (void)onPauseButtonTap;
+- (void)updateProgress:(double)progress forSong:(LocalSongModel *)song;
+- (void)didPauseSong:(LocalSongModel *)song;
+- (void)didStartPlayingSong:(LocalSongModel *)song;
+- (void)didRequestNextForSong:(LocalSongModel *)song;
+- (void)didRequestPreviousForSong:(LocalSongModel *)song;
 
 @end
 
 @protocol MusicPlayerDelegate
 
-- (void)replaceCurrentSongWithSong:(LocalSongModel *)song;
-- (BOOL)avPlayerStatusIsPlaying;
+- (void)prepareSong:(LocalSongModel *)song;
+- (void)playLoadedSong;
+- (void)pauseLoadedSong;
+- (BOOL)isPlaying;
+- (void)setMediaPlayPauseButton:(EnumCellMediaPlaybackState)state;
+- (LocalSongModel *)nowPlaying;
 
 @end
 
