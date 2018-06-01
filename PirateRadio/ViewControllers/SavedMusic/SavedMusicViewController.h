@@ -11,7 +11,7 @@
 @class SavedMusicTableViewController;
 @class MusicPlayerViewController;
 
-@interface SongListPlusPlayerViewController : UIViewController
+@interface SavedMusicViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UIView *tableViewContainer;
 @property (weak, nonatomic) IBOutlet UIView *musicPlayerContainer;
