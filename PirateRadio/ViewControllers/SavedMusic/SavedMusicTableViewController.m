@@ -109,13 +109,15 @@
     
     [self.musicPlayerDelegate pauseLoadedSong];
     [self.musicPlayerDelegate prepareSong:[self nextSongForSong:self.musicPlayerDelegate.nowPlaying]];
-    
+    [self.musicPlayerDelegate setMediaPlayPauseButton:EnumCellMediaPlaybackStatePlay];
     LocalSongModel *song = self.songs[indexPath.row];
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
         NSError *error;
         [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
-        [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
+        if (song.localArtworkURL != nil) {
+            [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
+        }
         if (error) {
             NSLog(@"Error deleting file from url = %@", error);
         }

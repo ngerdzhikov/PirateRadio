@@ -61,9 +61,12 @@
     
     NSString *urlString = self.localSongURL.absoluteString;
     NSString *artworkURLString = [[urlString stringByReplacingOccurrencesOfString:@"/songs/" withString:@"/artwork/"] stringByReplacingOccurrencesOfString:@".mp3" withString:@".jpg"];
-    NSURL *artworkURL = [NSURL URLWithString:artworkURLString];
-    
-    return artworkURL;
+    if ([NSFileManager.defaultManager fileExistsAtPath:artworkURLString]) {
+        NSURL *artworkURL = [NSURL URLWithString:artworkURLString];
+        
+        return artworkURL;
+    }
+    return nil;
 }
 
 -(NSArray<NSString *> *)keywordsFromTitle {
