@@ -13,7 +13,7 @@
 
 @class MusicPlayerViewController;
 
-@interface SavedMusicTableViewController : UITableViewController<SavedMusicTableDelegate>
+@interface SavedMusicTableViewController : UITableViewController<SongListDelegate>
 
 @property (weak, nonatomic) id<MusicPlayerDelegate> musicPlayerDelegate;
 
