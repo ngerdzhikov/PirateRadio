@@ -61,12 +61,9 @@
     
     NSString *urlString = self.localSongURL.absoluteString;
     NSString *artworkURLString = [[urlString stringByReplacingOccurrencesOfString:@"/songs/" withString:@"/artwork/"] stringByReplacingOccurrencesOfString:@".mp3" withString:@".jpg"];
-    if ([NSFileManager.defaultManager fileExistsAtPath:artworkURLString]) {
-        NSURL *artworkURL = [NSURL URLWithString:artworkURLString];
-        
-        return artworkURL;
-    }
-    return nil;
+    NSURL *artworkURL = [NSURL URLWithString:artworkURLString];
+    
+    return artworkURL;
 }
 
 -(NSArray<NSString *> *)keywordsFromTitle {
@@ -80,4 +77,19 @@
     return keywords;
 }
 
+
+- (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+    
+    if ([object isKindOfClass:[LocalSongModel class]]) {
+        LocalSongModel *songToCompare = (LocalSongModel *)object;
+        if ([songToCompare.localSongURL isEqual:self.localSongURL]) {
+            return YES;
+        }
+    }
+    return NO;
+    
+}
 @end
