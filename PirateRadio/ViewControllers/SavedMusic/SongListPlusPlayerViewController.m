@@ -6,35 +6,36 @@
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
-#import "SavedMusicViewController.h"
+#import "SongListPlusPlayerViewController.h"
 #import "SavedMusicTableViewController.h"
 #import "MusicPlayerViewController.h"
 
-@interface SavedMusicViewController ()
+@interface SongListPlusPlayerViewController ()
 
-@property (strong, nonatomic) SavedMusicTableViewController *savedMusicTableView;
-@property (strong, nonatomic) MusicPlayerViewController *musicControllerView;
+@property (strong, nonatomic) SavedMusicTableViewController *songListViewController;
+@property (strong, nonatomic) MusicPlayerViewController *playerViewController;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *musicPlayerHeightConstraint;
 @property CGFloat musicPlayerHeight;
 @property CGFloat tableViewHeight;
 
 @end
 
-@implementation SavedMusicViewController
+@implementation SongListPlusPlayerViewController
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     
-    self.savedMusicTableView = self.childViewControllers.firstObject;
-    self.musicControllerView = self.childViewControllers.lastObject;
-    self.musicControllerView.savedMusicTableDelegate = self.savedMusicTableView;
-    self.savedMusicTableView.musicPlayerDelegate = self.musicControllerView;
+    self.songListViewController = self.childViewControllers.firstObject;
+    self.playerViewController = self.childViewControllers.lastObject;
+    
+    self.songListViewController.musicPlayerDelegate = self.playerViewController;
+    self.playerViewController.songListDelegate = self.songListViewController;
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicPlayerContainer addGestureRecognizer:pan];
     self.musicPlayerHeight = self.musicPlayerContainer.frame.size.height;
     self.tableViewHeight = self.tableViewContainer.frame.size.height;
-
 }
 
 - (void)didReceiveMemoryWarning {
