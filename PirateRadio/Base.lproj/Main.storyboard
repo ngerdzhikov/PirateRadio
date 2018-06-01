@@ -155,7 +155,7 @@
         <!--Music-->
         <scene sceneID="6G5-fc-wHl">
             <objects>
-                <viewController id="C5O-cd-Wlr" customClass="SavedMusicViewController" sceneMemberID="viewController">
+                <viewController id="C5O-cd-Wlr" customClass="SongListPlusPlayerViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5Xk-Xx-sxc">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
