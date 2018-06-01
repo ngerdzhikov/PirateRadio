@@ -35,6 +35,8 @@ typedef enum {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
 }
 
 - (void)updateProgressBar:(NSNumber *)value {
@@ -237,6 +239,13 @@ typedef enum {
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self loadSongsFromDisk];
+- (void)didRecieveNewSong:(NSNotification *)notification {
+    LocalSongModel *newSong = [notification.userInfo objectForKey:@"song"];
+    [self.songs addObject:newSong];
+    NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
+    });
 }
 
 @end

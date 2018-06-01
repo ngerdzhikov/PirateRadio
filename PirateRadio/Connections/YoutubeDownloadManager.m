@@ -11,6 +11,7 @@
 #import "ITunesRequestManager.h"
 #import "ITunesDownloadManager.h"
 #import "LocalSongModel.h"
+#import "Constants.h"
 
 @interface YoutubeDownloadManager ()
 
@@ -64,6 +65,7 @@
         LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
         [ITunesDownloadManager.sharedInstance downloadArtworkForLocalSongModel:song];
         [self.downloads removeObjectForKey:downloadTask];
+        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
     }
 }
 
