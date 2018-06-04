@@ -32,6 +32,7 @@
     [self startAnimation];
     NSDictionary *playerVars = @{
                                  @"playsinline" : @1,
+                                 @"origin" : @"https://www.example.com"
                                  };
     [self.youtubePlayer loadWithVideoId:self.videoModel.videoId playerVars:playerVars];
     self.youtubePlayer.delegate = self;
@@ -53,6 +54,14 @@
     NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
     [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
     self.downloadButtonWebView.videoModel = self.videoModel;
+    
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 }
 
 - (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
@@ -88,23 +97,37 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self stopAnimation];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
+
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
 
 }
 
 - (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
+    
     if (state == kYTPlayerStatePlaying) {
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
     }
+    if (state == kYTPlayerStatePaused) {
+        
+    }
 }
 
+- (void)didEnterBackground:(NSNotification *)notification {
 
+    if (self.youtubePlayer.playerState == kYTPlayerStatePlaying) {
 
+        [self.youtubePlayer playVideo];
+    }
+    
+
+}
 /*
 #pragma mark - Navigation
 

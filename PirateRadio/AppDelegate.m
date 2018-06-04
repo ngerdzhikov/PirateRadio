@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+@import AVFoundation;
 
 @interface AppDelegate ()
 
@@ -30,6 +31,10 @@
                               withIntermediateDirectories:YES
                                                attributes:nil
                                                     error:&error];
+    
+    NSError *setCategoryError = nil;
+    [AVAudioSession.sharedInstance setCategory: AVAudioSessionCategoryPlayback error: &setCategoryError];
+    
     return YES;
 }
 
