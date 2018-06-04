@@ -99,7 +99,7 @@
 
 - (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
     if (state == kYTPlayerStatePlaying) {
-        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_PAUSE_BUTTON_PRESSED object:nil];
+        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
     }
 }
 
