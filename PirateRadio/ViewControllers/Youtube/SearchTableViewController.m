@@ -120,7 +120,7 @@ typedef enum {
     CGFloat offset = scrollView.contentOffset.y;
     CGFloat maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
     
-    if (self.isNextPageEnabled && ((maximumOffset - offset) <= 100)) {
+    if (self.isNextPageEnabled && ((maximumOffset - offset) <= 200)) {
         self.isNextPageEnabled = NO;
         if (self.lastSearchType == EnumLastSearchTypeSuggestions) {
             [self makeSearchForMostPopularVideos];
@@ -141,7 +141,7 @@ typedef enum {
     if (!UIAccessibilityIsReduceTransparencyEnabled()) {
         UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
         self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        self.blurEffectView.frame = self.navigationController.view.bounds;
+        self.blurEffectView.frame = self.view.bounds;
         [self.view addSubview:self.blurEffectView];
     }
     self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
@@ -175,6 +175,7 @@ typedef enum {
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     self.nextPageToken = @"";
     [self makeSearchWithString:searchBar.text];
+    [self stopAnimation];
 }
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
@@ -214,10 +215,11 @@ typedef enum {
         self.videoModelsArray = [[NSMutableArray alloc] init];
         [self makeSearchWithKeywords:keywords];
     }
-    [self manageSearchHistory];
+
     [self.searchSuggestionsTable dismissViewControllerAnimated:NO completion:nil];
     self.navigationItem.searchController.active = NO;
     self.searchBar.text = string;
+    [self manageSearchHistory];
 }
 
 - (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
@@ -230,6 +232,7 @@ typedef enum {
             NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
             if (serializationError) {
                 NSLog(@"Error = %@", serializationError.localizedDescription);
+                [self stopAnimation];
             }
             else {
                 NSArray *items = [responseDict objectForKey:@"items"];
@@ -261,14 +264,18 @@ typedef enum {
     [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:videoIds andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error searching for video durations = %@", error);
+            [self stopAnimation];
         }
         else {
+            
             NSError *serializationError;
             NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
             if (serializationError) {
                 NSLog(@"Error = %@", serializationError.localizedDescription);
             }
+            
             else {
+                
                 NSArray *items = [responseDict objectForKey:@"items"];
                 for (NSDictionary *item in items) {
                     NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
@@ -292,6 +299,8 @@ typedef enum {
     [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithNextPageToken:self.nextPageToken andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error = %@", error.localizedDescription);
+            [self stopAnimation];
+            
         }
         else {
             NSError *serializationError;
