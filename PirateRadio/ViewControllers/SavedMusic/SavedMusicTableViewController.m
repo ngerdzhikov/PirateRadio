@@ -30,7 +30,6 @@
     [self loadSongsFromDisk];
 }
 
-
 - (void)loadSongsFromDisk {
     
     self.songs = [[NSMutableArray alloc] init];
@@ -84,7 +83,7 @@
     [cell.circleProgressBar addGestureRecognizer:tap];
    
 
-    if ([indexPath isEqual:[self indexPathOfLastPlayed]] && self.musicPlayerDelegate.isPlaying) {
+    if ([indexPath isEqual:[self indexPathOfLastPlayed]]) {
         cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
         cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
     }
