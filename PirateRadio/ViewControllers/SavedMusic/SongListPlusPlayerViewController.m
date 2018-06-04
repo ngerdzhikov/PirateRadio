@@ -55,16 +55,17 @@
     
     if (recognizer.state == UIGestureRecognizerStateChanged) {
         NSLog(@"newCenter y = %lf", newCenter.y);
-        if (newCenter.y >= self.tableViewHeight + (self.musicPlayerHeight / 2) && newCenter.y <= self.view.frame.size.height) {
+        if (newCenter.y >= (self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2) && newCenter.y <= self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6) {
             recognizer.view.center = newCenter;
         }
     }
     if (recognizer.state == UIGestureRecognizerStateEnded) {
-        if (recognizer.view.center.y > self.tableViewHeight + self.musicPlayerHeight) {
-            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.view.frame.size.height);
+        if (recognizer.view.center.y > self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 4) {
+            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6);
         }
         else {
-            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tableViewHeight + self.musicPlayerHeight/2);
+//            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tableViewHeight + self.musicPlayerHeight/2);
+            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2);
         }
         
     }
