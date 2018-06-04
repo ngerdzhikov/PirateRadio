@@ -7,10 +7,11 @@
 //
 
 #import "MusicPlayerViewController.h"
-#import <AVKit/AVKit.h>
 #import "LocalSongModel.h"
 #import "Constants.h"
 #import "CBAutoScrollLabel.h"
+@import MediaPlayer;
+@import AVFoundation;
 
 @interface MusicPlayerViewController ()
 
@@ -38,10 +39,18 @@
         [weakSelf updateProgressBar];
     }];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
-    
-    
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self becomeFirstResponder];
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
+}
+
+- (BOOL)canBecomeFirstResponder {
+    return YES;
 }
 
 - (void)updateProgressBar {
@@ -69,6 +78,19 @@
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
         [self.player replaceCurrentItemWithPlayerItem:item];
         NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
+    
+        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];
+        MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
+            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
+            return image;
+        }];
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.song.artistName,
+                                MPMediaItemPropertyTitle: self.song.songTitle,
+                                MPMediaItemPropertyPlaybackDuration: duration,
+                                MPMediaItemPropertyArtwork: artwork,
+                                                                 };
+        [MPNowPlayingInfoCenter.defaultCenter setNowPlayingInfo:info];
+        // setting duration not working.
         
         // Register as an observer of the player item's status property
         [item addObserver:self forKeyPath:@"status" options:options context:nil];
@@ -107,6 +129,7 @@
 - (void)itemDidEndPlaying:(NSNotification *)notification {
     
     [self.songListDelegate didRequestNextForSong:self.song];
+    [self playLoadedSong];
 }
 
 - (void)setMusicPlayerSongNameAndImage {
@@ -168,6 +191,9 @@
              toleranceAfter:kCMTimeZero completionHandler:
      ^(BOOL isFinished) {
          if (CMTIME_COMPARE_INLINE(seekTimeInProgress, ==, self.chaseTime)) {
+             
+             [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
+             
              self.isSeekInProgress = NO;
              [self.player play];
          }
@@ -192,6 +218,7 @@
                 // Ready to Play
                 self.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
                 self.songTimeProgress.maximumValue = CMTimeGetSeconds(self.player.currentItem.duration);
+                [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
                 break;
             case AVPlayerItemStatusFailed:
                 // Failed. Examine AVPlayerItem.error
@@ -203,15 +230,22 @@
     }
 }
 
-    }
-    
-    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
+- (void)playLoadedSong {
     [self.player play];
+    
+    // this is for testing
+    [self startAudioSession];
+    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
+    
+    
+    // end testing
+  
 }
 
 - (void)pauseLoadedSong {
-    [AVAudioSession.sharedInstance setActive:NO error:nil];
+    
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
+    
     [self.player pause];
 }
 
@@ -225,10 +259,86 @@
 }
 
 - (void)setPlayerPlayPauseButtonState:(EnumCellMediaPlaybackState)state {
+    
     [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
     if (state == EnumCellMediaPlaybackStatePause) {
+        
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
     }
+}
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
+    if (event.type == UIEventTypeRemoteControl) {
+        switch (event.subtype) {
+            case UIEventSubtypeRemoteControlPlay:
+                
+                [self setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
+                [self playLoadedSong];
+                [self.songListDelegate didStartPlayingSong:self.song];
+                break;
+                
+            case UIEventSubtypeRemoteControlPause:
+                
+                [self setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
+                [self pauseLoadedSong];
+                [self.songListDelegate didPauseSong:self.song];
+                break;
+                
+            case UIEventSubtypeRemoteControlNextTrack:
+                
+                [self.songListDelegate didRequestNextForSong:self.song];
+                break;
+                
+            case UIEventSubtypeRemoteControlPreviousTrack:
+                
+                [self.songListDelegate didRequestPreviousForSong:self.song];
+                break;
+                
+            default:
+                break;
+        }
+    }
+}
+
+- (void)startAudioSession {
+    AVAudioSession *session = AVAudioSession.sharedInstance;
+    NSError *error;
+    [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
+    if (error) {
+        NSLog(@"Error = %@", error);
+    }
+    else {
+        [session setActive:YES error:&error];
+    }
+    if (error) {
+        NSLog(@"Error = %@", error);
+    }
+}
+
+- (void)updateMPNowPlayingInfoCenterWithLoadedSongInfo {
+    if ([MPNowPlayingInfoCenter class])  {
+        
+        NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentTime)];
+        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];
+        MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
+            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.song.localArtworkURL]];
+            return image;
+        }];
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.song.artistName,
+                                MPMediaItemPropertyTitle: self.song.songTitle,
+                                MPMediaItemPropertyPlaybackDuration: duration,
+                                MPMediaItemPropertyArtwork: artwork,
+                                MPNowPlayingInfoPropertyPlaybackRate: @1.0,
+                                MPNowPlayingInfoPropertyElapsedPlaybackTime: elapsedTime,
+                                };
+        [MPNowPlayingInfoCenter.defaultCenter setNowPlayingInfo:info];
+        
+    }
+}
+
+- (void)changedPlaybackPositionFromCommandCenter:(MPChangePlaybackPositionCommandEvent *)event {
+    CMTime time = CMTimeMake((double)event.positionTime * 600, 600);
+    [self stopPlayingAndSeekSmoothlyToTime:time];
 }
 
 @end
