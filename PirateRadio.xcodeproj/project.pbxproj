@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0608885020C587A600860DBC /* PlaylistsTableViewController.m */; };
+		0608885420C5883E00860DBC /* PlaylistModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0608885320C5883E00860DBC /* PlaylistModel.m */; };
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
@@ -36,6 +38,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0608884F20C587A600860DBC /* PlaylistsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistsTableViewController.h; sourceTree = "<group>"; };
+		0608885020C587A600860DBC /* PlaylistsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistsTableViewController.m; sourceTree = "<group>"; };
+		0608885220C5883E00860DBC /* PlaylistModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistModel.h; sourceTree = "<group>"; };
+		0608885320C5883E00860DBC /* PlaylistModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistModel.m; sourceTree = "<group>"; };
 		062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubeDownloadManager.h; sourceTree = "<group>"; };
 		062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubeDownloadManager.m; sourceTree = "<group>"; };
 		062E7EA820A5E911006F1221 /* DownloadModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadModel.h; sourceTree = "<group>"; };
@@ -102,6 +108,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0608884E20C5877A00860DBC /* Playlists */ = {
+			isa = PBXGroup;
+			children = (
+				0608884F20C587A600860DBC /* PlaylistsTableViewController.h */,
+				0608885020C587A600860DBC /* PlaylistsTableViewController.m */,
+			);
+			path = Playlists;
+			sourceTree = "<group>";
+		};
 		062E7EAE20A5F4B1006F1221 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,6 +173,7 @@
 		06BE0CAF20A44F9D007D9319 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				0608884E20C5877A00860DBC /* Playlists */,
 				069C32D620BD90670079C5C5 /* Youtube */,
 				069C32D520BD905E0079C5C5 /* SavedMusic */,
 			);
@@ -190,6 +206,8 @@
 				062E7EA920A5E911006F1221 /* DownloadModel.m */,
 				06D65A3820AEE9FB000AC0FC /* LocalSongModel.h */,
 				06D65A3920AEE9FB000AC0FC /* LocalSongModel.m */,
+				0608885220C5883E00860DBC /* PlaylistModel.h */,
+				0608885320C5883E00860DBC /* PlaylistModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -303,6 +321,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.InterAppAudio = {
+								enabled = 0;
+							};
 						};
 					};
 				};
@@ -388,6 +409,7 @@
 				06BE0CD320A4A6B4007D9319 /* ThumbnailModel.m in Sources */,
 				06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */,
 				06FC537720A335D4003238BF /* main.m in Sources */,
+				0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */,
 				062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */,
 				06BE0CCA20A4A106007D9319 /* NSURL+URLWithQueryItems.m in Sources */,
 				06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */,
@@ -403,6 +425,7 @@
 				06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */,
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
 				069C32CD20BC071C0079C5C5 /* SongListPlusPlayerViewController.m in Sources */,
+				0608885420C5883E00860DBC /* PlaylistModel.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
 				06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */,
 				063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */,

@@ -26,8 +26,10 @@
     
     [super viewDidLoad];
     
+    
     self.songListViewController = self.childViewControllers.firstObject;
     self.playerViewController = self.childViewControllers.lastObject;
+    
     
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;

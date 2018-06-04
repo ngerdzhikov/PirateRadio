@@ -15,9 +15,11 @@
 
 
 
+
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
+@property BOOL shouldLoadFromDisk;
 
 @end
 
@@ -27,6 +29,7 @@
     [super viewDidLoad];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
+    
     [self loadSongsFromDisk];
 }
 
