@@ -12,9 +12,11 @@
 #import "Protocols.h"
 
 @class MusicPlayerViewController;
+@class PlaylistModel;
 
 @interface SavedMusicTableViewController : UITableViewController<SongListDelegate>
 
 @property (weak, nonatomic) id<MusicPlayerDelegate> musicPlayerDelegate;
+@property (strong, nonatomic) PlaylistModel *playlist;
 
 @end

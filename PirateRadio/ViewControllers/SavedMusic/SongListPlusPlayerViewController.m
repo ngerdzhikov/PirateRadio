@@ -34,6 +34,9 @@
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;
     
+//    pass the playlist to the SongListViewController
+    self.songListViewController.playlist = self.playlist;
+    
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicPlayerContainer addGestureRecognizer:pan];
     self.musicPlayerHeight = self.musicPlayerContainer.frame.size.height;
@@ -66,7 +69,6 @@
             recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6);
         }
         else {
-//            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tableViewHeight + self.musicPlayerHeight/2);
             recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2);
         }
         
@@ -77,6 +79,12 @@
     [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
     
     [UIView commitAnimations];
+}
+
++(instancetype)initWithPlaylist:(PlaylistModel *)playlist {
+    SongListPlusPlayerViewController *songListPlusPlayerVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SongListPlusPlayer"];
+    songListPlusPlayerVC.playlist = playlist;
+    return songListPlusPlayerVC;
 }
 
 

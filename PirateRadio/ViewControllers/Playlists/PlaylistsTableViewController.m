@@ -12,8 +12,6 @@
 
 @interface PlaylistsTableViewController ()
 
-@property (strong, nonatomic) NSMutableArray<PlaylistModel *> *playlists;
-
 @end
 
 @implementation PlaylistsTableViewController
@@ -21,18 +19,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     UIBarButtonItem *addPlaylistButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPlaylist)];
-    self.navigationItem.rightBarButtonItem = addPlaylistButton;
-    self.playlists = [[NSMutableArray alloc] init];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editPlaylists)];
+    self.navigationItem.rightBarButtonItems = @[addPlaylistButton, editButton];
+    self.navigationItem.title = @"Playlists";
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+//    clear NSUserDefaults for debug
+//    [NSUserDefaults.standardUserDefaults setObject:nil forKey:@"playlists"];
+    
+    // load playlists from UserDefaults
+    self.playlists = [[self loadPlaylistsFromUserDefaults] mutableCopy];
+    // if there are no playlists allocate memory for playlists array
+    if (!self.playlists) {
+        self.playlists = [[NSMutableArray alloc] init];
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self savePlaylistArray:self.playlists];
 }
 
 #pragma mark - Table view data source
@@ -47,7 +57,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [[UITableViewCell alloc] init];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistCell"];
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
     cell.textLabel.text = playlist.name;
@@ -57,42 +67,46 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PlaylistModel *playlist = self.playlists[indexPath.row];
-    SongListPlusPlayerViewController * vc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SongListPlusPlayer"];
-    [self.navigationController pushViewController:vc animated:YES];
+    
+    SongListPlusPlayerViewController * songListPlusPlayerVC = [SongListPlusPlayerViewController initWithPlaylist:playlist];
+    [self.navigationController pushViewController:songListPlusPlayerVC animated:YES];
+
 }
-/*
+
+
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
-*/
 
-/*
+
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
+        [self.playlists removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
 
-/*
+
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+    PlaylistModel *movingPlaylist = self.playlists[fromIndexPath.row];
+    PlaylistModel *replacedPlaylist = self.playlists[toIndexPath.row];
+    
+    [self.playlists setObject:movingPlaylist atIndexedSubscript:toIndexPath.row];
+    [self.playlists setObject:replacedPlaylist atIndexedSubscript:fromIndexPath.row];
 }
-*/
 
-/*
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
 
 /*
 #pragma mark - Navigation
@@ -104,6 +118,8 @@
 }
 */
 
+
+
 - (void)addPlaylist {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Create playlist" message:nil preferredStyle:UIAlertControllerStyleAlert];
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
@@ -111,7 +127,7 @@
     }];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        if (alertController.textFields[0].text.length > 2) {
+        if (alertController.textFields[0].text.length > 1) {
             PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:alertController.textFields[0].text];
             [self.playlists addObject:playlist];
             [self.tableView reloadData];
@@ -121,6 +137,22 @@
     [self presentViewController:alertController animated:NO completion:^{
         
     }];
+}
+
+- (void)editPlaylists {
+    self.editing = !self.editing;
+}
+
+- (void)savePlaylistArray:(NSArray<PlaylistModel *> *)playlists {
+    NSData *encodedPlaylists = [NSKeyedArchiver archivedDataWithRootObject:playlists];
+    [NSUserDefaults.standardUserDefaults setObject:encodedPlaylists forKey:@"playlists"];
+    [NSUserDefaults.standardUserDefaults synchronize];
+}
+
+- (NSArray<PlaylistModel *> *)loadPlaylistsFromUserDefaults {
+    NSData *encodedPlaylists = [NSUserDefaults.standardUserDefaults objectForKey:@"playlists"];
+    NSArray<PlaylistModel *> *playlists = [NSKeyedUnarchiver unarchiveObjectWithData:encodedPlaylists];
+    return playlists;
 }
 
 @end

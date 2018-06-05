@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class PlaylistModel;
+
 @interface PlaylistsTableViewController : UITableViewController
+
+@property (strong, nonatomic) NSMutableArray<PlaylistModel *> *playlists;
 
 @end

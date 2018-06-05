@@ -11,9 +11,15 @@
 @class SavedMusicTableViewController;
 @class MusicPlayerViewController;
 
+@class PlaylistModel;
+
 @interface SongListPlusPlayerViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UIView *tableViewContainer;
 @property (weak, nonatomic) IBOutlet UIView *musicPlayerContainer;
+
+@property (strong, nonatomic) PlaylistModel *playlist;
+
++(instancetype)initWithPlaylist:(PlaylistModel *)playlist;
 
 @end

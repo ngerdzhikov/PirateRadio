@@ -6,20 +6,19 @@
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
-#import "SavedMusicTableViewController.h"
-#import "SavedMusicTableViewCell.h"
-#import "MusicPlayerViewController.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
-#import "Constants.h"
+#import "SavedMusicTableViewController.h"
+#import "AllSongsTableViewController.h"
+#import "MusicPlayerViewController.h"
+#import "SavedMusicTableViewCell.h"
 #import "LocalSongModel.h"
-
-
+#import "PlaylistModel.h"
+#import "Constants.h"
 
 
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
-@property BOOL shouldLoadFromDisk;
 
 @end
 
@@ -30,7 +29,27 @@
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     
-    [self loadSongsFromDisk];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+//    if I don't have playlist -> load all songs from the disk
+    if (self.playlist == nil) {
+        [self loadSongsFromDisk];
+    }
+//    otherwise if I have a playlist -> load songs from the playlist
+//    this means that the current tableView is pushed over the other one
+    else {
+        self.songs = self.playlist.songs;
+        self.navigationController.childViewControllers[1].navigationItem.title = self.playlist.name;
+        UIBarButtonItem *addPlaylistButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addSongInPlaylist)];
+        UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleDone target:self action:@selector(onBackButtonTap)];
+        self.navigationController.childViewControllers[1].navigationItem.hidesBackButton = YES;
+        self.navigationController.childViewControllers[1].navigationItem.leftBarButtonItem = newBackButton;
+        self.navigationController.childViewControllers[1].navigationItem.rightBarButtonItem = addPlaylistButton;
+        [self.tableView reloadData];
+    }
 }
 
 - (void)loadSongsFromDisk {
@@ -56,6 +75,19 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)addSongInPlaylist {
+
+    AllSongsTableViewController *allSongsTVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"allSongsTableView"];
+    allSongsTVC.playlist = self.playlist;
+    [self.navigationController pushViewController:allSongsTVC animated:YES];
+}
+
+- (void)onBackButtonTap {
+//    this is called only if a playlist table view is pushed to the stack.
+    [self.musicPlayerDelegate pauseLoadedSong];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -69,7 +101,7 @@
 -(NSString *)properMusicTitleForSong:(LocalSongModel *)song {
     
     NSString *songTitle = [[song.artistName stringByAppendingString:@" - "] stringByAppendingString:song.songTitle];
-    if ([song.artistName isEqualToString:@"Uknown artist"]) {
+    if ([song.artistName isEqualToString:@"Unknown artist"]) {
         songTitle = song.songTitle;
     }
 
@@ -87,8 +119,10 @@
    
 
     if ([indexPath isEqual:[self indexPathOfLastPlayed]]) {
-        cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
-        cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
+        if (self.musicPlayerDelegate.isPlaying) {
+            cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
+            cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
+        }
     }
     else {
         cell.circleProgressBar.unitString = BUTTON_TITLE_PLAY_STRING;
@@ -106,24 +140,31 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    [self.musicPlayerDelegate pauseLoadedSong];
-    [self.musicPlayerDelegate prepareSong:[self nextSongForSong:self.musicPlayerDelegate.nowPlaying]];
-    [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
+    if ([[self indexPathOfLastPlayed] isEqual:[self indexPathForSong:self.musicPlayerDelegate.nowPlaying]]) {
+        [self.musicPlayerDelegate pauseLoadedSong];
+        [self.musicPlayerDelegate prepareSong:[self nextSongForSong:self.musicPlayerDelegate.nowPlaying]];
+        [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
+    }
     LocalSongModel *song = self.songs[indexPath.row];
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        
-        NSError *error;
-        [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
-        UIImage *artwork = [UIImage imageWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
-        if (artwork != nil) {
-            [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
-        }
-        if (error) {
-            NSLog(@"Error deleting file from url = %@", error);
-        }
-        else {
+        if (self.playlist) {
             [self.songs removeObjectAtIndex:indexPath.row];
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
+        else {
+            NSError *error;
+            [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
+            UIImage *artwork = [UIImage imageWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
+            if (artwork != nil) {
+                [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
+            }
+            if (error) {
+                NSLog(@"Error deleting file from url = %@", error);
+            }
+            else {
+                [self.songs removeObjectAtIndex:indexPath.row];
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            }
         }
     }
 }
@@ -146,7 +187,7 @@
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchLocation];
     
     // index of last previously played song;
-    NSIndexPath *previouslyPlayedIndexPath = [NSIndexPath indexPathForRow:[self.songs indexOfObject:self.musicPlayerDelegate.nowPlaying] inSection:0];
+    NSIndexPath *previouslyPlayedIndexPath = [self indexPathOfLastPlayed];
     LocalSongModel *songToPlay = self.songs[indexPath.row];
     
     if (![songToPlay isEqual:self.musicPlayerDelegate.nowPlaying]) {
@@ -181,7 +222,7 @@
     NSIndexPath *indexPath = [self indexPathForSong:song];
     NSIndexPath *previousIndexPath = [NSIndexPath indexPathForRow:(indexPath.row - 1) inSection:indexPath.section];;
     
-    if ((previousIndexPath.row - 1) < 0) {
+    if (previousIndexPath.row < 0) {
         previousIndexPath = [NSIndexPath indexPathForRow:self.songs.count - 1 inSection:indexPath.section];
     }
     
@@ -216,11 +257,6 @@
         cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
         cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
     }
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self loadSongsFromDisk];
 }
 
 //TODO: Add optimisations for index path getting here
