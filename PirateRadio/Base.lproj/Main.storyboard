@@ -147,7 +147,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Jgd-cV-1n8">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="playlistCell" id="Jgd-cV-1n8">
                                 <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Jgd-cV-1n8" id="Flt-vq-gt4">
@@ -165,7 +165,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kg1-kO-CzS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4048" y="-889"/>
+            <point key="canvasLocation" x="-4049.275362318841" y="-889.4021739130435"/>
         </scene>
         <!--Playlists-->
         <scene sceneID="lMo-mW-6Ba">
@@ -200,6 +200,34 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dbQ-t1-wOA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-3055" y="-646"/>
+        </scene>
+        <!--All Songs Table View Controller-->
+        <scene sceneID="8QL-wL-num">
+            <objects>
+                <tableViewController storyboardIdentifier="allSongsTableView" id="Gno-p1-baa" customClass="AllSongsTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="0Ul-BK-6yx">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="allSongsCell" id="7el-XA-Y9a">
+                                <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7el-XA-Y9a" id="IMs-8l-wkp">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Gno-p1-baa" id="0VO-Ri-D1h"/>
+                            <outlet property="delegate" destination="Gno-p1-baa" id="DWg-B3-cmd"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JOU-TG-ey1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2538" y="-1489"/>
         </scene>
         <!--Music-->
         <scene sceneID="6G5-fc-wHl">
@@ -261,9 +289,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
+                        <segue destination="9Ym-eL-ckl" kind="relationship" relationship="viewControllers" id="ev3-qS-HYO"/>
                         <segue destination="WsQ-M8-PDq" kind="relationship" relationship="viewControllers" id="wcJ-A2-yuY"/>
                         <segue destination="c5L-qN-WnR" kind="relationship" relationship="viewControllers" id="kVv-UB-10n"/>
-                        <segue destination="9Ym-eL-ckl" kind="relationship" relationship="viewControllers" id="ev3-qS-HYO"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fbf-xi-L83" userLabel="First Responder" sceneMemberID="firstResponder"/>
