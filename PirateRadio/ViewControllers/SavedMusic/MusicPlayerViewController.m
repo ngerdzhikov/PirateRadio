@@ -39,6 +39,7 @@
         [weakSelf updateProgressBar];
     }];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didGetInterrupted) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -102,6 +103,8 @@
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
     if (self.isPlaying) {
         
+        //        can be replaced with [self didGetInterrupted];
+        
         [self pauseLoadedSong];
         [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
         
@@ -129,7 +132,11 @@
 - (void)itemDidEndPlaying:(NSNotification *)notification {
     
     [self.songListDelegate didRequestNextForSong:self.song];
-    [self playLoadedSong];
+    [self.player play];
+    
+    // this is for testing
+    [self startAudioSession];
+    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
 }
 
 - (void)setMusicPlayerSongNameAndImage {
@@ -231,12 +238,14 @@
 }
 
 - (void)playLoadedSong {
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
+    
     [self.player play];
     
     // this is for testing
     [self startAudioSession];
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
-    
     
     // end testing
   
@@ -265,6 +274,13 @@
         
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
     }
+}
+
+- (void)didGetInterrupted {
+    
+    [self pauseLoadedSong];
+    [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+    [self.songListDelegate didPauseSong:self.song];
 }
 
 - (void)remoteControlReceivedWithEvent:(UIEvent *)event {
@@ -303,7 +319,9 @@
 - (void)startAudioSession {
     AVAudioSession *session = AVAudioSession.sharedInstance;
     NSError *error;
-    [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
+    [session setCategory:AVAudioSessionCategoryPlayback error:&error];
+    [session setMode:AVAudioSessionModeDefault error:nil];
+    
     if (error) {
         NSLog(@"Error = %@", error);
     }

@@ -12,6 +12,7 @@
 #define NOTIFICATION_VALUE_CHANGED @"NotificationValueChanged"
 #define NOTIFICATION_DOWNLOAD_FINISHED @"NotificationDownloadFinished"
 #define NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING @"NotificationYoutubeVideoStartedPlaying"
+#define NOTIFICATION_AVPLAYER_STARTED_PLAYING @"NotificationAVPlayerStartedPlaying"
 
 #define BUTTON_TITLE_PLAY_STRING  @"c"
 #define BUTTON_TITLE_PAUSE_STRING @"d"
