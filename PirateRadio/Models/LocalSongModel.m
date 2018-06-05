@@ -52,7 +52,7 @@
         self.songTitle = [self extractedSongTitleFromString:[components[1] substringToIndex:components[1].length - 8]];
     }
     else {
-        self.artistName = @"Uknown artist";
+        self.artistName = @"Unknown artist";
         self.songTitle = [self extractedSongTitleFromString:[song substringToIndex:song.length - 8]];
     }
 }
@@ -92,4 +92,25 @@
     return NO;
     
 }
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+    NSString *fileName = self.localSongURL.lastPathComponent;
+    [encoder encodeObject:fileName forKey:@"localSongURL"];
+    [encoder encodeObject:self.artistName forKey:@"artistName"];
+    [encoder encodeObject:self.songTitle forKey:@"songTitle"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    
+    if((self = [super init])) {
+        NSString *fileName = [decoder decodeObjectForKey:@"localSongURL"];
+        NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+        sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
+        self.localSongURL = [sourcePath URLByAppendingPathComponent:fileName isDirectory:NO];
+        self.artistName = [decoder decodeObjectForKey:@"artistName"];
+        self.songTitle = [decoder decodeObjectForKey:@"songTitle"];
+    }
+    return self;
+}
+
 @end

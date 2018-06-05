@@ -23,4 +23,19 @@
     [self.songs addObject:song];
 }
 
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+    
+    [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeObject:self.songs forKey:@"songs"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if((self = [super init])) {
+        self.name = [decoder decodeObjectForKey:@"name"];
+        self.songs = [decoder decodeObjectForKey:@"songs"];
+    }
+    return self;
+}
+
 @end
