@@ -68,7 +68,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
-    SongListPlusPlayerViewController * songListPlusPlayerVC = [SongListPlusPlayerViewController initWithPlaylist:playlist];
+    SongListPlusPlayerViewController * songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
     [self.navigationController pushViewController:songListPlusPlayerVC animated:YES];
 
 }
@@ -141,6 +141,12 @@
 
 - (void)editPlaylists {
     self.editing = !self.editing;
+    if (self.editing) {
+        self.navigationItem.rightBarButtonItems[1].title = @"Done";
+    }
+    else {
+        self.navigationItem.rightBarButtonItems[1].title = @"Edit";
+    }
 }
 
 - (void)savePlaylistArray:(NSArray<PlaylistModel *> *)playlists {

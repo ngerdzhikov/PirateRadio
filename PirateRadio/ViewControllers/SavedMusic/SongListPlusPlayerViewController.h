@@ -20,6 +20,6 @@
 
 @property (strong, nonatomic) PlaylistModel *playlist;
 
-+(instancetype)initWithPlaylist:(PlaylistModel *)playlist;
++(instancetype)songListPlusPlayerViewControllerWithPlaylist:(PlaylistModel *)playlist;
 
 @end

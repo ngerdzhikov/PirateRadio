@@ -9,14 +9,16 @@
 #import "SongListPlusPlayerViewController.h"
 #import "SavedMusicTableViewController.h"
 #import "MusicPlayerViewController.h"
+#import "PlaylistModel.h"
+#import "LocalSongModel.h"
+#import "SongListFromPlaylistTableViewController.h"
 
-@interface SongListPlusPlayerViewController ()
+@interface SongListPlusPlayerViewController ()<UISearchBarDelegate>
 
 @property (strong, nonatomic) SavedMusicTableViewController *songListViewController;
 @property (strong, nonatomic) MusicPlayerViewController *playerViewController;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *musicPlayerHeightConstraint;
 @property CGFloat musicPlayerHeight;
-@property CGFloat tableViewHeight;
 
 @end
 
@@ -26,16 +28,11 @@
     
     [super viewDidLoad];
     
-    
-    self.songListViewController = self.childViewControllers.firstObject;
-    self.playerViewController = self.childViewControllers.lastObject;
-    
+    [self addViewControllerToContainerView];
+    self.playerViewController = self.childViewControllers.firstObject;
     
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;
-    
-//    pass the playlist to the SongListViewController
-    self.songListViewController.playlist = self.playlist;
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicPlayerContainer addGestureRecognizer:pan];
@@ -81,11 +78,56 @@
     [UIView commitAnimations];
 }
 
-+(instancetype)initWithPlaylist:(PlaylistModel *)playlist {
++(instancetype)songListPlusPlayerViewControllerWithPlaylist:(PlaylistModel *)playlist {
     SongListPlusPlayerViewController *songListPlusPlayerVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SongListPlusPlayer"];
     songListPlusPlayerVC.playlist = playlist;
     return songListPlusPlayerVC;
 }
+
+- (void)addViewControllerToContainerView {
+    
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    if (self.playlist) {
+        
+        SongListFromPlaylistTableViewController *vc = [storyBoard instantiateViewControllerWithIdentifier:@"songListFromPlaylistTableViewController"];
+        vc.playlist = self.playlist;
+        self.songListViewController = vc;
+        self.songListViewController.songs = self.playlist.songs;
+        
+        self.navigationItem.title = self.playlist.name;
+        UIBarButtonItem *addPlaylistButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self.songListViewController action:@selector(addSongInPlaylist)];
+        self.navigationItem.rightBarButtonItem = addPlaylistButton;
+        
+    }
+    else {
+        self.songListViewController = [storyBoard instantiateViewControllerWithIdentifier:@"savedMusicViewController"];
+        self.songListViewController.songs = [self songsFromDisk];
+    }
+    
+    self.songListViewController.view.frame = self.tableViewContainer.bounds;
+    [self.songListViewController willMoveToParentViewController:self];
+    [self.tableViewContainer addSubview:self.songListViewController.view];
+    [self addChildViewController:self.songListViewController];
+    [self.songListViewController didMoveToParentViewController:self];
+}
+
+- (NSMutableArray<LocalSongModel *> *)songsFromDisk {
+    
+    NSMutableArray<LocalSongModel *> * songs = [[NSMutableArray alloc] init];
+    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
+    NSArray* dirs = [NSFileManager.defaultManager contentsOfDirectoryAtURL:sourcePath includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    [dirs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *filePath = ((NSURL *)obj).absoluteString;
+        NSString *extension = [[filePath pathExtension] lowercaseString];
+        if ([extension isEqualToString:@"mp3"]) {
+            LocalSongModel *localSong = [[LocalSongModel alloc] initWithLocalSongURL:[NSURL URLWithString:filePath]];
+            [songs addObject:localSong];
+        }
+    }];
+    return songs;
+}
+
 
 
 @end
