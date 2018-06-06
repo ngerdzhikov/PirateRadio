@@ -14,9 +14,9 @@
 @class MusicPlayerViewController;
 @class PlaylistModel;
 
-@interface SavedMusicTableViewController : UITableViewController<SongListDelegate>
+@interface SavedMusicTableViewController : UITableViewController<SongListDelegate, UISearchBarDelegate>
 
 @property (weak, nonatomic) id<MusicPlayerDelegate> musicPlayerDelegate;
-@property (strong, nonatomic) PlaylistModel *playlist;
+@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
 
 @end

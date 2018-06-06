@@ -19,6 +19,7 @@
 @property (strong, nonatomic) MusicPlayerViewController *playerViewController;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *musicPlayerHeightConstraint;
 @property CGFloat musicPlayerHeight;
+@property (weak, nonatomic) UISearchBar *searchBar;
 
 @end
 
@@ -37,7 +38,14 @@
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicPlayerContainer addGestureRecognizer:pan];
     self.musicPlayerHeight = self.musicPlayerContainer.frame.size.height;
-    self.tableViewHeight = self.tableViewContainer.frame.size.height;
+    
+    
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    
+    self.navigationItem.searchController = searchController;
+    self.searchBar = self.navigationItem.searchController.searchBar;
+    self.searchBar.delegate = self.songListViewController;
+
 }
 
 - (void)didReceiveMemoryWarning {

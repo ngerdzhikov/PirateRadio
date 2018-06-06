@@ -18,7 +18,7 @@
 
 @interface SavedMusicTableViewController ()
 
-@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
+@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *backupSongs;
 
 @end
 
@@ -29,63 +29,17 @@
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     
+    self.backupSongs = [NSMutableArray arrayWithArray:self.songs];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-//    if I don't have playlist -> load all songs from the disk
-    if (self.playlist == nil) {
-        [self loadSongsFromDisk];
-    }
-//    otherwise if I have a playlist -> load songs from the playlist
-//    this means that the current tableView is pushed over the other one
-    else {
-        self.songs = self.playlist.songs;
-        self.navigationController.childViewControllers[1].navigationItem.title = self.playlist.name;
-        UIBarButtonItem *addPlaylistButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addSongInPlaylist)];
-        UIBarButtonItem *newBackButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStyleDone target:self action:@selector(onBackButtonTap)];
-        self.navigationController.childViewControllers[1].navigationItem.hidesBackButton = YES;
-        self.navigationController.childViewControllers[1].navigationItem.leftBarButtonItem = newBackButton;
-        self.navigationController.childViewControllers[1].navigationItem.rightBarButtonItem = addPlaylistButton;
-        [self.tableView reloadData];
-    }
-}
-
-- (void)loadSongsFromDisk {
-    
-    self.songs = [[NSMutableArray alloc] init];
-    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-    sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
-    NSArray* dirs = [NSFileManager.defaultManager contentsOfDirectoryAtURL:sourcePath includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
-    [dirs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *filePath = ((NSURL *)obj).absoluteString;
-        NSString *extension = [[filePath pathExtension] lowercaseString];
-        if ([extension isEqualToString:@"mp3"]) {
-            LocalSongModel *localSong = [[LocalSongModel alloc] initWithLocalSongURL:[NSURL URLWithString:filePath]];
-            [self.songs addObject:localSong];
-        }
-    }];
-
     [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)addSongInPlaylist {
-
-    AllSongsTableViewController *allSongsTVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"allSongsTableView"];
-    allSongsTVC.playlist = self.playlist;
-    [self.navigationController pushViewController:allSongsTVC animated:YES];
-}
-
-- (void)onBackButtonTap {
-//    this is called only if a playlist table view is pushed to the stack.
-    [self.musicPlayerDelegate pauseLoadedSong];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Table view data source
@@ -147,24 +101,18 @@
     }
     LocalSongModel *song = self.songs[indexPath.row];
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        if (self.playlist) {
-            [self.songs removeObjectAtIndex:indexPath.row];
-            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        NSError *error;
+        [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
+        UIImage *artwork = [UIImage imageWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
+        if (artwork != nil) {
+            [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
+        }
+        if (error) {
+            NSLog(@"Error deleting file from url = %@", error);
         }
         else {
-            NSError *error;
-            [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
-            UIImage *artwork = [UIImage imageWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
-            if (artwork != nil) {
-                [NSFileManager.defaultManager removeItemAtURL:song.localArtworkURL error:&error];
-            }
-            if (error) {
-                NSLog(@"Error deleting file from url = %@", error);
-            }
-            else {
-                [self.songs removeObjectAtIndex:indexPath.row];
-                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            }
+            [self.songs removeObjectAtIndex:indexPath.row];
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
     }
 }
@@ -288,6 +236,8 @@
     }
 }
 
+#pragma mark songListDelegate
+
 - (void)didPauseSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
@@ -333,5 +283,30 @@
         [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
     });
 }
+
+#pragma mark searchBarDelegate
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    if (searchText.length > 0) {
+        self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
+        self.songs = [[self.songs filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+            return ([[self properMusicTitleForSong:evaluatedObject].lowercaseString containsString:searchText.lowercaseString] ||
+                    [evaluatedObject.songTitle.lowercaseString containsString:searchText.lowercaseString] ||
+                    [evaluatedObject.artistName.lowercaseString containsString:searchText.lowercaseString]);
+        }]] mutableCopy];
+        
+        [self.tableView reloadData];
+    }
+    else {
+        self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
+        [self.tableView reloadData];
+    }
+}
+
+-(void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    
+}
+
+
 
 @end
