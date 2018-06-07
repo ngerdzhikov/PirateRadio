@@ -27,30 +27,20 @@
     
     [super viewDidLoad];
     
-    [self addViewControllerToContainerView];
     self.playerViewController = self.childViewControllers.firstObject;
+    [self addViewControllerToContainerView];
     
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;
+    
+    if (self.songListViewController.songs.firstObject) {
+        [self.playerViewController prepareSong:self.songListViewController.songs.firstObject];
+    }
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicPlayerContainer addGestureRecognizer:pan];
     self.musicPlayerHeight = self.musicPlayerContainer.frame.size.height;
     
-    
-    /*
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.2];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-    
-    self.musicPlayerContainer.center = CGPointMake(self.musicPlayerContainer.center.x, self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6);
-    CGRect newTableViewFrame = self.tableViewContainer.frame;
-    newTableViewFrame.size.height = self.musicPlayerContainer.center.y - (self.musicPlayerHeight / 2);
-    self.tableViewContainer.frame = newTableViewFrame;
-    [pan setTranslation:CGPointMake(0, 0) inView:self.view];
-    
-    [UIView commitAnimations];
-     */
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,14 +98,16 @@
         self.songListViewController.songs = self.playlist.songs;
         
         self.navigationItem.title = self.playlist.name;
-        UIBarButtonItem *addPlaylistButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self.songListViewController action:@selector(addSongInPlaylist)];
-        self.navigationItem.rightBarButtonItem = addPlaylistButton;
+        UIBarButtonItem *addSongsButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self.songListViewController action:@selector(addSongInPlaylist)];
+        UIBarButtonItem *editSongsButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self.songListViewController action:@selector(editSongs)];
+        self.navigationItem.rightBarButtonItems = @[addSongsButton, editSongsButton];
         
     }
     else {
         self.songListViewController = [storyBoard instantiateViewControllerWithIdentifier:@"savedMusicViewController"];
         self.songListViewController.songs = [self songsFromDisk];
     }
+    
     
     self.songListViewController.view.frame = self.tableViewContainer.bounds;
     [self.songListViewController willMoveToParentViewController:self];
