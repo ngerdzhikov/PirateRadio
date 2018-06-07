@@ -11,6 +11,7 @@
 #import "AllSongsTableViewController.h"
 #import "MusicPlayerViewController.h"
 #import "SavedMusicTableViewCell.h"
+#import "PlaylistsDatabase.h"
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
 #import "Constants.h"
@@ -25,8 +26,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.tableView reloadData];
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -40,6 +45,10 @@
     [self.navigationController pushViewController:allSongsTVC animated:YES];
 }
 
+- (void)editSongs {
+    self.editing = !self.editing;
+}
+
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
@@ -49,6 +58,28 @@
         [self.playlist.songs removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+    LocalSongModel *movingSong = self.playlist.songs[fromIndexPath.row];
+    LocalSongModel *replacedSong = self.playlist.songs[toIndexPath.row];
+    
+    [self.playlist.songs replaceObjectAtIndex:toIndexPath.row withObject:movingSong];
+    [self.playlist.songs replaceObjectAtIndex:fromIndexPath.row withObject:replacedSong];
+    
+    [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+    
+    [self.tableView reloadData];
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return YES;
+}
+
+- (void)didRecieveNewSong:(NSNotification *)notification {
+// override with nothing because it's in the playlist
+    return;
 }
 
 
