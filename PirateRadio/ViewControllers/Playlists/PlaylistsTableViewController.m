@@ -9,6 +9,8 @@
 #import "PlaylistsTableViewController.h"
 #import "PlaylistModel.h"
 #import "SongListPlusPlayerViewController.h"
+#import "Constants.h"
+#import "PlaylistsDatabase.h"
 
 @interface PlaylistsTableViewController ()
 
@@ -28,12 +30,7 @@
 //    clear NSUserDefaults for debug
 //    [NSUserDefaults.standardUserDefaults setObject:nil forKey:@"playlists"];
     
-    // load playlists from UserDefaults
-    self.playlists = [[self loadPlaylistsFromUserDefaults] mutableCopy];
-    // if there are no playlists allocate memory for playlists array
-    if (!self.playlists) {
-        self.playlists = [[NSMutableArray alloc] init];
-    }
+    
     
 }
 
@@ -44,11 +41,19 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self savePlaylistArray:self.playlists];
+    [PlaylistsDatabase savePlaylistArray:self.playlists];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    // load playlists from UserDefaults
+    self.playlists = [[PlaylistsDatabase loadPlaylistsFromUserDefaults] mutableCopy];
+    // if there are no playlists allocate memory for playlists array
+    if (!self.playlists) {
+        self.playlists = [[NSMutableArray alloc] init];
+    }
+    
     [self.tableView reloadData];
 }
 
@@ -122,10 +127,13 @@
     }];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        if (alertController.textFields[0].text.length > 1) {
+        if (alertController.textFields[0].text.length > 1 && ![(NSArray<NSString *> *)[self.playlists valueForKey:@"name"] containsObject:alertController.textFields[0].text]) {
             PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:alertController.textFields[0].text];
             [self.playlists addObject:playlist];
+            
             [self.tableView reloadData];
+            
+            [PlaylistsDatabase savePlaylistArray:self.playlists];
         }
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
@@ -148,16 +156,5 @@
     }
 }
 
-- (void)savePlaylistArray:(NSArray<PlaylistModel *> *)playlists {
-    NSData *encodedPlaylists = [NSKeyedArchiver archivedDataWithRootObject:playlists];
-    [NSUserDefaults.standardUserDefaults setObject:encodedPlaylists forKey:@"playlists"];
-    [NSUserDefaults.standardUserDefaults synchronize];
-}
-
-- (NSArray<PlaylistModel *> *)loadPlaylistsFromUserDefaults {
-    NSData *encodedPlaylists = [NSUserDefaults.standardUserDefaults objectForKey:@"playlists"];
-    NSArray<PlaylistModel *> *playlists = [NSKeyedUnarchiver unarchiveObjectWithData:encodedPlaylists];
-    return playlists;
-}
 
 @end

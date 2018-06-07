@@ -119,7 +119,12 @@
             NSLog(@"Error deleting file from url = %@", error);
         }
         else {
+            
+//            remove from dataSource
             [self.songs removeObjectAtIndex:indexPath.row];
+//            post notification that song is deleted and pass it
+            [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
+            
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
     }

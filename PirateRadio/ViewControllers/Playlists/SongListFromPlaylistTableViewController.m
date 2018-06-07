@@ -26,6 +26,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(onSongDelete:) name:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil];
+}
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -56,6 +58,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [self.playlist.songs removeObjectAtIndex:indexPath.row];
+        [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
@@ -80,6 +83,19 @@
 - (void)didRecieveNewSong:(NSNotification *)notification {
 // override with nothing because it's in the playlist
     return;
+}
+
+- (void)onSongDelete:(NSNotification *)notification {
+    LocalSongModel *song = [notification.userInfo objectForKey:@"song"];
+    
+    if ([self.playlist.songs containsObject:song]) {
+        
+        [self.playlist.songs removeObject:song];
+        
+        [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+        
+        [self.tableView reloadData];
+    }
 }
 
 

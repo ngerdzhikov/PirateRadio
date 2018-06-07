@@ -19,6 +19,7 @@
 		069C32D420BD7A440079C5C5 /* MusicPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */; };
 		06B1B9CA20A974500019B0CC /* SavedMusicTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
+		06B53DF520C959C700D3AD79 /* PlaylistsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B53DF420C959C700D3AD79 /* PlaylistsDatabase.m */; };
 		06B998ED20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B998EC20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m */; };
 		06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */; };
 		06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */; };
@@ -64,6 +65,8 @@
 		06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicTableViewController.m; sourceTree = "<group>"; };
 		06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewCell.h; sourceTree = "<group>"; };
 		06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicTableViewCell.m; sourceTree = "<group>"; };
+		06B53DF320C959C700D3AD79 /* PlaylistsDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlaylistsDatabase.h; path = PirateRadio/Utilities/PlaylistsDatabase.h; sourceTree = "<group>"; };
+		06B53DF420C959C700D3AD79 /* PlaylistsDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PlaylistsDatabase.m; path = PirateRadio/Utilities/PlaylistsDatabase.m; sourceTree = "<group>"; };
 		06B998EB20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SongListFromPlaylistTableViewController.h; sourceTree = "<group>"; };
 		06B998EC20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SongListFromPlaylistTableViewController.m; sourceTree = "<group>"; };
 		06BBC52820B541EC00BAC667 /* Protocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Protocols.h; path = PirateRadio/Utilities/Protocols.h; sourceTree = "<group>"; };
@@ -175,6 +178,8 @@
 				06BE0CC920A4A106007D9319 /* NSURL+URLWithQueryItems.m */,
 				063EDF3B20B43E3200630747 /* ImageCacher.h */,
 				063EDF3A20B43E3100630747 /* ImageCacher.m */,
+				06B53DF320C959C700D3AD79 /* PlaylistsDatabase.h */,
+				06B53DF420C959C700D3AD79 /* PlaylistsDatabase.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -438,6 +443,7 @@
 				06BE0CB820A46019007D9319 /* SearchResultTableViewCell.m in Sources */,
 				069C32CD20BC071C0079C5C5 /* SongListPlusPlayerViewController.m in Sources */,
 				0608885420C5883E00860DBC /* PlaylistModel.m in Sources */,
+				06B53DF520C959C700D3AD79 /* PlaylistsDatabase.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
 				06D65A3420ADD217000AC0FC /* ITunesRequestManager.m in Sources */,
 				063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */,
