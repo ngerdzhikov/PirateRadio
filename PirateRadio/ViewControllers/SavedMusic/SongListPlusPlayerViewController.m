@@ -17,9 +17,7 @@
 
 @property (strong, nonatomic) SavedMusicTableViewController *songListViewController;
 @property (strong, nonatomic) MusicPlayerViewController *playerViewController;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *musicPlayerHeightConstraint;
 @property CGFloat musicPlayerHeight;
-@property (weak, nonatomic) UISearchBar *searchBar;
 
 @end
 
@@ -40,12 +38,19 @@
     self.musicPlayerHeight = self.musicPlayerContainer.frame.size.height;
     
     
-    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    /*
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.2];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
     
-    self.navigationItem.searchController = searchController;
-    self.searchBar = self.navigationItem.searchController.searchBar;
-    self.searchBar.delegate = self.songListViewController;
-
+    self.musicPlayerContainer.center = CGPointMake(self.musicPlayerContainer.center.x, self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6);
+    CGRect newTableViewFrame = self.tableViewContainer.frame;
+    newTableViewFrame.size.height = self.musicPlayerContainer.center.y - (self.musicPlayerHeight / 2);
+    self.tableViewContainer.frame = newTableViewFrame;
+    [pan setTranslation:CGPointMake(0, 0) inView:self.view];
+    
+    [UIView commitAnimations];
+     */
 }
 
 - (void)didReceiveMemoryWarning {

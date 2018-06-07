@@ -19,6 +19,7 @@
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *backupSongs;
+@property (strong, nonatomic) NSString *searchTextBeforeEnding;
 
 @end
 
@@ -30,6 +31,13 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     
     self.backupSongs = [NSMutableArray arrayWithArray:self.songs];
+    
+    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0., 0., 320., 44.)];
+    searchBar.enablesReturnKeyAutomatically = NO;
+    searchBar.returnKeyType = UIReturnKeyDone;
+    searchBar.delegate = self;
+    self.tableView.tableHeaderView = searchBar;
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -287,6 +295,10 @@
 #pragma mark searchBarDelegate
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+
+    self.searchTextBeforeEnding = searchText;
+    
+    
     if (searchText.length > 0) {
         self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
         self.songs = [[self.songs filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
@@ -303,10 +315,12 @@
     }
 }
 
--(void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    searchBar.text = self.searchTextBeforeEnding;
 }
 
-
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
+}
 
 @end

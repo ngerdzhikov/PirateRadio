@@ -268,7 +268,6 @@
                     <navigationItem key="navigationItem" id="KMd-0G-LeW"/>
                     <connections>
                         <outlet property="musicPlayerContainer" destination="fek-re-3Qc" id="epr-xu-s7h"/>
-                        <outlet property="musicPlayerHeightConstraint" destination="eDg-9R-nAP" id="dMY-6S-wER"/>
                         <outlet property="tableViewContainer" destination="1sM-IC-J7N" id="hy5-38-E9A"/>
                     </connections>
                 </viewController>
