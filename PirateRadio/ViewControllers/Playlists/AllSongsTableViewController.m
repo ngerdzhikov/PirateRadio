@@ -10,11 +10,15 @@
 #import "PlaylistModel.h"
 #import "LocalSongModel.h"
 #import "SongListPlusPlayerViewController.h"
+#import "Constants.h"
+#import "PlaylistsDatabase.h"
 
-@interface AllSongsTableViewController ()
+@interface AllSongsTableViewController ()<UISearchBarDelegate>
 
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *selectedSongs;
+@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *backupSongs;
+@property (strong, nonatomic) NSString *searchTextBeforeEnding;
 
 @end
 
@@ -28,6 +32,14 @@
     
     UIBarButtonItem *commitSelectedButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(commitSelected)];
     self.navigationItem.rightBarButtonItem = commitSelectedButton;
+    
+    self.backupSongs = [NSMutableArray arrayWithArray:self.songs];
+    
+    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0., 0., 320., 44.)];
+    searchBar.enablesReturnKeyAutomatically = NO;
+    searchBar.returnKeyType = UIReturnKeyDone;
+    searchBar.delegate = self;
+    self.tableView.tableHeaderView = searchBar;
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -62,6 +74,9 @@
 
 - (void)commitSelected {
     [self.playlist.songs addObjectsFromArray:self.selectedSongs];
+//    get playlists
+    [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -86,20 +101,57 @@
         cell.textLabel.text = song.songTitle;
     }
     
+    if ([self.selectedSongs containsObject:self.songs[indexPath.row]]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
+    else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if (cell.accessoryType == UITableViewCellAccessoryNone) {
+    if (![self.selectedSongs containsObject:self.songs[indexPath.row]]) {
         [self.selectedSongs addObject:self.songs[indexPath.row]];
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
     else {
         [self.selectedSongs removeObject:self.songs[indexPath.row]];
-        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    [self.tableView reloadData];
+}
+
+
+#pragma mark searchBarDelegate
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    
+    self.searchTextBeforeEnding = searchText;
+    
+    
+    if (searchText.length > 0) {
+        self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
+        self.songs = [[self.songs filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+            return ([evaluatedObject.songTitle.lowercaseString containsString:searchText.lowercaseString] ||
+                    [evaluatedObject.artistName.lowercaseString containsString:searchText.lowercaseString]);
+        }]] mutableCopy];
+        
+        [self.tableView reloadData];
+    }
+    else {
+        self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
+        [self.tableView reloadData];
     }
 }
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    searchBar.text = self.searchTextBeforeEnding;
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
+}
+
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
