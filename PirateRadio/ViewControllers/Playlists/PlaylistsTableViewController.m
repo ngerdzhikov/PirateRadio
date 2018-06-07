@@ -12,6 +12,8 @@
 
 @interface PlaylistsTableViewController ()
 
+@property (strong, nonatomic) SongListPlusPlayerViewController * songListPlusPlayerVC;
+
 @end
 
 @implementation PlaylistsTableViewController
@@ -19,7 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     UIBarButtonItem *addPlaylistButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPlaylist)];
-    UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editPlaylists)];
+    UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self action:@selector(editPlaylists)];
     self.navigationItem.rightBarButtonItems = @[addPlaylistButton, editButton];
     self.navigationItem.title = @"Playlists";
     
@@ -45,6 +47,11 @@
     [self savePlaylistArray:self.playlists];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.tableView reloadData];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -62,38 +69,38 @@
     
     cell.textLabel.text = playlist.name;
     
+    if ([self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
-    SongListPlusPlayerViewController * songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
-    [self.navigationController pushViewController:songListPlusPlayerVC animated:YES];
+    if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name])
+        self.songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
+    [self.navigationController pushViewController:self.songListPlusPlayerVC animated:YES];
 
 }
 
 
-// Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
+    
     return YES;
 }
 
-
-
-// Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [self.playlists removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    }
 }
 
-
-// Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
     PlaylistModel *movingPlaylist = self.playlists[fromIndexPath.row];
     PlaylistModel *replacedPlaylist = self.playlists[toIndexPath.row];
@@ -102,22 +109,10 @@
     [self.playlists setObject:replacedPlaylist atIndexedSubscript:fromIndexPath.row];
 }
 
-// Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
+
     return YES;
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 
 
 - (void)addPlaylist {
@@ -125,7 +120,7 @@
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = @"Playlist name";
     }];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
         if (alertController.textFields[0].text.length > 1) {
             PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:alertController.textFields[0].text];
@@ -133,7 +128,11 @@
             [self.tableView reloadData];
         }
     }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        // Called when user taps outside
+    }];
     [alertController addAction:okAction];
+    [alertController addAction:cancelAction];
     [self presentViewController:alertController animated:NO completion:^{
         
     }];
