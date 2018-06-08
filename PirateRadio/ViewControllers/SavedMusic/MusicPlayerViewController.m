@@ -10,12 +10,13 @@
 #import "LocalSongModel.h"
 #import "Constants.h"
 #import "CBAutoScrollLabel.h"
+#import "PirateAVPlayer.h"
 @import MediaPlayer;
 @import AVFoundation;
 
 @interface MusicPlayerViewController ()
 
-@property (strong, nonatomic) AVPlayer *player;
+@property (strong, nonatomic) PirateAVPlayer *player;
 @property BOOL isSeekInProgress;
 @property BOOL isSliding;
 @property CMTime chaseTime;
@@ -28,7 +29,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    self.player = [[AVPlayer alloc] init];
+    self.player = PirateAVPlayer.sharedPlayer;
     [self configureMusicControllerView];
     self.songTimeProgress.value = 0.0f;
     
@@ -40,6 +41,8 @@
     }];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didGetInterrupted) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
+    
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -48,6 +51,24 @@
     [self becomeFirstResponder];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
+    
+    self.songTimeProgress.maximumValue = CMTimeGetSeconds(self.player.currentItem.duration);
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self setMusicPlayerSongNameAndImage];
+    
+    if (self.player.currentSong && self.isPlaying) {
+        [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
+    }
+    else {
+        [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+    }
+    
+    
 }
 
 - (BOOL)canBecomeFirstResponder {
@@ -60,7 +81,7 @@
         double time = CMTimeGetSeconds(self.player.currentTime);
         double duration = CMTimeGetSeconds(self.player.currentItem.duration);
         self.songTimeProgress.value = time;
-        [self.songListDelegate updateProgress:(time / duration) * 100 forSong:self.song];
+        [self.songListDelegate updateProgress:(time / duration) * 100 forSong:self.player.currentSong];
     }
 }
 
@@ -72,9 +93,9 @@
 
 - (void)prepareSong:(LocalSongModel *)song {
     
-    if (![self.song.localSongURL isEqual:song.localSongURL]) {
-        self.song = song;
-        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:self.song.localSongURL options:nil];
+    if (![self.player.currentSong.localSongURL isEqual:song.localSongURL]) {
+        self.player.currentSong = song;
+        AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
         AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
         [self.player replaceCurrentItemWithPlayerItem:item];
@@ -85,8 +106,8 @@
             UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
             return image;
         }];
-        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.song.artistName,
-                                MPMediaItemPropertyTitle: self.song.songTitle,
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: song.artistName,
+                                MPMediaItemPropertyTitle: song.songTitle,
                                 MPMediaItemPropertyPlaybackDuration: duration,
                                 MPMediaItemPropertyArtwork: artwork,
                                                                  };
@@ -108,30 +129,30 @@
         [self pauseLoadedSong];
         [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
         
-        [self.songListDelegate didPauseSong:self.song];
+        [self.songListDelegate didPauseSong:self.player.currentSong];
     }
     else {
         
         [self playLoadedSong];
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
         
-        [self.songListDelegate didStartPlayingSong:self.song];
+        [self.songListDelegate didStartPlayingSong:self.player.currentSong];
     }
 }
 
 - (IBAction)previousBtnTap:(id)sender {
     
-    [self.songListDelegate didRequestPreviousForSong:self.song];
+    [self.songListDelegate didRequestPreviousForSong:self.player.currentSong];
 }
 
 - (IBAction)nextBtnTap:(id)sender {
     
-    [self.songListDelegate didRequestNextForSong:self.song];
+    [self.songListDelegate didRequestNextForSong:self.player.currentSong];
 }
 
 - (void)itemDidEndPlaying:(NSNotification *)notification {
     
-    [self.songListDelegate didRequestNextForSong:self.song];
+    [self.songListDelegate didRequestNextForSong:self.player.currentSong];
     [self.player play];
     
     // this is for testing
@@ -141,7 +162,7 @@
 
 - (void)setMusicPlayerSongNameAndImage {
     
-    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.song.localArtworkURL]];
+    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
     if (image) {
         
         self.songImage.image = image;
@@ -150,7 +171,7 @@
         
         self.songImage.image = [UIImage imageNamed:@"unknown_artist_transperent"];
     }
-    self.songName.text = self.song.songTitle;
+    self.songName.text = self.player.currentSong.songTitle;
 }
 
 
@@ -202,7 +223,10 @@
              [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
              
              self.isSeekInProgress = NO;
-             [self.player play];
+             
+             if ([self.playButton.currentImage isEqual:[UIImage imageNamed:@"pause_button_icon"]]) {
+                 [self.player play];
+             }
          }
          else{
              [self trySeekToChaseTime];
@@ -264,7 +288,7 @@
 }
 
 - (LocalSongModel *)nowPlaying {
-    return self.song;
+    return self.player.currentSong;
 }
 
 - (void)setPlayerPlayPauseButtonState:(EnumCellMediaPlaybackState)state {
@@ -280,7 +304,7 @@
     
     [self pauseLoadedSong];
     [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
-    [self.songListDelegate didPauseSong:self.song];
+    [self.songListDelegate didPauseSong:self.player.currentSong];
 }
 
 - (void)remoteControlReceivedWithEvent:(UIEvent *)event {
@@ -290,24 +314,24 @@
                 
                 [self setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
                 [self playLoadedSong];
-                [self.songListDelegate didStartPlayingSong:self.song];
+                [self.songListDelegate didStartPlayingSong:self.player.currentSong];
                 break;
                 
             case UIEventSubtypeRemoteControlPause:
                 
                 [self setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
                 [self pauseLoadedSong];
-                [self.songListDelegate didPauseSong:self.song];
+                [self.songListDelegate didPauseSong:self.player.currentSong];
                 break;
                 
             case UIEventSubtypeRemoteControlNextTrack:
                 
-                [self.songListDelegate didRequestNextForSong:self.song];
+                [self.songListDelegate didRequestNextForSong:self.player.currentSong];
                 break;
                 
             case UIEventSubtypeRemoteControlPreviousTrack:
                 
-                [self.songListDelegate didRequestPreviousForSong:self.song];
+                [self.songListDelegate didRequestPreviousForSong:self.player.currentSong];
                 break;
                 
             default:
@@ -339,11 +363,11 @@
         NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentTime)];
         NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];
         MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
-            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.song.localArtworkURL]];
+            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
             return image;
         }];
-        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.song.artistName,
-                                MPMediaItemPropertyTitle: self.song.songTitle,
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.player.currentSong.artistName,
+                                MPMediaItemPropertyTitle: self.player.currentSong.songTitle,
                                 MPMediaItemPropertyPlaybackDuration: duration,
                                 MPMediaItemPropertyArtwork: artwork,
                                 MPNowPlayingInfoPropertyPlaybackRate: @1.0,

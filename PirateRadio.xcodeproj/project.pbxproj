@@ -20,6 +20,7 @@
 		06B1B9CA20A974500019B0CC /* SavedMusicTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
 		06B53DF520C959C700D3AD79 /* PlaylistsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B53DF420C959C700D3AD79 /* PlaylistsDatabase.m */; };
+		06B53DFB20C98A3900D3AD79 /* PirateAVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B53DF920C98A3800D3AD79 /* PirateAVPlayer.m */; };
 		06B998ED20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B998EC20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m */; };
 		06BE0CB220A44F9D007D9319 /* SearchTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB120A44F9D007D9319 /* SearchTableViewController.m */; };
 		06BE0CB520A44FDA007D9319 /* YoutubePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */; };
@@ -67,6 +68,8 @@
 		06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicTableViewCell.m; sourceTree = "<group>"; };
 		06B53DF320C959C700D3AD79 /* PlaylistsDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlaylistsDatabase.h; path = PirateRadio/Utilities/PlaylistsDatabase.h; sourceTree = "<group>"; };
 		06B53DF420C959C700D3AD79 /* PlaylistsDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PlaylistsDatabase.m; path = PirateRadio/Utilities/PlaylistsDatabase.m; sourceTree = "<group>"; };
+		06B53DF920C98A3800D3AD79 /* PirateAVPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PirateAVPlayer.m; path = PirateRadio/Utilities/PirateAVPlayer.m; sourceTree = "<group>"; };
+		06B53DFA20C98A3800D3AD79 /* PirateAVPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PirateAVPlayer.h; path = PirateRadio/Utilities/PirateAVPlayer.h; sourceTree = "<group>"; };
 		06B998EB20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SongListFromPlaylistTableViewController.h; sourceTree = "<group>"; };
 		06B998EC20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SongListFromPlaylistTableViewController.m; sourceTree = "<group>"; };
 		06BBC52820B541EC00BAC667 /* Protocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Protocols.h; path = PirateRadio/Utilities/Protocols.h; sourceTree = "<group>"; };
@@ -180,6 +183,8 @@
 				063EDF3A20B43E3100630747 /* ImageCacher.m */,
 				06B53DF320C959C700D3AD79 /* PlaylistsDatabase.h */,
 				06B53DF420C959C700D3AD79 /* PlaylistsDatabase.m */,
+				06B53DFA20C98A3800D3AD79 /* PirateAVPlayer.h */,
+				06B53DF920C98A3800D3AD79 /* PirateAVPlayer.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -422,6 +427,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				06BE0CD320A4A6B4007D9319 /* ThumbnailModel.m in Sources */,
+				06B53DFB20C98A3900D3AD79 /* PirateAVPlayer.m in Sources */,
 				06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */,
 				06FC537720A335D4003238BF /* main.m in Sources */,
 				0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */,

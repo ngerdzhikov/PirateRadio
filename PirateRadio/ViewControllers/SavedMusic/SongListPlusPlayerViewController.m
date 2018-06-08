@@ -33,7 +33,7 @@
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;
     
-    if (self.songListViewController.songs.firstObject) {
+    if (self.songListViewController.songs.firstObject && self.playerViewController.nowPlaying == nil) {
         [self.playerViewController prepareSong:self.songListViewController.songs.firstObject];
     }
     

@@ -80,7 +80,7 @@
     [cell.circleProgressBar addGestureRecognizer:tap];
    
 
-    if ([indexPath isEqual:[self indexPathOfLastPlayed]]) {
+    if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         if (self.musicPlayerDelegate.isPlaying) {
             cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
             cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
@@ -91,7 +91,7 @@
         cell.circleProgressBar.textOffset = CGPointMake(0, -0.5);
         cell.circleProgressBar.value = 0;
     }
-
+    
     return cell;
 }
 
@@ -218,6 +218,7 @@
         cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
         cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
     }
+//    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 //TODO: Add optimisations for index path getting here
@@ -266,26 +267,31 @@
 - (void)didRequestNextForSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
-    [self clearProgressForCellAtIndexPath:indexPath];
-    
-    
-    LocalSongModel *nextSong = [self nextSongForSong:song];
-    [self.musicPlayerDelegate prepareSong:nextSong];
-    
-    indexPath = [self indexPathForSong:nextSong];
-    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+    if (indexPath.row <= self.songs.count) {
+        
+        [self clearProgressForCellAtIndexPath:indexPath];
+        
+        LocalSongModel *nextSong = [self nextSongForSong:song];
+        [self.musicPlayerDelegate prepareSong:nextSong];
+        
+        indexPath = [self indexPathForSong:nextSong];
+        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+    }
 }
 
 - (void)didRequestPreviousForSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
-    [self clearProgressForCellAtIndexPath:indexPath];
-    
-    LocalSongModel *previousSong = [self previousSongForSong:song];
-    [self.musicPlayerDelegate prepareSong:previousSong];
-    
-    indexPath = [self indexPathForSong:previousSong];
-    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+    if (indexPath.row <= self.songs.count) {
+        
+        [self clearProgressForCellAtIndexPath:indexPath];
+        
+        LocalSongModel *previousSong = [self previousSongForSong:song];
+        [self.musicPlayerDelegate prepareSong:previousSong];
+        
+        indexPath = [self indexPathForSong:previousSong];
+        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+    }
 }
 
 - (void)didRecieveNewSong:(NSNotification *)notification {
