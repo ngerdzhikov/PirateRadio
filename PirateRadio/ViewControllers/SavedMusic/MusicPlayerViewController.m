@@ -29,19 +29,19 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    self.player = PirateAVPlayer.sharedPlayer;
-    [self configureMusicControllerView];
-    self.songTimeProgress.value = 0.0f;
     
-    self.songName.textAlignment = NSTextAlignmentCenter;
+    self.player = PirateAVPlayer.sharedPlayer;
+    
+    [self configureMusicControllerView];
+    
     
     __weak MusicPlayerViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
+    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didGetInterrupted) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
-    
     
 }
 
@@ -59,14 +59,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self setMusicPlayerSongNameAndImage];
+    [self updateMusicPlayerContent];
     
-    if (self.player.currentSong && self.isPlaying) {
-        [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
-    }
-    else {
-        [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
-    }
     
     
 }
@@ -89,6 +83,9 @@
 - (void)configureMusicControllerView {
     [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
+    
+    self.songTimeProgress.value = 0.0f;
+    self.songName.textAlignment = NSTextAlignmentCenter;
 }
 
 - (void)prepareSong:(LocalSongModel *)song {
@@ -116,7 +113,7 @@
         
         // Register as an observer of the player item's status property
         [item addObserver:self forKeyPath:@"status" options:options context:nil];
-        [self setMusicPlayerSongNameAndImage];
+        [self updateMusicPlayerContent];
     }
 }
 
@@ -160,7 +157,7 @@
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
 }
 
-- (void)setMusicPlayerSongNameAndImage {
+- (void)updateMusicPlayerContent {
     
     UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
     if (image) {
@@ -172,6 +169,17 @@
         self.songImage.image = [UIImage imageNamed:@"unknown_artist_transperent"];
     }
     self.songName.text = self.player.currentSong.songTitle;
+    
+    if (self.player.currentSong && self.isPlaying) {
+        [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
+    }
+    else {
+        [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+        
+        //        tell the songList that song is paused;
+        [self.songListDelegate didPauseSong:self.player.currentSong];
+    }
+    
 }
 
 

@@ -218,7 +218,6 @@
         cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
         cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
     }
-//    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 //TODO: Add optimisations for index path getting here
