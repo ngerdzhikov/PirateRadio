@@ -69,6 +69,7 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"playlistCell"];
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
@@ -81,14 +82,20 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
+    UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
+    longPressGesture.minimumPressDuration = 1.3;
+    longPressGesture.name = playlist.name;
+    [cell addGestureRecognizer:longPressGesture];
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
-    if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name])
+    if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
         self.songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
+    }
     [self.navigationController pushViewController:self.songListPlusPlayerVC animated:YES];
 
 }
@@ -141,9 +148,34 @@
     }];
     [alertController addAction:okAction];
     [alertController addAction:cancelAction];
-    [self presentViewController:alertController animated:NO completion:^{
-        
-    }];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)onCellLongPress:(UILongPressGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Rename playlist" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.placeholder = @"New playlist name";
+            textField.text = recognizer.name;
+        }];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            if (alertController.textFields[0].text.length > 1) {
+                for (PlaylistModel *playlist in self.playlists) {
+                    if ([playlist.name isEqualToString:recognizer.name]) {
+                        playlist.name = alertController.textFields[0].text;
+                        break;
+                    }
+                }
+                [self.tableView reloadData];
+                
+                [PlaylistsDatabase savePlaylistArray:self.playlists];
+            }
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            // Called when user taps outside
+        }]];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 - (void)editPlaylists {
