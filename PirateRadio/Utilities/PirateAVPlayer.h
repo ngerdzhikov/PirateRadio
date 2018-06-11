@@ -13,6 +13,7 @@
 @interface PirateAVPlayer : AVPlayer
 
 @property (strong, nonatomic) LocalSongModel *currentSong;
+@property AVPlayerStatus playerCurrentItemStatus;
 
 + (instancetype)sharedPlayer;
 

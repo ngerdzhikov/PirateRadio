@@ -42,6 +42,14 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+//    if (self.songs.count == 0) {
+//        UIImageView *noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
+//        noSongsImageView.frame = CGRectMake(self.tableView.frame.size.width / 4, self.tableView.frame.size.height / 4, self.tableView.frame.size.width / 2, self.tableView.frame.size.height / 2);
+//        [self.view addSubview:noSongsImageView];
+//        self.tableView.tableHeaderView = nil;
+//    }
+    
     [self.tableView reloadData];
 }
 
@@ -105,7 +113,7 @@
     if ([[self indexPathOfLastPlayed] isEqual:[self indexPathForSong:self.musicPlayerDelegate.nowPlaying]]) {
         [self.musicPlayerDelegate pauseLoadedSong];
         [self.musicPlayerDelegate prepareSong:[self nextSongForSong:self.musicPlayerDelegate.nowPlaying]];
-        [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
+        [self.musicPlayerDelegate setPlayerPlayPauseButtonState:YES];
     }
     LocalSongModel *song = self.songs[indexPath.row];
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -156,7 +164,7 @@
         [self.musicPlayerDelegate prepareSong:songToPlay];
         [self.musicPlayerDelegate playLoadedSong];
         
-        [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
+        [self.musicPlayerDelegate setPlayerPlayPauseButtonState:NO];
         [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
     }
     else {
@@ -164,13 +172,13 @@
             
             [self.musicPlayerDelegate pauseLoadedSong];
             
-            [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
+            [self.musicPlayerDelegate setPlayerPlayPauseButtonState:YES];
             [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlay forCellAtIndexPath:indexPath];
         }
         else {
             [self.musicPlayerDelegate playLoadedSong];
             
-            [self.musicPlayerDelegate setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
+            [self.musicPlayerDelegate setPlayerPlayPauseButtonState:NO];
             [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
         }
     }

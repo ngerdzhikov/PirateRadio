@@ -20,7 +20,6 @@
 @property BOOL isSeekInProgress;
 @property BOOL isSliding;
 @property CMTime chaseTime;
-@property AVPlayerStatus playerCurrentItemStatus;
 
 @end
 
@@ -34,17 +33,16 @@
     
     [self configureMusicControllerView];
     
-    
     __weak MusicPlayerViewController *weakSelf = self;
     [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didGetInterrupted) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     
-    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(playLoadedSong)];
-    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(pauseLoadedSong)];
+    
+    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(previousBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
@@ -55,11 +53,6 @@
     
     [self becomeFirstResponder];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    
-    if (self.player.currentSong != nil) {
-        self.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
-        self.songTimeProgress.maximumValue = CMTimeGetSeconds(self.player.currentItem.duration);
-    }
     
     
 }
@@ -77,13 +70,13 @@
 }
 
 - (void)updateProgressBar {
-    
     if (!self.isSliding) {
-        double time = CMTimeGetSeconds(self.player.currentTime);
         double duration = CMTimeGetSeconds(self.player.currentItem.duration);
-        self.songTimeProgress.value = time;
+        double time = CMTimeGetSeconds(self.player.currentTime);
+        self.songTimeProgress.value = (time / duration) * 100;
         [self.songListDelegate updateProgress:(time / duration) * 100 forSong:self.player.currentSong];
     }
+    
 }
 
 
@@ -91,6 +84,7 @@
     [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
     
+    self.songTimeProgress.maximumValue = 100;
     self.songTimeProgress.value = 0.0f;
     self.songName.textAlignment = NSTextAlignmentCenter;
 }
@@ -99,6 +93,8 @@
     
     if (![self.player.currentSong.localSongURL isEqual:song.localSongURL]) {
         self.player.currentSong = song;
+        self.player.playerCurrentItemStatus = AVPlayerItemStatusUnknown;
+        
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
         AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
@@ -127,8 +123,6 @@
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
     if (self.isPlaying) {
-        
-        //        can be replaced with [self didGetInterrupted];
         
         [self pauseLoadedSong];
         [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
@@ -201,7 +195,7 @@
 
 -(void) sliderEndedSliding {
     
-    [self stopPlayingAndSeekSmoothlyToTime:CMTimeMake(self.songTimeProgress.value * 600, 600)];
+    [self stopPlayingAndSeekSmoothlyToTime:CMTimeMake((self.songTimeProgress.value * CMTimeGetSeconds(self.player.currentItem.duration) / 100) * 600, 600)];
     self.isSliding = NO;
 }
 
@@ -223,10 +217,10 @@
 
 - (void)trySeekToChaseTime {
     
-    if (self.playerCurrentItemStatus == AVPlayerItemStatusUnknown) {
+    if (self.player.playerCurrentItemStatus == AVPlayerItemStatusUnknown) {
         // wait until item becomes ready (KVO player.currentItem.status)
     }
-    else if (self.playerCurrentItemStatus == AVPlayerItemStatusReadyToPlay) {
+    else if (self.player.playerCurrentItemStatus == AVPlayerItemStatusReadyToPlay) {
         [self actuallySeekToTime];
     }
 }
@@ -267,8 +261,7 @@
         switch (status) {
             case AVPlayerItemStatusReadyToPlay:
                 // Ready to Play
-                self.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
-                self.songTimeProgress.maximumValue = CMTimeGetSeconds(self.player.currentItem.duration);
+                self.player.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
                 [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
                 break;
             case AVPlayerItemStatusFailed:
@@ -282,17 +275,10 @@
 }
 
 - (void)playLoadedSong {
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
-    
-    [self.player play];
-    
-    // this is for testing
-    [self startAudioSession];
+
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
     
-    // end testing
-  
+    [self.player play];
 }
 
 - (void)pauseLoadedSong {
@@ -311,20 +297,13 @@
     return self.player.currentSong;
 }
 
-- (void)setPlayerPlayPauseButtonState:(EnumCellMediaPlaybackState)state {
+- (void)setPlayerPlayPauseButtonState:(BOOL)play {
     
     [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
-    if (state == EnumCellMediaPlaybackStatePause) {
+    if (!play) {
         
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
     }
-}
-
-- (void)didGetInterrupted {
-    
-    [self pauseLoadedSong];
-    [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
-    [self.songListDelegate didPauseSong:self.player.currentSong];
 }
 
 - (void)startAudioSession {

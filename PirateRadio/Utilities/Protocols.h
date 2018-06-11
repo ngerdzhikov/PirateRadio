@@ -44,7 +44,7 @@ typedef enum {
 - (void)playLoadedSong;
 - (void)pauseLoadedSong;
 - (BOOL)isPlaying;
-- (void)setPlayerPlayPauseButtonState:(EnumCellMediaPlaybackState)state;
+- (void)setPlayerPlayPauseButtonState:(BOOL)play;
 - (LocalSongModel *)nowPlaying;
 
 @end
