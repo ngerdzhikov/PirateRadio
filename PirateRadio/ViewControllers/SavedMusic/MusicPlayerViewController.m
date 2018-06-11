@@ -341,6 +341,9 @@
         NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];
         MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
             UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
+            if (!image) {
+                image = [UIImage imageNamed:@"unknown_artist_transperent"];
+            }
             return image;
         }];
         NSDictionary *info = @{ MPMediaItemPropertyArtist: self.player.currentSong.artistName,

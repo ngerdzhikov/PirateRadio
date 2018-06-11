@@ -85,7 +85,8 @@
     
     if ([object isKindOfClass:[LocalSongModel class]]) {
         LocalSongModel *songToCompare = (LocalSongModel *)object;
-        if ([songToCompare.localSongURL isEqual:self.localSongURL]) {
+        if ([songToCompare.songTitle isEqual:self.songTitle
+             ]) {
             return YES;
         }
     }

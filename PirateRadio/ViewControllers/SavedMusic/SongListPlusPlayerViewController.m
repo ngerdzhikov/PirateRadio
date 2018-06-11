@@ -59,7 +59,6 @@
     CGPoint newCenter = CGPointMake(self.view.frame.size.width/2, recognizer.view.center.y + translatedPoint.y);
     
     if (recognizer.state == UIGestureRecognizerStateChanged) {
-        NSLog(@"newCenter y = %lf", newCenter.y);
         if (newCenter.y >= (self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2) && newCenter.y <= self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6) {
             recognizer.view.center = newCenter;
         }
