@@ -39,13 +39,8 @@
     }];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
+
     
-    
-    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
-    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
-    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
-    [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(previousBtnTap:)];
-    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -117,8 +112,24 @@
         // Register as an observer of the player item's status property
         [item addObserver:self forKeyPath:@"status" options:options context:nil];
         [self updateMusicPlayerContent];
+        [self updateCommandCenterRemoteControlTargets];
     }
 }
+
+- (void)updateCommandCenterRemoteControlTargets {
+
+    [MPRemoteCommandCenter.sharedCommandCenter.togglePlayPauseCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
+
+    
+    [MPRemoteCommandCenter.sharedCommandCenter.togglePlayPauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(previousBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
+}
+
 
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
