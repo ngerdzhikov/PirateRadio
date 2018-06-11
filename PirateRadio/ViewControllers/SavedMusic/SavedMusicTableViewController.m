@@ -138,6 +138,10 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self didSelectSongFromCellForIndexPath:indexPath];
+}
+
 -(NSIndexPath *)indexPathOfLastPlayed {
     
     LocalSongModel *nowPlayingSong = self.musicPlayerDelegate.nowPlaying;
@@ -155,6 +159,10 @@
     CGPoint touchLocation = [recognizer locationInView:self.tableView];
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchLocation];
     
+    [self didSelectSongFromCellForIndexPath:indexPath];
+}
+
+- (void)didSelectSongFromCellForIndexPath:(NSIndexPath *)indexPath {
     // index of last previously played song;
     NSIndexPath *previouslyPlayedIndexPath = [self indexPathOfLastPlayed];
     LocalSongModel *songToPlay = self.songs[indexPath.row];
@@ -183,7 +191,6 @@
         }
     }
 }
-
 
 
 - (LocalSongModel *)previousSongForSong:(LocalSongModel *)song {
