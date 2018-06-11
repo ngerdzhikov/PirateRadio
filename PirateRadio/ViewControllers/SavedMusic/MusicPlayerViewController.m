@@ -43,6 +43,11 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didGetInterrupted) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     
+    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(playLoadedSong)];
+    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(pauseLoadedSong)];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(previousBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -50,9 +55,12 @@
     
     [self becomeFirstResponder];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
     
-    self.songTimeProgress.maximumValue = CMTimeGetSeconds(self.player.currentItem.duration);
+    if (self.player.currentSong != nil) {
+        self.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
+        self.songTimeProgress.maximumValue = CMTimeGetSeconds(self.player.currentItem.duration);
+    }
+    
     
 }
 
@@ -60,7 +68,6 @@
     [super viewWillAppear:animated];
     
     [self updateMusicPlayerContent];
-    
     
     
 }
@@ -149,6 +156,10 @@
 
 - (void)itemDidEndPlaying:(NSNotification *)notification {
     
+    
+    //    I will hate myself for doing this....
+    [self.player play];
+    //    it's ok for now
     [self.songListDelegate didRequestNextForSong:self.player.currentSong];
     [self.player play];
     
@@ -197,7 +208,8 @@
 
 - (void)stopPlayingAndSeekSmoothlyToTime:(CMTime)newChaseTime {
     
-    [self pauseLoadedSong];
+    [self.player pause];
+    
     NSLog(@"time = %lf", CMTimeGetSeconds(newChaseTime));
     if (CMTIME_COMPARE_INLINE(newChaseTime, !=, self.chaseTime)) {
         
@@ -313,39 +325,6 @@
     [self pauseLoadedSong];
     [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
     [self.songListDelegate didPauseSong:self.player.currentSong];
-}
-
-- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
-    if (event.type == UIEventTypeRemoteControl) {
-        switch (event.subtype) {
-            case UIEventSubtypeRemoteControlPlay:
-                
-                [self setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePause];
-                [self playLoadedSong];
-                [self.songListDelegate didStartPlayingSong:self.player.currentSong];
-                break;
-                
-            case UIEventSubtypeRemoteControlPause:
-                
-                [self setPlayerPlayPauseButtonState:EnumCellMediaPlaybackStatePlay];
-                [self pauseLoadedSong];
-                [self.songListDelegate didPauseSong:self.player.currentSong];
-                break;
-                
-            case UIEventSubtypeRemoteControlNextTrack:
-                
-                [self.songListDelegate didRequestNextForSong:self.player.currentSong];
-                break;
-                
-            case UIEventSubtypeRemoteControlPreviousTrack:
-                
-                [self.songListDelegate didRequestPreviousForSong:self.player.currentSong];
-                break;
-                
-            default:
-                break;
-        }
-    }
 }
 
 - (void)startAudioSession {
