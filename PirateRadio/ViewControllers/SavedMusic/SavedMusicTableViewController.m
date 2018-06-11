@@ -83,10 +83,6 @@
     SavedMusicTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];;
     LocalSongModel *song = self.songs[indexPath.row];
     cell.musicTitle.text = [self properMusicTitleForSong:song];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cellPlayButtonTap:)];
-    [cell.circleProgressBar addGestureRecognizer:tap];
-   
 
     if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         if (self.musicPlayerDelegate.isPlaying) {
@@ -154,13 +150,7 @@
     return indexPath;
 }
 
-- (void)cellPlayButtonTap:(UITapGestureRecognizer *)recognizer {
-    
-    CGPoint touchLocation = [recognizer locationInView:self.tableView];
-    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchLocation];
-    
-    [self didSelectSongFromCellForIndexPath:indexPath];
-}
+
 
 - (void)didSelectSongFromCellForIndexPath:(NSIndexPath *)indexPath {
     // index of last previously played song;
