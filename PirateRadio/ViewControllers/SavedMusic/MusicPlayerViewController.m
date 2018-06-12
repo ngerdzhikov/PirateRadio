@@ -118,13 +118,15 @@
 
 - (void)updateCommandCenterRemoteControlTargets {
 
-    [MPRemoteCommandCenter.sharedCommandCenter.togglePlayPauseCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.playCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
 
     
-    [MPRemoteCommandCenter.sharedCommandCenter.togglePlayPauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
+    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(previousBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changedPlaybackPositionFromCommandCenter:)];
@@ -245,7 +247,7 @@
      ^(BOOL isFinished) {
          if (CMTIME_COMPARE_INLINE(seekTimeInProgress, ==, self.chaseTime)) {
              
-             [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
+             [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
              
              self.isSeekInProgress = NO;
              
@@ -273,7 +275,7 @@
             case AVPlayerItemStatusReadyToPlay:
                 // Ready to Play
                 self.player.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
-                [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
+                [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
                 break;
             case AVPlayerItemStatusFailed:
                 // Failed. Examine AVPlayerItem.error
@@ -286,15 +288,21 @@
 }
 
 - (void)playLoadedSong {
-
+    
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
     
+    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
+    
     [self.player play];
+    
+    
 }
 
 - (void)pauseLoadedSong {
     
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
+    
+    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0.0];
     
     [self.player pause];
 }
@@ -334,7 +342,7 @@
     }
 }
 
-- (void)updateMPNowPlayingInfoCenterWithLoadedSongInfo {
+- (void)updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:(double)playbackRate {
     if ([MPNowPlayingInfoCenter class])  {
         
         NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentTime)];
@@ -350,7 +358,7 @@
                                 MPMediaItemPropertyTitle: self.player.currentSong.songTitle,
                                 MPMediaItemPropertyPlaybackDuration: duration,
                                 MPMediaItemPropertyArtwork: artwork,
-                                MPNowPlayingInfoPropertyPlaybackRate: @1.0,
+                                MPNowPlayingInfoPropertyPlaybackRate: [NSNumber numberWithDouble:playbackRate],
                                 MPNowPlayingInfoPropertyElapsedPlaybackTime: elapsedTime,
                                 };
         [MPNowPlayingInfoCenter.defaultCenter setNowPlayingInfo:info];
