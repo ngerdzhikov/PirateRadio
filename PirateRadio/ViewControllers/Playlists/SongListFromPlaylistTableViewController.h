@@ -15,6 +15,6 @@
 @property (strong, nonatomic) PlaylistModel *playlist;
 
 - (void)addSongInPlaylist;
-- (void)editSongs;
+- (void)editSongs:(id)sender;
 
 @end
