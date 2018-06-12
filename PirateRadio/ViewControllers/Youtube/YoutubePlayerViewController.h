@@ -13,7 +13,7 @@
 @class DownloadButtonWebView;
 @class CBAutoScrollLabel;
 
-@interface YoutubePlayerViewController : UIViewController <YTPlayerViewDelegate>
+@interface YoutubePlayerViewController : UIViewController <YTPlayerViewDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) VideoModel *videoModel;
 @property (weak, nonatomic) IBOutlet YTPlayerView *youtubePlayer;
