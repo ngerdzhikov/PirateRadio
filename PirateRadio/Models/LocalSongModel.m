@@ -90,12 +90,11 @@
     
     if ([object isKindOfClass:[LocalSongModel class]]) {
         LocalSongModel *songToCompare = (LocalSongModel *)object;
-        if ([songToCompare.songTitle isEqual:self.songTitle
-             ]) {
-            return YES;
+        if (![songToCompare.localSongURL.lastPathComponent isEqual:self.localSongURL.lastPathComponent]) {
+            return NO;
         }
     }
-    return NO;
+    return YES;
     
 }
 

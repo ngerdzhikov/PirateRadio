@@ -48,8 +48,8 @@
             NSLog(@"serializationError = %@", serializationError);
         }
         else {
-            NSLog(@"Found artwork");
             if ([[responseDict objectForKey:@"results"] count] > 0) {
+                NSLog(@"Found artwork");
                 NSURL *artworkURL = [NSURL URLWithString:[[responseDict objectForKey:@"results"][0] objectForKey:@"artworkUrl100"]];
                 //            NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
                 NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
