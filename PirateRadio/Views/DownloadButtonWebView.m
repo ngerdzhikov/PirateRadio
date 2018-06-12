@@ -41,7 +41,7 @@
         
         decisionHandler(WKNavigationResponsePolicyCancel);
         NSLog(@"Cancel response");
-        [self removeFromSuperview];
+        [self setUserInteractionEnabled:NO];
     }
     else {
         decisionHandler(WKNavigationResponsePolicyAllow);

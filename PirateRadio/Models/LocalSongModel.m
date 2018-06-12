@@ -41,19 +41,24 @@
     else {
         modifiedTitle = [regex stringByReplacingMatchesInString:title options:0 range:NSMakeRange(0, [title length]) withTemplate:@""];
     }
-    return modifiedTitle;
+    return [modifiedTitle substringToIndex:modifiedTitle.length - 8];
 }
 
 -(void)extractArtistNameAndSongTitleFromSongURL:(NSURL *)songURL {
     NSString *song = [[[songURL lastPathComponent] stringByDeletingPathExtension] stringByRemovingPercentEncoding];
     NSArray<NSString *> *components = [song componentsSeparatedByString:@" - "];
-    if (components.count > 1) {
+    if (components.count == 2) {
         self.artistName = components[0];
-        self.songTitle = [self extractedSongTitleFromString:[components[1] substringToIndex:components[1].length - 8]];
+        self.songTitle = [self extractedSongTitleFromString:components[1]];
+    }
+    else if (components.count > 2) {
+        self.artistName = components[0];
+        NSArray<NSString *> *newComponents = [components[1] componentsSeparatedByString:@"  "];
+        self.songTitle = newComponents[0];
     }
     else {
         self.artistName = @"Unknown artist";
-        self.songTitle = [self extractedSongTitleFromString:[song substringToIndex:song.length - 8]];
+        self.songTitle = [self extractedSongTitleFromString:song];
     }
 }
 
