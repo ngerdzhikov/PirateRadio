@@ -15,7 +15,7 @@
 
 @interface YoutubeDownloadManager ()
 
-@property (strong, nonatomic) NSMutableDictionary<NSURLSessionDownloadTask *, DownloadModel *> *downloads;
+@property (strong, nonatomic) NSMutableDictionary<id, DownloadModel *> *downloads;
 @property (strong, nonatomic) NSURLSession *youtubeSession;
 
 @end
@@ -67,11 +67,6 @@
         [self.downloads removeObjectForKey:downloadTask];
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
     }
-}
-
-
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
-    NSLog(@"Total Bytes Written = %lld", totalBytesWritten);
 }
 
 

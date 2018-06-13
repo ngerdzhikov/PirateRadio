@@ -50,6 +50,8 @@
     
     [self makeSearchForSuggestedVideosForVideoId:self.videoModel.videoId];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:@"downloadingStarted" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopAnimation) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     
 }
 
@@ -119,9 +121,11 @@
 }
 
 - (void)stopAnimation {
-    [self.activityIndicatorView stopAnimating];
-    [self.activityIndicatorView removeFromSuperview];
-    [self.blurEffectView removeFromSuperview];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicatorView stopAnimating];
+        [self.activityIndicatorView removeFromSuperview];
+        [self.blurEffectView removeFromSuperview];
+    });
 }
 
 - (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
@@ -316,6 +320,16 @@
 
 - (void)cancelButtonClicked {
     [self.autoPlaySwitch setOn:NO animated:YES];
+}
+
+- (void)didStartDownloading:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeLineScalePulseOutRapid];
+        self.activityIndicatorView.tintColor = [UIColor blackColor];
+        self.activityIndicatorView.frame = CGRectMake(self.navigationController.view.frame.origin.x/2-10, self.downloadButtonWebView.frame.origin.y - 15, self.view.bounds.size.width, self.view.bounds.size.height);
+        [self.navigationController.view addSubview:self.activityIndicatorView];
+        [self.activityIndicatorView startAnimating];
+    });
 }
 
 @end

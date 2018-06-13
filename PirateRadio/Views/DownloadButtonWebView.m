@@ -35,7 +35,9 @@
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)navigationResponse.response;
     NSString *contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
     if ([contentType isEqualToString:@"audio/mpeg"] || [contentType isEqualToString:@"application/force-download"]) {
-        
+
+        [NSNotificationCenter.defaultCenter postNotificationName:@"downloadingStarted" object:nil];
+
         DownloadModel *download = [[DownloadModel alloc] initWithVideoModel:self.videoModel andURL:httpResponse.URL];
         [YoutubeDownloadManager.sharedInstance downloadVideoWithDownloadModel:download];
         
