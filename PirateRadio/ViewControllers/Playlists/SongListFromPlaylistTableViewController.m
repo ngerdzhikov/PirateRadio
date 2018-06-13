@@ -76,6 +76,7 @@
     
     NSMutableArray<LocalSongModel *> *rearrangedSongs = [[NSMutableArray alloc] initWithCapacity:self.songs.count];
     if (toIndexPath.row - fromIndexPath.row > 0) {
+        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(0, fromIndexPath.row)]];
         [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, toIndexPath.row - fromIndexPath.row)]];
         [rearrangedSongs addObject:self.songs[fromIndexPath.row]];
         [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(toIndexPath.row + 1, self.songs.count - toIndexPath.row - 1)]];
