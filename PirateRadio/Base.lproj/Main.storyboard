@@ -636,7 +636,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="c2n-l8-OzO">
-                                <rect key="frame" x="82" y="13" width="250" height="273"/>
+                                <rect key="frame" x="82" y="5" width="250" height="282.66666666666669"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mzo-Pc-5ck" customClass="CBAutoScrollLabel">
                                         <rect key="frame" x="0.0" y="0.0" width="250" height="20"/>
@@ -651,8 +651,25 @@
                                             <constraint firstAttribute="height" constant="30" id="yoZ-bO-Hh5"/>
                                         </constraints>
                                     </slider>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tYc-IK-QHA">
+                                        <rect key="frame" x="0.0" y="50" width="250" height="9.6666666666666643"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p7t-Qn-yWb">
+                                                <rect key="frame" x="0.0" y="0.0" width="236" height="9.6666666666666661"/>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="8"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6B6-eP-JPN">
+                                                <rect key="frame" x="236" y="0.0" width="14" height="9.6666666666666661"/>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="8"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="71" translatesAutoresizingMaskIntoConstraints="NO" id="fAd-x9-o1Z">
-                                        <rect key="frame" x="0.0" y="50" width="250" height="36"/>
+                                        <rect key="frame" x="0.0" y="59.666666666666671" width="250" height="36"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qUz-x6-6Hs">
                                                 <rect key="frame" x="0.0" y="0.0" width="36" height="36"/>
@@ -686,7 +703,7 @@
                                         </subviews>
                                     </stackView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GzL-15-2zn">
-                                        <rect key="frame" x="0.0" y="86" width="250" height="187"/>
+                                        <rect key="frame" x="0.0" y="95.666666666666686" width="250" height="187"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="187" id="cHw-tX-alD"/>
                                             <constraint firstAttribute="width" secondItem="GzL-15-2zn" secondAttribute="height" multiplier="250:187" id="tCL-e1-3V9"/>
@@ -697,19 +714,21 @@
                         </subviews>
                         <color key="backgroundColor" red="0.15687546224396701" green="0.66813372603957821" blue="0.91932480569948183" alpha="0.098343970070422532" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="c2n-l8-OzO" firstAttribute="top" secondItem="JeQ-PZ-wtD" secondAttribute="top" constant="13" id="mWU-GE-rX8"/>
+                            <constraint firstItem="c2n-l8-OzO" firstAttribute="top" secondItem="JeQ-PZ-wtD" secondAttribute="top" constant="5" id="mWU-GE-rX8"/>
                             <constraint firstItem="c2n-l8-OzO" firstAttribute="centerX" secondItem="JeQ-PZ-wtD" secondAttribute="centerX" id="uzs-Mn-a0S"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="JeQ-PZ-wtD"/>
                     </view>
                     <size key="freeformSize" width="414" height="300"/>
                     <connections>
+                        <outlet property="elapsedTimeLabel" destination="p7t-Qn-yWb" id="bu6-Rb-g5n"/>
                         <outlet property="nextButton" destination="zh1-of-FlN" id="WVL-UA-Rb5"/>
                         <outlet property="playButton" destination="OSK-C1-WNs" id="06W-Ej-B7z"/>
                         <outlet property="previousButton" destination="qUz-x6-6Hs" id="szC-TC-d03"/>
                         <outlet property="songImage" destination="GzL-15-2zn" id="o6c-HX-xJC"/>
                         <outlet property="songName" destination="mzo-Pc-5ck" id="JqS-qe-5pe"/>
                         <outlet property="songTimeProgress" destination="CAd-3T-75d" id="UZb-cz-ucD"/>
+                        <outlet property="timeLeftLabel" destination="6B6-eP-JPN" id="ck8-eb-nMY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rt2-SH-Y5u" userLabel="First Responder" sceneMemberID="firstResponder"/>

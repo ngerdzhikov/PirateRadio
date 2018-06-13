@@ -20,6 +20,8 @@
 @property BOOL isSeekInProgress;
 @property BOOL isSliding;
 @property CMTime chaseTime;
+@property (weak, nonatomic) IBOutlet UILabel *elapsedTimeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeLeftLabel;
 
 @end
 
@@ -65,12 +67,14 @@
 }
 
 - (void)updateProgressBar {
+    double duration = CMTimeGetSeconds(self.player.currentItem.duration);
+    double time = CMTimeGetSeconds(self.player.currentTime);
     if (!self.isSliding) {
-        double duration = CMTimeGetSeconds(self.player.currentItem.duration);
-        double time = CMTimeGetSeconds(self.player.currentTime);
+        
         self.songTimeProgress.value = (time / duration) * 100;
         [self.songListDelegate updateProgress:(time / duration) * 100 forSong:self.player.currentSong];
     }
+    [self setTime:time andDuration:duration];
     
 }
 
@@ -96,17 +100,7 @@
         [self.player replaceCurrentItemWithPlayerItem:item];
         NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
     
-        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];
-        MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
-            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:song.localArtworkURL]];
-            return image;
-        }];
-        NSDictionary *info = @{ MPMediaItemPropertyArtist: song.artistName,
-                                MPMediaItemPropertyTitle: song.songTitle,
-                                MPMediaItemPropertyPlaybackDuration: duration,
-                                MPMediaItemPropertyArtwork: artwork,
-                                                                 };
-        [MPNowPlayingInfoCenter.defaultCenter setNowPlayingInfo:info];
+        [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0];
         // setting duration not working.
         
         // Register as an observer of the player item's status property
@@ -171,7 +165,7 @@
     [self.player play];
     
     // this is for testing
-    [self startAudioSession];
+//    [self startAudioSession];
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
 }
 
@@ -276,6 +270,7 @@
                 // Ready to Play
                 self.player.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
                 [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
+                [self setTime:0 andDuration:CMTimeGetSeconds(self.player.currentItem.duration)];
                 break;
             case AVPlayerItemStatusFailed:
                 // Failed. Examine AVPlayerItem.error
@@ -369,6 +364,16 @@
 - (void)changedPlaybackPositionFromCommandCenter:(MPChangePlaybackPositionCommandEvent *)event {
     CMTime time = CMTimeMake((double)event.positionTime * 600, 600);
     [self stopPlayingAndSeekSmoothlyToTime:time];
+}
+
+- (void)setTime:(double)time andDuration:(double)duration {
+    int elapsedMinutes = ((int)time / 60) % 60;
+    int elapsedSeconds = (int)time % 60;
+    int minutesLeft = (((int)duration - (int)time) / 60) % 60;
+    int secondsLeft = ((int)duration - (int)time) % 60;
+    
+    self.elapsedTimeLabel.text = [NSString stringWithFormat:@"%d:%d%d", elapsedMinutes, (elapsedSeconds / 10), (elapsedSeconds % 10)];
+    self.timeLeftLabel.text = [NSString stringWithFormat:@"-%d:%d%d", minutesLeft, (secondsLeft / 10), (secondsLeft % 10)];
 }
 
 @end
