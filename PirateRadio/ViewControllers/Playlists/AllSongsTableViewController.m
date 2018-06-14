@@ -15,10 +15,10 @@
 
 @interface AllSongsTableViewController ()<UISearchBarDelegate>
 
-@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
+@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *allSongs;
+@property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *selectedSongs;
-@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *backupSongs;
-@property (strong, nonatomic) NSString *searchTextBeforeEnding;
+@property (strong, nonatomic) UISearchController *searchController;
 
 @end
 
@@ -33,18 +33,12 @@
     UIBarButtonItem *commitSelectedButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(commitSelected)];
     self.navigationItem.rightBarButtonItem = commitSelectedButton;
     
-    self.backupSongs = [NSMutableArray arrayWithArray:self.songs];
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    self.searchController.dimsBackgroundDuringPresentation = NO;
+    self.navigationItem.searchController = self.searchController;
+    self.navigationItem.searchController.searchBar.delegate = self;
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0., 0., 320., 44.)];
-    searchBar.enablesReturnKeyAutomatically = NO;
-    searchBar.returnKeyType = UIReturnKeyDone;
-    searchBar.delegate = self;
-    self.tableView.tableHeaderView = searchBar;
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -54,7 +48,7 @@
 
 - (void)loadSongsFromDisk {
     
-    self.songs = [[NSMutableArray alloc] init];
+    self.allSongs = [[NSMutableArray alloc] init];
     NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
     NSArray* dirs = [NSFileManager.defaultManager contentsOfDirectoryAtURL:sourcePath includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
@@ -64,7 +58,7 @@
         if ([extension isEqualToString:@"mp3"]) {
             LocalSongModel *localSong = [[LocalSongModel alloc] initWithLocalSongURL:[NSURL URLWithString:filePath]];
             if (![self.playlist.songs containsObject:localSong]) {
-                [self.songs addObject:localSong];
+                [self.allSongs addObject:localSong];
             }
         }
     }];
@@ -90,9 +84,8 @@
     return self.songs.count;
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"allSongsCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"allSongsCell" forIndexPath:indexPath];
     LocalSongModel *song = self.songs[indexPath.row];
     if (![song.artistName isEqualToString:@"Unknown artist"]) {
         cell.textLabel.text = [[song.artistName stringByAppendingString: @" - "] stringByAppendingString:song.songTitle];
@@ -118,82 +111,39 @@
     else {
         [self.selectedSongs removeObject:self.songs[indexPath.row]];
     }
-    [self.tableView reloadData];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
-
 
 #pragma mark searchBarDelegate
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     
-    self.searchTextBeforeEnding = searchText;
-    
-    
     if (searchText.length > 0) {
-        self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
-        self.songs = [[self.songs filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        
+        self.filteredSongs = [self.allSongs filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+            
             return ([evaluatedObject.songTitle.lowercaseString containsString:searchText.lowercaseString] ||
                     [evaluatedObject.artistName.lowercaseString containsString:searchText.lowercaseString]);
-        }]] mutableCopy];
-        
-        [self.tableView reloadData];
+        }]];
     }
-    else {
-        self.songs = [NSMutableArray arrayWithArray:self.backupSongs];
-        [self.tableView reloadData];
+    
+    [self.tableView reloadData];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    searchBar.text = @"";
+    [self.tableView reloadData];
+}
+
+- (BOOL)isFiltering {
+    return ![self.searchController.searchBar.text isEqualToString:@""];
+}
+
+- (NSArray<LocalSongModel *> *)songs {
+    if (self.isFiltering) {
+        return self.filteredSongs;
     }
+    return self.allSongs;
 }
-
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    searchBar.text = self.searchTextBeforeEnding;
-}
-
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [searchBar resignFirstResponder];
-}
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
