@@ -20,6 +20,7 @@
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
+@property (strong, nonatomic) NSMutableDictionary<NSString *, NSNumber *> *allSongsDurations;
 @property (strong, nonatomic) UIImageView *noSongsImageView;
 
 @end
@@ -34,6 +35,8 @@
 
     self.tableView.tableHeaderView = self.navigationItem.searchController.searchBar;
 
+    self.allSongsDurations = [[NSMutableDictionary alloc] init];
+    [self loadAllSongsDurations];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -76,6 +79,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)loadAllSongsDurations {
+    
+    for (LocalSongModel *song in self.allSongs) {
+        AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
+        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
+        [self.allSongsDurations setObject:duration forKey:song.localSongURL.absoluteString];
+    }
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -105,7 +117,8 @@
     
     LocalSongModel *song = self.songs[indexPath.row];
     cell.musicTitle.text = [self properMusicTitleForSong:song];
-
+    cell.songDurationLabel.text = [self extractSongDurationFromNumber:[self.allSongsDurations objectForKey:song.localSongURL.absoluteString]];
+    
     if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         if (self.musicPlayerDelegate.isPlaying) {
             cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
@@ -123,7 +136,7 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 44.0f;
+    return 50.0f;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -174,15 +187,11 @@
     return indexPath;
 }
 
-
-
 - (void)didSelectSongFromCellForIndexPath:(NSIndexPath *)indexPath {
-    // index of last previously played song;
-    NSIndexPath *previouslyPlayedIndexPath = [self indexPathOfLastPlayed];
     LocalSongModel *songToPlay = self.songs[indexPath.row];
     
     if (![songToPlay isEqual:self.musicPlayerDelegate.nowPlaying]) {
-        [self clearProgressForCellAtIndexPath:previouslyPlayedIndexPath];
+        [self clearProgressForCellAtIndexPath:self.indexPathOfLastPlayed];
         [self.musicPlayerDelegate prepareSong:songToPlay];
         [self.musicPlayerDelegate playLoadedSong];
         
@@ -206,7 +215,6 @@
     }
 }
 
-
 - (LocalSongModel *)previousSongForSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
@@ -215,7 +223,6 @@
     if (previousIndexPath.row < 0) {
         previousIndexPath = [NSIndexPath indexPathForRow:self.songs.count - 1 inSection:indexPath.section];
     }
-    
     
     return self.songs[previousIndexPath.row];
 }
@@ -361,6 +368,22 @@
         return self.filteredSongs;
     }
     return self.allSongs;
+}
+
+#pragma mark Calculating Methods
+
+- (NSString *)extractSongDurationFromNumber:(NSNumber *)duration {
+    int songDuration = duration.intValue;
+    int hours = songDuration / 3600;
+    int minutes = (songDuration / 60) % 60;
+    int seconds = songDuration % 60;
+    
+    if (hours == 0) {
+        return [NSString stringWithFormat:@"%d:%d%d", minutes, (seconds / 10), (seconds % 10)];
+    }
+    else {
+        return [NSString stringWithFormat:@"%d:%d%d:%d%d", hours, (minutes / 10), (minutes % 10), (seconds / 10), (seconds % 10)];
+    }
 }
 
 @end

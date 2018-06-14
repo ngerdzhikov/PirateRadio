@@ -13,5 +13,6 @@
 @interface SavedMusicTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *musicTitle;
 @property (strong, nonatomic) MBCircularProgressBarView *circleProgressBar;
+@property (weak, nonatomic) IBOutlet UILabel *songDurationLabel;
 
 @end

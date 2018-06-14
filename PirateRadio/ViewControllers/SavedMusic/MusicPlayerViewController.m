@@ -210,8 +210,7 @@
 - (void)stopPlayingAndSeekSmoothlyToTime:(CMTime)newChaseTime {
     
     [self.player pause];
-    
-    NSLog(@"time = %lf", CMTimeGetSeconds(newChaseTime));
+
     if (CMTIME_COMPARE_INLINE(newChaseTime, !=, self.chaseTime)) {
         
         self.chaseTime = newChaseTime;
@@ -367,13 +366,21 @@
 }
 
 - (void)setTime:(double)time andDuration:(double)duration {
+    int elapsedHours = (int)time / 3600;
     int elapsedMinutes = ((int)time / 60) % 60;
     int elapsedSeconds = (int)time % 60;
+    int hoursLeft = ((int)duration - (int)time) / 3600;
     int minutesLeft = (((int)duration - (int)time) / 60) % 60;
     int secondsLeft = ((int)duration - (int)time) % 60;
     
-    self.elapsedTimeLabel.text = [NSString stringWithFormat:@"%d:%d%d", elapsedMinutes, (elapsedSeconds / 10), (elapsedSeconds % 10)];
-    self.timeLeftLabel.text = [NSString stringWithFormat:@"-%d:%d%d", minutesLeft, (secondsLeft / 10), (secondsLeft % 10)];
+    if (elapsedHours + hoursLeft > 0) {
+        self.elapsedTimeLabel.text = [NSString stringWithFormat:@"%d:%d%d:%d%d", elapsedHours, (elapsedMinutes / 10), (elapsedMinutes % 10), (elapsedSeconds / 10), (elapsedSeconds % 10)];
+        self.timeLeftLabel.text = [NSString stringWithFormat:@"%d:%d%d:%d%d", hoursLeft, (minutesLeft / 10), (minutesLeft % 10), (secondsLeft / 10), (secondsLeft % 10)];
+    }
+    else {
+        self.elapsedTimeLabel.text = [NSString stringWithFormat:@"%d:%d%d", elapsedMinutes, (elapsedSeconds / 10), (elapsedSeconds % 10)];
+        self.timeLeftLabel.text = [NSString stringWithFormat:@"-%d:%d%d", minutesLeft, (secondsLeft / 10), (secondsLeft % 10)];
+    }
 }
 
 @end
