@@ -27,13 +27,23 @@
 + (void)updateDatabaseForChangedPlaylist:(PlaylistModel *)playlist {
     NSMutableArray<PlaylistModel *> *playlists = [[PlaylistsDatabase loadPlaylistsFromUserDefaults] mutableCopy];
     NSUInteger index = NSIntegerMax;
+    int i = 0;
     for (PlaylistModel *iteratingPlaylist in playlists) {
         if ([iteratingPlaylist.name isEqualToString:playlist.name]) {
-            index = [playlists indexOfObject:iteratingPlaylist];
+            index = i;
             break;
         }
+        i++;
     }
     [playlists replaceObjectAtIndex:index withObject:playlist];
+    [PlaylistsDatabase savePlaylistArray:playlists];
+}
+
++ (void)removeSong:(LocalSongModel *)song {
+    NSMutableArray<PlaylistModel *> *playlists = [[PlaylistsDatabase loadPlaylistsFromUserDefaults] mutableCopy];
+    for (PlaylistModel *iteratingPlaylist in playlists) {
+        [iteratingPlaylist.songs removeObject:song];
+    }
     [PlaylistsDatabase savePlaylistArray:playlists];
 }
 
