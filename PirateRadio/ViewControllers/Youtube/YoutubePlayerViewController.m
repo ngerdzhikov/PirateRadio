@@ -51,7 +51,7 @@
     [self makeSearchForSuggestedVideosForVideoId:self.videoModel.videoId];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:@"downloadingStarted" object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopAnimation) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     
 }
 
@@ -120,12 +120,22 @@
     [self.activityIndicatorView startAnimating];
 }
 
-- (void)stopAnimation {
+- (void)stopAnimation:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.activityIndicatorView stopAnimating];
         [self.activityIndicatorView removeFromSuperview];
-        [self.blurEffectView removeFromSuperview];
+        UILabel *downloadFinishedLabel = [[UILabel alloc] initWithFrame:self.downloadButtonWebView.frame];
+        downloadFinishedLabel.text = @"Download finished.";
+        downloadFinishedLabel.textAlignment = NSTextAlignmentCenter;
+        downloadFinishedLabel.font = [UIFont boldSystemFontOfSize:20];
+        [self.scrollView addSubview:downloadFinishedLabel];
     });
+}
+
+- (void)stopAnimation {
+    [self.activityIndicatorView stopAnimating];
+    [self.activityIndicatorView removeFromSuperview];
+    [self.blurEffectView removeFromSuperview];
 }
 
 - (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
@@ -273,6 +283,10 @@
     
 }
 
+- (void)playNextButtonTap {
+    [self pushYoutubePlayerWithVideoModel:self.suggestedVideos[0]];
+}
+
 - (void)startAutoPlayAnimation {
     UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
     self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
@@ -281,8 +295,8 @@
     
 
     
-    MBCircularProgressBarView *circularProgressBar = [[MBCircularProgressBarView alloc]
-                                                      initWithFrame:CGRectMake(self.youtubePlayer.frame.size.width/2 - 50, self.youtubePlayer.frame.size.height/2 - 50, 100, 100)];
+    MBCircularProgressBarView *circularProgressBar = [[MBCircularProgressBarView alloc] initWithFrame:
+                                                      CGRectMake(self.youtubePlayer.frame.size.width/2 - 50, self.youtubePlayer.frame.size.height/2 - 50, 100, 100)];
     circularProgressBar.maxValue = 5;
     circularProgressBar.value = 0;
     circularProgressBar.showUnitString = NO;
@@ -291,13 +305,28 @@
     [self.youtubePlayer addSubview:circularProgressBar];
     
     self.timer = 0;
+    UILabel *nextVideoLabel = [[UILabel alloc] initWithFrame:
+                          CGRectMake(self.youtubePlayer.frame.origin.x, circularProgressBar.frame.origin.y - 30, self.youtubePlayer.frame.size.width, 20)];
+    nextVideoLabel.font = [UIFont systemFontOfSize:17];
+    nextVideoLabel.textAlignment = NSTextAlignmentCenter;
+    nextVideoLabel.text = [NSString stringWithFormat:@"Next: %@", self.suggestedVideos[0].videoTitle];
+    [self.youtubePlayer addSubview:nextVideoLabel];
     
     UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
     [cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [cancelButton setFrame:CGRectMake(circularProgressBar.frame.origin.x, circularProgressBar.frame.origin.y + 50, 100, 100)];
+    [cancelButton setFrame:CGRectMake(circularProgressBar.frame.origin.x, circularProgressBar.frame.origin.y + 100, 100, 30)];
     [cancelButton addTarget:self action:@selector(cancelButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.youtubePlayer addSubview:cancelButton];
+    
+    UIButton *playNextButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [playNextButton setImage:[UIImage imageNamed:@"next_button_icon"] forState:UIControlStateNormal];
+    [playNextButton setFrame:CGRectMake(circularProgressBar.frame.origin.x + circularProgressBar.frame.size.width / 2 - 15,
+                                        circularProgressBar.frame.origin.y + circularProgressBar.frame.size.height / 2  - 15,
+                                        30,
+                                        30)];
+    [playNextButton addTarget:self action:@selector(playNextButtonTap) forControlEvents:UIControlEventTouchUpInside];
+    [self.youtubePlayer addSubview:playNextButton];
     
     [[NSTimer scheduledTimerWithTimeInterval:0.1 repeats:YES block:^(NSTimer * _Nonnull timer) {
         if (!self.autoPlaySwitch.isOn) {
@@ -326,10 +355,11 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeLineScalePulseOutRapid];
         self.activityIndicatorView.tintColor = [UIColor blackColor];
-        self.activityIndicatorView.frame = CGRectMake(self.navigationController.view.frame.origin.x/2-10, self.downloadButtonWebView.frame.origin.y - 15, self.view.bounds.size.width, self.view.bounds.size.height);
-        [self.navigationController.view addSubview:self.activityIndicatorView];
+        self.activityIndicatorView.frame = self.downloadButtonWebView.frame;
+        [self.scrollView addSubview:self.activityIndicatorView];
         [self.activityIndicatorView startAnimating];
     });
+    self.downloadButtonWebView.hidden = YES;
 }
 
 @end
