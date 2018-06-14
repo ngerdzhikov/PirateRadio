@@ -29,10 +29,12 @@
 }
 
 - (void)newSongDownloaded:(NSNotification *)notification {
-    if (self.selectedIndex != 1) {
-        self.downloadedSongs++;
-        self.viewControllers[1].tabBarItem.badgeValue = [NSString stringWithFormat:@"%lu", (unsigned long)self.downloadedSongs];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.selectedIndex != 1) {
+            self.downloadedSongs++;
+            self.viewControllers[1].tabBarItem.badgeValue = [NSString stringWithFormat:@"%lu", (unsigned long)self.downloadedSongs];
+        }
+    });
 }
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
