@@ -33,9 +33,14 @@
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;
     
-    if (self.songListViewController.songs.firstObject && self.playerViewController.nowPlaying == nil) {
-        [self.playerViewController prepareSong:self.songListViewController.songs.firstObject];
+    if (self.songListViewController.allSongs.firstObject && self.playerViewController.nowPlaying == nil) {
+        [self.playerViewController prepareSong:self.songListViewController.allSongs.firstObject];
     }
+    
+    self.navigationItem.searchController = self.songListViewController.songListSearchController;
+    self.navigationItem.searchController.searchBar.delegate = self.songListViewController;
+    self.navigationItem.searchController.dimsBackgroundDuringPresentation = NO;
+    
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];
     [self.musicPlayerContainer addGestureRecognizer:pan];
@@ -94,7 +99,7 @@
         SongListFromPlaylistTableViewController *vc = [storyBoard instantiateViewControllerWithIdentifier:@"songListFromPlaylistTableViewController"];
         vc.playlist = self.playlist;
         self.songListViewController = vc;
-        self.songListViewController.songs = self.playlist.songs;
+        self.songListViewController.allSongs = self.playlist.songs;
         
         self.navigationItem.title = self.playlist.name;
         UIBarButtonItem *addSongsButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self.songListViewController action:@selector(addSongInPlaylist)];
@@ -104,7 +109,7 @@
     }
     else {
         self.songListViewController = [storyBoard instantiateViewControllerWithIdentifier:@"savedMusicViewController"];
-        self.songListViewController.songs = [self songsFromDisk];
+        self.songListViewController.allSongs = [self songsFromDisk];
     }
     
     

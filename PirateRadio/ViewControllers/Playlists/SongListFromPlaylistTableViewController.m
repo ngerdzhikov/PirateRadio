@@ -48,14 +48,16 @@
 }
 
 - (void)editSongs:(id)sender {
-    self.editing = !self.editing;
-    if ([sender isKindOfClass:UIBarButtonItem.class]) {
-        UIBarButtonItem *editButton = (UIBarButtonItem *)sender;
-        if (self.editing) {
-            [editButton setTitle:@"Done"];
-        }
-        else {
-            [editButton setTitle:@"Edit"];
+    if (!self.isFiltering) {
+        self.editing = !self.editing;
+        if ([sender isKindOfClass:UIBarButtonItem.class]) {
+            UIBarButtonItem *editButton = (UIBarButtonItem *)sender;
+            if (self.editing) {
+                [editButton setTitle:@"Done"];
+            }
+            else {
+                [editButton setTitle:@"Edit"];
+            }
         }
     }
 }
@@ -74,24 +76,24 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
     
-    NSMutableArray<LocalSongModel *> *rearrangedSongs = [[NSMutableArray alloc] initWithCapacity:self.songs.count];
+    NSMutableArray<LocalSongModel *> *rearrangedSongs = [[NSMutableArray alloc] initWithCapacity:self.allSongs.count];
     if (toIndexPath.row - fromIndexPath.row > 0) {
-        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(0, fromIndexPath.row)]];
-        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, toIndexPath.row - fromIndexPath.row)]];
-        [rearrangedSongs addObject:self.songs[fromIndexPath.row]];
-        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(toIndexPath.row + 1, self.songs.count - toIndexPath.row - 1)]];
-        self.songs = [NSMutableArray arrayWithArray:rearrangedSongs];
+        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(0, fromIndexPath.row)]];
+        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, toIndexPath.row - fromIndexPath.row)]];
+        [rearrangedSongs addObject:self.allSongs[fromIndexPath.row]];
+        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(toIndexPath.row + 1, self.allSongs.count - toIndexPath.row - 1)]];
+        self.allSongs = [NSMutableArray arrayWithArray:rearrangedSongs];
     }
     else if (toIndexPath.row - fromIndexPath.row < 0) {
-        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(0, toIndexPath.row)]];
-        [rearrangedSongs addObject:self.songs[fromIndexPath.row]];
-        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(toIndexPath.row, fromIndexPath.row - toIndexPath.row)]];
-        if (fromIndexPath.row < self.songs.count - 1) {
-            [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, self.songs.count - 1 - fromIndexPath.row)]];
+        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(0, toIndexPath.row)]];
+        [rearrangedSongs addObject:self.allSongs[fromIndexPath.row]];
+        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(toIndexPath.row, fromIndexPath.row - toIndexPath.row)]];
+        if (fromIndexPath.row < self.allSongs.count - 1) {
+            [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, self.allSongs.count - 1 - fromIndexPath.row)]];
         }
-        self.songs = [NSMutableArray arrayWithArray:rearrangedSongs];
+        self.allSongs = [NSMutableArray arrayWithArray:rearrangedSongs];
     }
-    self.playlist.songs = self.songs;
+    self.playlist.songs = self.allSongs;
 
     [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
     

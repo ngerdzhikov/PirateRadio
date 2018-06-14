@@ -13,14 +13,14 @@
 #import "SavedMusicTableViewCell.h"
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
+#import "PlaylistsDatabase.h"
 #import "Constants.h"
 
 
 @interface SavedMusicTableViewController ()
 
-@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *filteredSongs;
-@property (strong, nonatomic) NSString *searchTextBeforeEnding;
-@property BOOL isFiltered;
+@property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
+@property (strong, nonatomic) UIImageView *noSongsImageView;
 
 @end
 
@@ -30,12 +30,9 @@
     [super viewDidLoad];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
-    
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0., 0., 320., 44.)];
-    searchBar.enablesReturnKeyAutomatically = NO;
-    searchBar.returnKeyType = UIReturnKeyDone;
-    searchBar.delegate = self;
-    self.tableView.tableHeaderView = searchBar;
+    self.songListSearchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+
+    self.tableView.tableHeaderView = self.navigationItem.searchController.searchBar;
 
 }
 
@@ -64,7 +61,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.isFiltered) {
+    if (self.isFiltering) {
         return self.filteredSongs.count;
     }
     return self.songs.count;
@@ -84,13 +81,7 @@
     
     SavedMusicTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
     
-    LocalSongModel *song;
-    if (self.isFiltered) {
-        song = self.filteredSongs[indexPath.row];
-    }
-    else {
-        song = self.songs[indexPath.row];
-    }
+    LocalSongModel *song = self.songs[indexPath.row];
     cell.musicTitle.text = [self properMusicTitleForSong:song];
 
     if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
@@ -115,12 +106,13 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    if ([[self indexPathOfLastPlayed] isEqual:[self indexPathForSong:self.musicPlayerDelegate.nowPlaying]]) {
+    LocalSongModel *song = self.songs[indexPath.row];
+    if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         [self.musicPlayerDelegate pauseLoadedSong];
         [self.musicPlayerDelegate prepareSong:[self nextSongForSong:self.musicPlayerDelegate.nowPlaying]];
         [self.musicPlayerDelegate setPlayerPlayPauseButtonState:YES];
     }
-    LocalSongModel *song = self.songs[indexPath.row];
+    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSError *error;
         [NSFileManager.defaultManager removeItemAtURL:song.localSongURL error:&error];
@@ -134,9 +126,10 @@
         else {
             
 //            remove from dataSource
-            [self.songs removeObjectAtIndex:indexPath.row];
+            [self.allSongs removeObjectAtIndex:indexPath.row];
 //            post notification that song is deleted and pass it
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
+            [PlaylistsDatabase removeSong:song];
             
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
@@ -309,7 +302,7 @@
 
 - (void)didRecieveNewSong:(NSNotification *)notification {
     LocalSongModel *newSong = [notification.userInfo objectForKey:@"song"];
-    [self.songs addObject:newSong];
+    [self.allSongs addObject:newSong];
     NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -319,34 +312,33 @@
 #pragma mark searchBarDelegate
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-
-    self.searchTextBeforeEnding = searchText;
-    
     
     if (searchText.length > 0) {
-        self.isFiltered = YES;
-        self.filteredSongs = [[self.songs filteredArrayUsingPredicate:
+        self.filteredSongs = [self.allSongs filteredArrayUsingPredicate:
                                [NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
             
             return ([[self properMusicTitleForSong:evaluatedObject].lowercaseString containsString:searchText.lowercaseString] ||
                     [evaluatedObject.songTitle.lowercaseString containsString:searchText.lowercaseString] ||
                     [evaluatedObject.artistName.lowercaseString containsString:searchText.lowercaseString]);
-        }]] mutableCopy];
-        
-        [self.tableView reloadData];
+        }]];
     }
-    else {
-        self.isFiltered = NO;
-        [self.tableView reloadData];
-    }
+    [self.tableView reloadData];
 }
 
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    searchBar.text = self.searchTextBeforeEnding;
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    searchBar.text = @"";
+    [self.tableView reloadData];
 }
 
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [searchBar resignFirstResponder];
+- (BOOL)isFiltering {
+    return ![self.songListSearchController.searchBar.text isEqualToString:@""];
+}
+
+- (NSArray<LocalSongModel *> *)songs {
+    if (self.isFiltering) {
+        return self.filteredSongs;
+    }
+    return self.allSongs;
 }
 
 @end

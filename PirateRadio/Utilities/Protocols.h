@@ -35,6 +35,7 @@ typedef enum {
 - (void)didStartPlayingSong:(LocalSongModel *)song;
 - (void)didRequestNextForSong:(LocalSongModel *)song;
 - (void)didRequestPreviousForSong:(LocalSongModel *)song;
+- (BOOL)isFiltering;
 
 @end
 
