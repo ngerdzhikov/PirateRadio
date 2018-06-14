@@ -39,12 +39,34 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-//    if (self.songs.count == 0) {
-//        UIImageView *noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
-//        noSongsImageView.frame = CGRectMake(self.tableView.frame.size.width / 4, self.tableView.frame.size.height / 4, self.tableView.frame.size.width / 2, self.tableView.frame.size.height / 2);
-//        [self.view addSubview:noSongsImageView];
-//        self.tableView.tableHeaderView = nil;
-//    }
+    if (self.songs.count == 0) {
+        if (![self.view.subviews containsObject:self.noSongsImageView]) {
+            self.noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
+            self.noSongsImageView.frame = CGRectMake(self.tableView.frame.size.width / 4, self.tableView.frame.size.height / 4, 200, 200);
+            [self.view addSubview:self.noSongsImageView];
+            [self.view addConstraint:
+             [NSLayoutConstraint constraintWithItem:self.noSongsImageView
+                                          attribute:NSLayoutAttributeCenterX
+                                          relatedBy:0
+                                             toItem:self.view
+                                          attribute:NSLayoutAttributeCenterX
+                                         multiplier:1
+                                           constant:0]];
+            
+            [self.view addConstraint:
+             [NSLayoutConstraint constraintWithItem:self.noSongsImageView
+                                          attribute:NSLayoutAttributeCenterY
+                                          relatedBy:0
+                                             toItem:self.view
+                                          attribute:NSLayoutAttributeCenterY
+                                         multiplier:1
+                                           constant:0]];
+            
+        }
+    }
+    else {
+        [self.noSongsImageView removeFromSuperview];
+    }
     
     [self.tableView reloadData];
 }
