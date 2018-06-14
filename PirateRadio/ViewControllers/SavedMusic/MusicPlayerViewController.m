@@ -270,7 +270,7 @@
                 // Ready to Play
                 self.player.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
                 [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
-                [self setTime:0 andDuration:CMTimeGetSeconds(self.player.currentItem.duration)];
+                [self setTime:CMTimeGetSeconds(self.player.currentTime) andDuration:CMTimeGetSeconds(self.player.currentItem.duration)];
                 break;
             case AVPlayerItemStatusFailed:
                 // Failed. Examine AVPlayerItem.error
