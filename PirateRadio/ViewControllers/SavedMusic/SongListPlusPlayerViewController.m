@@ -40,6 +40,7 @@
     self.navigationItem.searchController = self.songListViewController.songListSearchController;
     self.navigationItem.searchController.searchBar.delegate = self.songListViewController;
     self.navigationItem.searchController.dimsBackgroundDuringPresentation = NO;
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onMusicControllerPan:)];

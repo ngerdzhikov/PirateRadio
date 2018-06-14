@@ -19,5 +19,8 @@
 @property (weak, nonatomic) id<MusicPlayerDelegate> musicPlayerDelegate;
 @property (strong, nonatomic) NSMutableArray<LocalSongModel *> *allSongs;
 @property (strong, nonatomic) UISearchController *songListSearchController;
+@property (strong, nonatomic) NSMutableDictionary<NSString *, NSNumber *> *allSongsDurations;
+
+- (void)displayEmptyListImageIfNeeded;
 
 @end

@@ -20,7 +20,6 @@
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
-@property (strong, nonatomic) NSMutableDictionary<NSString *, NSNumber *> *allSongsDurations;
 @property (strong, nonatomic) UIImageView *noSongsImageView;
 
 @end
@@ -31,10 +30,10 @@
     [super viewDidLoad];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didRecieveNewSong:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
+    
     self.songListSearchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-
-    self.tableView.tableHeaderView = self.navigationItem.searchController.searchBar;
-
+    
+    
     self.allSongsDurations = [[NSMutableDictionary alloc] init];
     [self loadAllSongsDurations];
 }
@@ -42,34 +41,11 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (self.songs.count == 0) {
-        if (![self.view.subviews containsObject:self.noSongsImageView]) {
-            self.noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
-            self.noSongsImageView.frame = CGRectMake(self.tableView.frame.size.width / 4, self.tableView.frame.size.height / 4, 200, 200);
-            [self.view addSubview:self.noSongsImageView];
-            [self.view addConstraint:
-             [NSLayoutConstraint constraintWithItem:self.noSongsImageView
-                                          attribute:NSLayoutAttributeCenterX
-                                          relatedBy:0
-                                             toItem:self.view
-                                          attribute:NSLayoutAttributeCenterX
-                                         multiplier:1
-                                           constant:0]];
-            
-            [self.view addConstraint:
-             [NSLayoutConstraint constraintWithItem:self.noSongsImageView
-                                          attribute:NSLayoutAttributeCenterY
-                                          relatedBy:0
-                                             toItem:self.view
-                                          attribute:NSLayoutAttributeCenterY
-                                         multiplier:1
-                                           constant:0]];
-            
-        }
+    if (self.songs.count != self.allSongsDurations.count) {
+        [self loadAllSongsDurations];
     }
-    else {
-        [self.noSongsImageView removeFromSuperview];
-    }
+    [self displayEmptyListImageIfNeeded];
+    
     
     [self.tableView reloadData];
 }
@@ -88,6 +64,44 @@
     }
 }
 
+- (void)displayEmptyListImageIfNeeded {
+    if (self.songs.count == 0) {
+        if (![self.view.subviews containsObject:self.noSongsImageView]) {
+            self.noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
+            self.noSongsImageView.frame = CGRectMake(self.tableView.frame.origin.x + self.tableView.frame.size.width / 4, self.tableView.frame.origin.y + self.tableView.frame.size.height / 4, self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+            self.noSongsImageView.translatesAutoresizingMaskIntoConstraints = NO;
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:3.0];
+            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:self.noSongsImageView cache:YES];
+            [self.view addSubview:self.noSongsImageView];
+            [UIView commitAnimations];
+            [self.view addConstraint:
+             [NSLayoutConstraint constraintWithItem:self.noSongsImageView
+                                          attribute:NSLayoutAttributeCenterX
+                                          relatedBy:0
+                                             toItem:self.view
+                                          attribute:NSLayoutAttributeCenterX
+                                         multiplier:1
+                                           constant:0]];
+            
+            [self.view addConstraint:
+             [NSLayoutConstraint constraintWithItem:self.noSongsImageView
+                                          attribute:NSLayoutAttributeCenterY
+                                          relatedBy:0
+                                             toItem:self.view
+                                          attribute:NSLayoutAttributeCenterY
+                                         multiplier:1
+                                           constant:0]];
+            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.height / 2]];
+            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.width / 2]];
+            
+        }
+    }
+    else {
+        [self.noSongsImageView removeFromSuperview];
+    }
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -95,9 +109,6 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.isFiltering) {
-        return self.filteredSongs.count;
-    }
     return self.songs.count;
 }
 
@@ -162,11 +173,15 @@
             
 //            remove from dataSource
             [self.allSongs removeObjectAtIndex:indexPath.row];
+            [self.allSongsDurations removeObjectForKey:song.localSongURL.absoluteString];
 //            post notification that song is deleted and pass it
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
             [PlaylistsDatabase removeSong:song];
             
+            [self displayEmptyListImageIfNeeded];
+            
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            
         }
     }
 }
@@ -332,8 +347,11 @@
 - (void)didRecieveNewSong:(NSNotification *)notification {
     LocalSongModel *newSong = [notification.userInfo objectForKey:@"song"];
     [self.allSongs addObject:newSong];
-    NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
+    AVURLAsset *songAsset = [AVURLAsset assetWithURL:newSong.localSongURL];
+    [self.allSongsDurations setObject:[NSNumber numberWithDouble:CMTimeGetSeconds(songAsset.duration)] forKey:newSong.localSongURL.absoluteString];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
         [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
     });
 }
