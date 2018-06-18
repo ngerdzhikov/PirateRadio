@@ -25,12 +25,17 @@
 @interface YoutubePlayerViewController ()
 
 @property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
-@property (strong, nonatomic) UIVisualEffectView *blurEffectView;
 @property (strong, nonatomic) NSMutableArray<VideoModel *> *suggestedVideos;
 @property (weak, nonatomic) IBOutlet UITableView *suggestedVideosTableView;
-@property (weak, nonatomic) IBOutlet UISwitch *autoPlaySwitch;
+@property (strong, nonatomic) CBAutoScrollLabel *videoTitle;
+@property (strong, nonatomic) UITextView *videoDescription;
+@property (strong, nonatomic) UILabel *videoViewsLabel;
+@property (strong, nonatomic) UILabel *autoPlayLabel;
+@property (strong, nonatomic) UIVisualEffectView *blurEffectView;
+@property (strong, nonatomic) UISwitch *autoPlaySwitch;
+@property (strong, nonatomic) DownloadButtonWebView *downloadButtonWebView;
 @property (nonatomic) double timer;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+
 
 @end
 
@@ -41,7 +46,7 @@
     
     [self startAnimation];
     
-    [self setContentDetailsForVideoModel:self.videoModel];
+    [self setYoutubePlayerForVideoModel:self.videoModel];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
@@ -70,31 +75,13 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)setContentDetailsForVideoModel:(VideoModel *)videoModel {
+- (void)setYoutubePlayerForVideoModel:(VideoModel *)videoModel {
     NSDictionary *playerVars = @{
                                  @"playsinline" : @1,
                                  @"origin" : @"https://www.example.com"
                                  };
     [self.youtubePlayer loadWithVideoId:videoModel.videoId playerVars:playerVars];
     self.youtubePlayer.delegate = self;
-    self.videoTitle.text = videoModel.videoTitle;
-    self.videoTitle.scrollSpeed = 15;
-    self.videoDescription.text = videoModel.videoDescription;
-    if ([self.videoDescription.text isEqualToString:@""]) {
-        self.videoDescription.text = @"No description.";
-    }
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
-    numberFormatter.groupingSeparator = groupingSeparator;
-    numberFormatter.groupingSize = 3;
-    numberFormatter.alwaysShowsDecimalSeparator = NO;
-    numberFormatter.usesGroupingSeparator = YES;
-    self.videoViews.text = [[numberFormatter stringFromNumber:[numberFormatter numberFromString:videoModel.videoViews]] stringByAppendingString:@" views"];
-    
-    NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:videoModel.videoId];
-    NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
-    [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
-    self.downloadButtonWebView.videoModel = videoModel;
 }
 
 - (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
@@ -128,7 +115,8 @@
         downloadFinishedLabel.text = @"Download finished.";
         downloadFinishedLabel.textAlignment = NSTextAlignmentCenter;
         downloadFinishedLabel.font = [UIFont boldSystemFontOfSize:20];
-        [self.scrollView addSubview:downloadFinishedLabel];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:3 inSection:0];
+        [[self.suggestedVideosTableView cellForRowAtIndexPath:indexPath] addSubview:downloadFinishedLabel];
     });
 }
 
@@ -159,7 +147,7 @@
     }
 }
 
-- (IBAction)autoPlaySwitchTap:(id)sender {
+- (void)autoPlaySwitchTap:(id)sender {
     if (self.autoPlaySwitch.isOn && self.youtubePlayer.playerState == kYTPlayerStateEnded && (self.suggestedVideos.count > 0)) {
         [self startAutoPlayAnimation];
     }
@@ -230,48 +218,82 @@
 #pragma mark tableViewDelegate
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == 0) {
+        return 4;
+    }
     return self.suggestedVideos.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0) {
+        if (indexPath.row == 2) {
+            return 150.0f;
+        }
+        return 50.0f;
+    }
     return 255.0f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
-    VideoModel *videoModel = self.suggestedVideos[indexPath.row];
-    UIImage *thumbnail = [ImageCacher.sharedInstance imageForVideoId:videoModel.videoId];
-    if (!thumbnail) {
-        thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
+    if (indexPath.section == 0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"defaultCell"];
+        if (indexPath.row == 0) {
+            [self addVideoTitleInCell:cell];
+        }
+        if (indexPath.row == 1) {
+            [self addVideoViewsAndAutoPlaySwitchInCell:cell];
+        }
+        if (indexPath.row == 2) {
+            [self addVideoDescriptionInCell:cell];
+        }
+        if (indexPath.row == 3) {
+            [self addDownloadButtonInCell:cell];
+        }
+        return cell;
     }
-    cell.videoImage.image = thumbnail;
-    cell.videoTitle.text = videoModel.videoTitle;
-    cell.channelTitle.text = videoModel.channelTitle;
-    
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
-    numberFormatter.groupingSeparator = groupingSeparator;
-    numberFormatter.groupingSize = 3;
-    numberFormatter.alwaysShowsDecimalSeparator = NO;
-    numberFormatter.usesGroupingSeparator = YES;
-    cell.views.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:videoModel.videoViews]];
-    
-    cell.duration.text = videoModel.formattedDuration;
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
-    NSDate *date = [dateFormatter dateFromString:videoModel.publishedAt];
-    cell.dateUploaded.text = [[dateFormatter stringFromDate:date] componentsSeparatedByString:@"T"][0];
-    
-    return cell;
+    else if (indexPath.section == 1) {
+        SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
+        VideoModel *videoModel = self.suggestedVideos[indexPath.row];
+        UIImage *thumbnail = [ImageCacher.sharedInstance imageForSearchResultId:videoModel.videoId];
+        if (!thumbnail) {
+            thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
+        }
+        cell.videoImage.image = thumbnail;
+        cell.videoTitle.text = videoModel.videoTitle;
+        cell.channelTitle.text = videoModel.channelTitle;
+        
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
+        numberFormatter.groupingSeparator = groupingSeparator;
+        numberFormatter.groupingSize = 3;
+        numberFormatter.alwaysShowsDecimalSeparator = NO;
+        numberFormatter.usesGroupingSeparator = YES;
+        cell.views.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:videoModel.videoViews]];
+        
+        cell.duration.text = videoModel.formattedDuration;
+        
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+        NSDate *date = [dateFormatter dateFromString:videoModel.publishedAt];
+        cell.dateUploaded.text = [[dateFormatter stringFromDate:date] componentsSeparatedByString:@"T"][0];
+        
+        return cell;
+    }
+    else return nil;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self pushYoutubePlayerWithVideoModel:self.suggestedVideos[indexPath.row]];
+    if (indexPath.section == 1)
+        [self pushYoutubePlayerWithVideoModel:self.suggestedVideos[indexPath.row]];
+}
+
+- (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 1) return YES;
+    return NO;
 }
 
 - (void)pushYoutubePlayerWithVideoModel:(VideoModel *)videoModel {
@@ -334,6 +356,7 @@
             [circularProgressBar removeFromSuperview];
             [self.blurEffectView removeFromSuperview];
             [cancelButton removeFromSuperview];
+            [playNextButton removeFromSuperview];
             
         }
         self.timer += timer.timeInterval;
@@ -356,10 +379,77 @@
         self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeLineScalePulseOutRapid];
         self.activityIndicatorView.tintColor = [UIColor blackColor];
         self.activityIndicatorView.frame = self.downloadButtonWebView.frame;
-        [self.scrollView addSubview:self.activityIndicatorView];
+        [[self.suggestedVideosTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]] addSubview:self.activityIndicatorView];
         [self.activityIndicatorView startAnimating];
     });
     self.downloadButtonWebView.hidden = YES;
+}
+
+- (void)addVideoTitleInCell:(UITableViewCell *)cell {
+    if (!self.videoTitle) {
+        self.videoTitle = [[CBAutoScrollLabel alloc] init];
+        self.videoTitle.text = self.videoModel.videoTitle;
+        self.videoTitle.scrollSpeed = 15;
+        self.videoTitle.textAlignment = NSTextAlignmentCenter;
+        [cell.contentView addSubview:self.videoTitle];
+    }
+    self.videoTitle.frame = CGRectMake(cell.frame.origin.x, cell.frame.origin.y, self.view.frame.size.width, cell.frame.size.height);
+}
+
+- (void)addVideoViewsAndAutoPlaySwitchInCell:(UITableViewCell *)cell {
+    if (!self.autoPlaySwitch && !self.videoViewsLabel) {
+        self.videoViewsLabel = [[UILabel alloc] init];
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
+        numberFormatter.groupingSeparator = groupingSeparator;
+        numberFormatter.groupingSize = 3;
+        numberFormatter.alwaysShowsDecimalSeparator = NO;
+        numberFormatter.usesGroupingSeparator = YES;
+        self.videoViewsLabel.text = [[numberFormatter stringFromNumber:[numberFormatter numberFromString:self.videoModel.videoViews]] stringByAppendingString:@" views"];
+        [cell.contentView addSubview:self.videoViewsLabel];
+        
+        self.autoPlaySwitch = [[UISwitch alloc] init];
+        self.autoPlaySwitch.on = YES;
+        [self.autoPlaySwitch addTarget:self action:@selector(autoPlaySwitchTap:) forControlEvents:UIControlEventValueChanged];
+        [cell.contentView addSubview:self.autoPlaySwitch];
+    }
+    if (!self.autoPlayLabel) {
+        self.autoPlayLabel = [[UILabel alloc] init];
+        self.autoPlayLabel.text = @"Autoplay";
+        [cell.contentView addSubview:self.autoPlayLabel];
+    }
+    self.videoViewsLabel.frame = CGRectMake(cell.frame.origin.x + 10, 15, self.view.frame.size.width / 2 - 30, 20);
+    self.autoPlaySwitch.frame = CGRectMake(self.view.frame.size.width - 60, 10, 50, 20);
+    self.autoPlayLabel.frame = CGRectMake(self.autoPlaySwitch.frame.origin.x - 90, 15, 90, 20);
+}
+
+- (void)addVideoDescriptionInCell:(UITableViewCell *)cell {
+    
+    if (!self.videoDescription) {
+        self.videoDescription = [[UITextView alloc] init];
+        self.videoDescription.editable = NO;
+        self.videoDescription.font = [UIFont systemFontOfSize:17];
+        self.videoDescription.text = self.videoModel.videoDescription;
+        [cell.contentView addSubview:self.videoDescription];
+    }
+    self.videoDescription.frame = cell.contentView.frame;
+}
+
+- (void)addDownloadButtonInCell:(UITableViewCell *)cell {
+    
+    if (!self.downloadButtonWebView) {
+        WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+        configuration.allowsInlineMediaPlayback = NO;
+        self.downloadButtonWebView = [[DownloadButtonWebView alloc] initWithFrame:cell.contentView.frame configuration:configuration];
+        self.downloadButtonWebView.navigationDelegate = self.downloadButtonWebView;
+        NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.videoModel.videoId];
+        NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
+        [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
+        self.downloadButtonWebView.videoModel = self.videoModel;
+        self.downloadButtonWebView.translatesAutoresizingMaskIntoConstraints = NO;
+        [cell.contentView addSubview:self.downloadButtonWebView];
+    }
+    self.downloadButtonWebView.frame = cell.contentView.frame;
 }
 
 @end
