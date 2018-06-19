@@ -33,12 +33,12 @@
     return self;
 }
 
-- (void)cacheImage:(UIImage *)image forVideoId:(NSString *)videoId {
-    [self.cache setObject:image forKey:videoId];
+- (void)cacheImage:(UIImage *)image forSearchResultId:(NSString *)searchResultId {
+    [self.cache setObject:image forKey:searchResultId];
 }
 
-- (UIImage *)imageForVideoId:(NSString *)videoId {
-    return [self.cache objectForKey:videoId];
+- (UIImage *)imageForSearchResultId:(NSString *)searchResultId {
+    return [self.cache objectForKey:searchResultId];
 }
 
 - (void)clearCache {
