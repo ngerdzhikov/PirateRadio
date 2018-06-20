@@ -35,7 +35,10 @@
     self = [super init];
     if (self) {
         self.downloads = [[NSMutableDictionary alloc] init];
-        self.youtubeSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"youtubeDownload"] delegate:self delegateQueue:nil];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"youtubeDownload"];
+        configuration.waitsForConnectivity = YES;
+        configuration.shouldUseExtendedBackgroundIdleMode = YES;
+        self.youtubeSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     }
     return self;
 }
