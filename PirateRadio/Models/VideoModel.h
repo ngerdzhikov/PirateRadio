@@ -7,17 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "YoutubeEntityModel.h"
 
 @class ThumbnailModel;
 
-@interface VideoModel : NSObject
+@interface VideoModel : YoutubeEntityModel
 
-@property (strong, nonatomic, readonly) NSString *videoId;
-@property (strong, nonatomic, readonly) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
-@property (strong, nonatomic, readonly) NSString *videoTitle;
-@property (strong, nonatomic, readonly) NSString *videoDescription;
-@property (strong, nonatomic, readonly) NSString *publishedAt;
-@property (strong, nonatomic, readonly) NSString *channelTitle;
 @property (strong, nonatomic) NSString *videoDuration;
 @property (strong, nonatomic) NSString *videoViews;
 

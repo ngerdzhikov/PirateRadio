@@ -11,6 +11,7 @@
 #define YOUTUBE_API_SEARCH_PREFIX @"https://www.googleapis.com/youtube/v3/search"
 #define YOUTUBE_API_VIDEO_DURATION_REQUEST_PREFIX @"https://www.googleapis.com/youtube/v3/videos"
 #define SEARCH_SUGGESTION_REQUEST_PREFIX @"http://clients1.google.com/complete/search"
+#define YOUTUBE_API_PLAYLIST_PREFIX @"https://www.googleapis.com/youtube/v3/playlistItems"
 
 @implementation YoutubeConnectionManager
 
@@ -18,7 +19,7 @@
     NSURL *url = [NSURL URLWithString:YOUTUBE_API_SEARCH_PREFIX];
     NSArray<NSURLQueryItem *> *queryItems = @[
                                               [NSURLQueryItem queryItemWithName:@"part" value:@"snippet"],
-                                              [NSURLQueryItem queryItemWithName:@"type" value:@"video"],
+                                              [NSURLQueryItem queryItemWithName:@"type" value:@"video,playlist"],
                                               [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
                                               [NSURLQueryItem queryItemWithName:@"q" value:[keywords componentsJoinedByString:@"+"]],
                                               [NSURLQueryItem queryItemWithName:@"maxResults" value:@"15"],
@@ -41,7 +42,7 @@
     [self.class makeGetRequestWithURLRequest:request withCompletion:completion];
 }
 
-+ (void)makeYoutubeRequestForMostPopularVideosWithNextPageToken:(NSString *)nextPageToken  andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
++ (void)makeYoutubeRequestForMostPopularVideosWithNextPageToken:(NSString *)nextPageToken andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
      NSURL *url = [NSURL URLWithString:YOUTUBE_API_VIDEO_DURATION_REQUEST_PREFIX];
     NSArray<NSURLQueryItem *> *queryItems = @[
                                               [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails,statistics"],
@@ -76,6 +77,20 @@
                                               [NSURLQueryItem queryItemWithName:@"maxResults" value:@"10"],
                                               [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
                                               [NSURLQueryItem queryItemWithName:@"relatedToVideoId" value:videoId],
+                                              ];
+    url = [url URLByAppendingQueryItems:queryItems];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [self.class makeGetRequestWithURLRequest:request withCompletion:completion];
+}
+
++ (void)makeYoutubeRequestForPlaylistItemsForPlaylistId:(NSString *)playlistId withNextPageToken:(NSString *)nextPageToken andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
+    NSURL *url = [NSURL URLWithString:YOUTUBE_API_PLAYLIST_PREFIX];
+    NSArray<NSURLQueryItem *> *queryItems = @[
+                                              [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails"],
+                                              [NSURLQueryItem queryItemWithName:@"playlistId" value:playlistId],
+                                              [NSURLQueryItem queryItemWithName:@"maxResults" value:@"50"],
+                                              [NSURLQueryItem queryItemWithName:@"nextPageToken" value:nextPageToken],
+                                              [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
                                               ];
     url = [url URLByAppendingQueryItems:queryItems];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];

@@ -11,11 +11,14 @@
 
 @class VideoModel;
 @class DownloadButtonWebView;
+@class YoutubePlaylistModel;
 @class CBAutoScrollLabel;
 
 @interface YoutubePlayerViewController : UIViewController <YTPlayerViewDelegate, UITableViewDelegate, UITableViewDataSource>
 
-@property (strong, nonatomic) VideoModel *videoModel;
+@property (strong, nonatomic) VideoModel *currentVideoModel;
+@property (strong, nonatomic) YoutubePlaylistModel *youtubePlaylist;
+@property (strong, nonatomic) NSMutableArray<VideoModel *> *suggestedVideos;
 @property (weak, nonatomic) IBOutlet YTPlayerView *youtubePlayer;
 
 

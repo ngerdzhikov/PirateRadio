@@ -14,5 +14,7 @@
 + (void)makeYoutubeRequestForMostPopularVideosWithNextPageToken:(NSString *)nextPageToken  andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion;
 + (void)makeSearchWithNextPageToken:(NSString *)nextPageToken andKeywords:(NSArray<NSString *> *)keywords andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion;
 + (void)makeYoutubeRequestForSuggestedVideosForVideoId:(NSString *)videoId andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion;
++ (void)makeYoutubeRequestForPlaylistItemsForPlaylistId:(NSString *)playlistId withNextPageToken:(NSString *)nextPageToken andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion;
+
 
 @end

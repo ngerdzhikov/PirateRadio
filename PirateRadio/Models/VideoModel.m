@@ -12,46 +12,23 @@
 
 @interface VideoModel ()
 
-@property (strong, nonatomic) NSString *videoId;
-@property (strong, nonatomic) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
-@property (strong, nonatomic) UIImage *thumb;
-@property (strong, nonatomic) NSString *videoTitle;
-@property (strong, nonatomic) NSString *videoDescription;
-@property (strong, nonatomic) NSString *publishedAt;
-@property (strong, nonatomic) NSString *channelTitle;
-
 @end
 
 @implementation VideoModel
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet andVideoId:(NSString *)videoId {
-    self = [super init];
-    if (self)
-    {
-        self.videoId = videoId;
-        self.videoTitle = [snippet objectForKey:@"title"];
-        self.videoDescription = [snippet objectForKey:@"description"];
-        self.publishedAt = [snippet objectForKey:@"publishedAt"];
-        NSDictionary<NSString *, id> *thumbnailsDict = [snippet objectForKey:@"thumbnails"];
-        NSMutableDictionary<NSString *,ThumbnailModel *> *temp = [[NSMutableDictionary alloc] init];
-        for (NSString *quality in thumbnailsDict.allKeys) {
-            NSDictionary *thumbDict = [thumbnailsDict objectForKey:quality];
-            ThumbnailModel *thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:thumbDict];
-            [temp setObject:thumbnail forKey:quality];
-        }
-        self.thumbnails = temp.copy;
-        self.thumb = [UIImage imageWithData:[NSData dataWithContentsOfURL:[self.thumbnails objectForKey:@"high"].url]];
-        [ImageCacher.sharedInstance cacheImage:self.thumb forVideoId:videoId];
-        self.channelTitle = [snippet objectForKey:@"channelTitle"];
+    self = [super initWithSnippet:snippet entityId:videoId andKind:@"youtube#video"];
+    if (self) {
+        
     }
     
     return self;
 }
 
 - (NSString*)formattedDuration {
-    NSInteger hours = 0;
-    NSInteger minutes = 0;
-    NSInteger seconds = 0;
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
     NSString *duration = self.videoDuration;
     //Get Time part from ISO 8601 formatted duration http://en.wikipedia.org/wiki/ISO_8601#Durations
     duration = [duration substringFromIndex:[duration rangeOfString:@"T"].location];

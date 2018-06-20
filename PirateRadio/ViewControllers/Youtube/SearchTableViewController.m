@@ -15,6 +15,7 @@
 #import "SearchSuggestionsTableViewController.h"
 #import "ImageCacher.h"
 #import "DGActivityIndicatorView.h"
+#import "YoutubePlaylistModel.h"
 
 typedef enum {
     EnumLastSearchTypeWithKeywords,
@@ -25,7 +26,7 @@ typedef enum {
 @interface SearchTableViewController ()<UISearchBarDelegate, UIPopoverPresentationControllerDelegate>
 
 @property (strong, nonatomic) NSMutableDictionary<NSString *, VideoModel *> *videoModelsDict;
-@property (strong, nonatomic) NSMutableArray<VideoModel *> *videoModelsArray;
+@property (strong, nonatomic) NSMutableArray<YoutubeEntityModel *> *youtubeSearchEntities;
 @property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
 @property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
 @property (strong, nonatomic) UIVisualEffectView *blurEffectView;
@@ -57,7 +58,7 @@ typedef enum {
     self.isNextPageEnabled = NO;
     self.searchSuggestions = [[NSMutableArray alloc] init];
     self.videoModelsDict = [[NSMutableDictionary alloc] init];
-    self.videoModelsArray = [[NSMutableArray alloc] init];
+    self.youtubeSearchEntities = [[NSMutableArray alloc] init];
     self.tableView.showsVerticalScrollIndicator = YES;
     [self makeSearchForMostPopularVideos];
 }
@@ -74,7 +75,7 @@ typedef enum {
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.videoModelsArray.count;
+    return self.youtubeSearchEntities.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -83,37 +84,59 @@ typedef enum {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
-    VideoModel *videoModel = self.videoModelsArray[indexPath.row];
-    UIImage *thumbnail = [ImageCacher.sharedInstance imageForVideoId:videoModel.videoId];
+    YoutubeEntityModel *entityModel = self.youtubeSearchEntities[indexPath.row];
+    UIImage *thumbnail = [ImageCacher.sharedInstance imageForSearchResultId:entityModel.entityId];
     if (!thumbnail) {
-        thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
+        thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[entityModel.thumbnails objectForKey:@"high"].url]];
     }
     cell.videoImage.image = thumbnail;
-    cell.videoTitle.text = videoModel.videoTitle;
-    cell.channelTitle.text = videoModel.channelTitle;
+    cell.videoTitle.text = entityModel.title;
+    cell.channelTitle.text = entityModel.channelTitle;
     
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
-    numberFormatter.groupingSeparator = groupingSeparator;
-    numberFormatter.groupingSize = 3;
-    numberFormatter.alwaysShowsDecimalSeparator = NO;
-    numberFormatter.usesGroupingSeparator = YES;
-    cell.views.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:videoModel.videoViews]];
-    
-    cell.duration.text = videoModel.formattedDuration;
+    if([entityModel.kind isEqualToString:@"youtube#video"]) {
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        NSString *groupingSeparator = [[NSLocale currentLocale] objectForKey:NSLocaleGroupingSeparator];
+        numberFormatter.groupingSeparator = groupingSeparator;
+        numberFormatter.groupingSize = 3;
+        numberFormatter.alwaysShowsDecimalSeparator = NO;
+        numberFormatter.usesGroupingSeparator = YES;
+        VideoModel *videoModel = [self.videoModelsDict objectForKey:entityModel.entityId];
+        cell.views.text = [numberFormatter stringFromNumber:[numberFormatter numberFromString:videoModel.videoViews]];
+        
+        cell.duration.text = videoModel.formattedDuration;
+    }
+    else {
+        YoutubePlaylistModel *playlistModel = (YoutubePlaylistModel *)entityModel;
+        cell.views.text = @"Playlist";
+        cell.duration.text = [[NSString stringWithFormat:@"%lu",playlistModel.playlistItems.count] stringByAppendingString:@" items"];
+    }
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
-    NSDate *date = [dateFormatter dateFromString:videoModel.publishedAt];
+    NSDate *date = [dateFormatter dateFromString:entityModel.publishedAt];
     cell.dateUploaded.text = [[dateFormatter stringFromDate:date] componentsSeparatedByString:@"T"][0];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
-    youtubePlayer.videoModel = self.videoModelsArray[indexPath.row];
-    [self.navigationController pushViewController:youtubePlayer animated:YES];
+
+    YoutubeEntityModel *entity = self.youtubeSearchEntities[indexPath.row];
+    
+    YoutubePlaylistModel *youtubePlaylistModel;
+    
+    if ([entity.kind isEqualToString:@"youtube#video"]) {
+        VideoModel *videoModel = (VideoModel *)entity;
+        youtubePlaylistModel = [[YoutubePlaylistModel alloc] initWithVideoModel:videoModel];
+        YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
+        youtubePlayer.youtubePlaylist = youtubePlaylistModel;
+        [self.navigationController pushViewController:youtubePlayer animated:YES];
+    }
+    else if ([entity.kind isEqualToString:@"youtube#playlist"]) {
+        youtubePlaylistModel = (YoutubePlaylistModel *)entity;
+        [self makeSearchForPlaylistItemsWithPlaylist:youtubePlaylistModel andNextPageToken:@""];
+    }
+    
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -212,7 +235,7 @@ typedef enum {
         self.lastSearchType = EnumLastSearchTypeWithKeywords;
         NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         self.videoModelsDict = [[NSMutableDictionary alloc] init];
-        self.videoModelsArray = [[NSMutableArray alloc] init];
+        self.youtubeSearchEntities = [[NSMutableArray alloc] init];
         [self makeSearchWithKeywords:keywords];
     }
 
@@ -246,22 +269,32 @@ typedef enum {
                 }
                 else {
                     for (NSDictionary *item in items) {
-                        NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
-                        NSDictionary *snippet = [item objectForKey:@"snippet"];
-                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                        [self.videoModelsArray addObject:videoModel];
-                        [self.videoModelsDict setObject:videoModel forKey:videoId];
+                        NSDictionary<NSString *, NSString *> *itemId = [item objectForKey:@"id"];
+//                        if it is a video
+                        if ([[itemId objectForKey:@"kind"] isEqualToString:@"youtube#video"]) {
+                            NSString *videoId = [itemId objectForKey:@"videoId"];
+                            NSDictionary *snippet = [item objectForKey:@"snippet"];
+                            VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                            [self.youtubeSearchEntities addObject:videoModel];
+                            [self.videoModelsDict setObject:videoModel forKey:videoId];
+                        }
+//                        if it is a playlist
+                        else if ([[itemId objectForKey:@"kind"] isEqualToString:@"youtube#playlist"]) {
+                            NSString *playlistId = [itemId objectForKey:@"playlistId"];
+                            NSDictionary *snippet = [item objectForKey:@"snippet"];
+                            YoutubePlaylistModel *youtubePlaylist = [[YoutubePlaylistModel alloc] initWithSnippet:snippet andPlaylistId:playlistId];
+                            [self.youtubeSearchEntities addObject:youtubePlaylist];
+                        }
                     }
-                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModelsArray];
+                    [self makeSearchForVideoDurationsWithVideoModels:self.videoModelsDict];
                 }
             }
         }
     }];
 }
 
-- (void)makeSearchForVideoDurationsWithVideoModels:(NSMutableArray<VideoModel *> *)videoModels {
-    NSArray<NSString *> *videoIds = [[NSArray alloc] initWithArray:[videoModels valueForKey:@"videoId"]];
-    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:videoIds andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+- (void)makeSearchForVideoDurationsWithVideoModels:(NSMutableDictionary<NSString *,VideoModel *> *)videoModels {
+    [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:videoModels.allKeys andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error searching for video durations = %@", error);
             [self stopAnimation];
@@ -293,6 +326,44 @@ typedef enum {
     }];
 }
 
+- (void)makeSearchForPlaylistItemsWithPlaylist:(YoutubePlaylistModel *)youtubePlaylistModel andNextPageToken:(NSString *)nextPageToken {
+    [YoutubeConnectionManager makeYoutubeRequestForPlaylistItemsForPlaylistId:youtubePlaylistModel.entityId withNextPageToken:nextPageToken andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error searching for playlist items = %@", error);
+        }
+        else {
+            
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            
+            else {
+                
+                NSArray *items = [responseDict objectForKey:@"items"];
+                for (NSDictionary *item in items) {
+                    NSDictionary *snippet = [item objectForKey:@"snippet"];
+                    NSDictionary *contentDetails = [item objectForKey:@"contentDetails"];
+                    NSString *entityId = [contentDetails objectForKey:@"videoId"];
+                    VideoModel *entity = [[VideoModel alloc] initWithSnippet:snippet entityId:entityId andKind:@"youtube#video"];
+                    [youtubePlaylistModel addPlaylistItem:entity];
+                }
+                NSString *totalResults = [[responseDict objectForKey:@"pageInfo"] objectForKey:@"totalResults"];
+                if (totalResults.integerValue != youtubePlaylistModel.playlistItems.count) {
+                    NSString *newNextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
+                    youtubePlayer.youtubePlaylist = youtubePlaylistModel;
+                    [self.navigationController pushViewController:youtubePlayer animated:YES];
+                });
+            }
+        }
+    }];
+}
+
 - (void)makeSearchForMostPopularVideos {
     self.lastSearchType = EnumLastSearchTypeSuggestions;
     [self startAnimation];
@@ -319,7 +390,7 @@ typedef enum {
                     NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
                     videoModel.videoDuration = duration;
                     videoModel.videoViews = views;
-                    [self.videoModelsArray addObject:videoModel];
+                    [self.youtubeSearchEntities addObject:videoModel];
                     [self.videoModelsDict setObject:videoModel forKey:videoId];
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -355,37 +426,6 @@ typedef enum {
 - (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
     self.navigationItem.searchController.active = NO;
 }
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
 
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
