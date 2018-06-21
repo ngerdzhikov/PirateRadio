@@ -36,6 +36,7 @@
     
     self.allSongsDurations = [[NSMutableDictionary alloc] init];
     [self loadAllSongsDurations];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -327,6 +328,8 @@
         indexPath = [self indexPathForSong:nextSong];
         [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
     }
+    
+    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
 }
 
 - (void)didRequestPreviousForSong:(LocalSongModel *)song {
@@ -342,6 +345,7 @@
         indexPath = [self indexPathForSong:previousSong];
         [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
     }
+    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
 }
 
 - (void)didRecieveNewSong:(NSNotification *)notification {
