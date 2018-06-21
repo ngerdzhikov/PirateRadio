@@ -31,6 +31,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *suggestedVideosTableView;
 @property (strong, nonatomic) CBAutoScrollLabel *videoTitle;
 @property (strong, nonatomic) UITextView *videoDescription;
+@property (strong, nonatomic) UIButton *expandTextViewButton;
 @property (strong, nonatomic) UILabel *videoViewsLabel;
 @property (strong, nonatomic) UILabel *autoPlayLabel;
 @property (strong, nonatomic) UIVisualEffectView *blurEffectView;
@@ -39,6 +40,7 @@
 @property (nonatomic) double timer;
 @property BOOL isPlayingFromPlaylist;
 @property (strong, nonatomic) UISwitch *autoPlaySwitch;
+@property double descriptionHeight;
 
 
 @end
@@ -54,9 +56,10 @@
     
     self.currentVideoModel = self.youtubePlaylist.playlistItems.firstObject;
     
+    self.descriptionHeight = 50;
+    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
-    
     
     self.suggestedVideosTableView.delegate = self;
     self.suggestedVideosTableView.dataSource = self;
@@ -70,6 +73,7 @@
     else {
         [self setYoutubePlayerWithPlaylist:self.youtubePlaylist];
         self.suggestedVideos = self.youtubePlaylist.playlistItems;
+        [self makeSearchForVideoDurationsWithVideoModels:self.suggestedVideos];
         self.isPlayingFromPlaylist = NO;
     }
     
@@ -282,7 +286,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
         if (indexPath.row == 2) {
-            return 150.0f;
+            return self.descriptionHeight;
         }
         return 50.0f;
     }
@@ -341,10 +345,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1)
         [self loadNextVideoWithVideoModel:self.suggestedVideos[indexPath.row]];
+
 }
 
 - (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1) return YES;
+    if (indexPath.section == 0 && indexPath.row == 2) return YES;
     return NO;
 }
 
@@ -484,14 +490,21 @@
 
 - (void)addVideoDescriptionInCell:(UITableViewCell *)cell {
     
-    if (!self.videoDescription) {
+    if (!self.videoDescription && !self.expandTextViewButton) {
         self.videoDescription = [[UITextView alloc] init];
         self.videoDescription.editable = NO;
         self.videoDescription.font = [UIFont systemFontOfSize:17];
         [cell.contentView addSubview:self.videoDescription];
+        
+        self.expandTextViewButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.expandTextViewButton setImage:[UIImage imageNamed:@"expand_more_icon"] forState:UIControlStateNormal];
+        [self.expandTextViewButton addTarget:self action:@selector(expandButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [cell.contentView addSubview:self.expandTextViewButton];
     }
     self.videoDescription.text = self.currentVideoModel.entityDescription;
     self.videoDescription.frame = cell.contentView.frame;
+    self.expandTextViewButton.frame = CGRectMake(self.videoDescription.frame.size.width - 20, self.videoDescription.frame.size.height - 20, 20, 20);
 }
 
 - (void)addDownloadButtonInCell:(UITableViewCell *)cell {
@@ -549,6 +562,33 @@
         [MPNowPlayingInfoCenter.defaultCenter setNowPlayingInfo:info];
         
     }
+}
+
+- (void)expandButtonClicked:(UIButton *)sender {
+    [self.suggestedVideosTableView beginUpdates];
+    double heightBeforeChange = self.descriptionHeight;
+    if (self.descriptionHeight == 150) {
+        self.descriptionHeight = 50;
+        [self.expandTextViewButton setImage:[UIImage imageNamed:@"expand_more_icon"] forState:UIControlStateNormal];
+
+    }
+    else {
+        self.descriptionHeight = 150;
+        [self.expandTextViewButton setImage:[UIImage imageNamed:@"expand_less_icon"] forState:UIControlStateNormal];
+
+    }
+    
+    [UIView animateWithDuration:0.25f
+                          delay:0.0f
+                        options:0
+                     animations:^{
+                         self.videoDescription.frame = CGRectMake(self.videoDescription.frame.origin.x, self.videoDescription.frame.origin.y, self.videoDescription.frame.size.width, (self.videoDescription.frame.size.height + self.descriptionHeight - heightBeforeChange));
+                         self.expandTextViewButton.frame = CGRectMake(self.videoDescription.frame.size.width - 20, self.videoDescription.frame.size.height - 20, 20, 20);
+                     }
+                     completion:^(BOOL finished) {
+                     }];
+    
+    [self.suggestedVideosTableView endUpdates];
 }
 
 @end
