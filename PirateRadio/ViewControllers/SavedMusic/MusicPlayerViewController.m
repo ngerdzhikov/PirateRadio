@@ -51,14 +51,13 @@
     [self becomeFirstResponder];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
-    
+    [self updateCommandCenterRemoteControlTargets];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self updateMusicPlayerContent];
-    
     
 }
 
@@ -118,7 +117,6 @@
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
 
-    
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
@@ -283,18 +281,15 @@
 
 - (void)playLoadedSong {
     
-    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
+    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     
     [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
     
     [self.player play];
     
-    
 }
 
 - (void)pauseLoadedSong {
-    
-    [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
     
     [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0.0];
     
@@ -338,6 +333,13 @@
 
 - (void)updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:(double)playbackRate {
     if ([MPNowPlayingInfoCenter class])  {
+        
+        if (playbackRate == 1) {
+            [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
+        }
+        else {
+            [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
+        }
         
         NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentTime)];
         NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];

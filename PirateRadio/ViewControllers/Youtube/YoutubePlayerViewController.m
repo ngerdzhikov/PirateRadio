@@ -21,6 +21,8 @@
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 
+@import MediaPlayer;
+
 #define DOWNLOAD_BUTTON_URL_PREFIX @"https://youtube7.download/mini.php"
 
 @interface YoutubePlayerViewController ()
@@ -48,21 +50,25 @@
     
     [self startAnimation];
     
+    self.youtubePlayer.delegate = self;
+    
     self.currentVideoModel = self.youtubePlaylist.playlistItems.firstObject;
     
-    [self setYoutubePlayerForVideoModel:self.currentVideoModel];
-    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
+    
     
     self.suggestedVideosTableView.delegate = self;
     self.suggestedVideosTableView.dataSource = self;
     
     
     if (self.youtubePlaylist.playlistItems.count <= 1) {
+        [self setYoutubePlayerForVideoModel:self.currentVideoModel];
         [self makeSearchForSuggestedVideosForVideoId:self.currentVideoModel.entityId];
         self.isPlayingFromPlaylist = YES;
     }
     else {
+        [self setYoutubePlayerWithPlaylist:self.youtubePlaylist];
         self.suggestedVideos = self.youtubePlaylist.playlistItems;
         self.isPlayingFromPlaylist = NO;
     }
@@ -74,17 +80,30 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    [MPRemoteCommandCenter.sharedCommandCenter.playCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
+    
+    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self.youtubePlayer action:@selector(playVideo)];
+    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self.youtubePlayer action:@selector(pauseVideo)];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextButtonTap)];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self stopAnimation];
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0];
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    NSLog(@"MEMORY WARNING");
 }
 
 - (void)setYoutubePlayerForVideoModel:(VideoModel *)videoModel {
@@ -93,13 +112,22 @@
                                  @"origin" : @"https://www.example.com"
                                  };
     [self.youtubePlayer loadWithVideoId:videoModel.entityId playerVars:playerVars];
-    self.youtubePlayer.delegate = self;
+}
+
+- (void)setYoutubePlayerWithPlaylist:(YoutubePlaylistModel *)youtubePlaylist {
+    NSDictionary *playerVars = @{
+                                 @"playsinline" : @1,
+                                 @"origin" : @"https://www.example.com"
+                                 };
+    [self.youtubePlayer loadWithPlaylistId:youtubePlaylist.entityId playerVars:playerVars];
 }
 
 - (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
     [self.youtubePlayer playVideo];
+    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1];
     [self stopAnimation];
 }
+
 
 - (void)startAnimation {
     if (!UIAccessibilityIsReduceTransparencyEnabled()) {
@@ -140,16 +168,27 @@
 }
 
 - (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
-    
-    if (state == kYTPlayerStatePlaying) {
-        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
+    if (state == kYTPlayerStatePaused){}
+    if (state == kYTPlayerStatePlaying){}
+    if (self.view.window) {
+        if (state == kYTPlayerStatePlaying) {
+            [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
+            [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
+        }
+        if (state == kYTPlayerStatePaused) {
+            [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0];
+        }
+        if (state == kYTPlayerStateEnded && self.autoPlaySwitch.isOn && (self.suggestedVideos.count > 0)) {
+            [self startAutoPlayAnimation];
+        }
+        if (state == kYTPlayerStateUnstarted) {
+            
+        }
     }
-    if (state == kYTPlayerStatePaused) {
+    else {
         
     }
-    if (state == kYTPlayerStateEnded && self.autoPlaySwitch.isOn && (self.suggestedVideos.count > 0)) {
-        [self startAutoPlayAnimation];
-    }
+ 
 }
 
 - (void)didEnterBackground:(NSNotification *)notification {
@@ -222,7 +261,6 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self stopAnimation];
                 [self.suggestedVideosTableView reloadData];
-                [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionNone animated:YES];
             });
         }
     }];
@@ -258,13 +296,13 @@
         if (indexPath.row == 0) {
             [self addVideoTitleInCell:cell];
         }
-        if (indexPath.row == 1) {
+        else if (indexPath.row == 1) {
             [self addVideoViewsAndAutoPlaySwitchInCell:cell];
         }
-        if (indexPath.row == 2) {
+        else if (indexPath.row == 2) {
             [self addVideoDescriptionInCell:cell];
         }
-        if (indexPath.row == 3) {
+        else if (indexPath.row == 3) {
             [self addDownloadButtonInCell:cell];
         }
         return cell;
@@ -311,6 +349,9 @@
 }
 
 - (void)loadNextVideoWithVideoModel:(VideoModel *)videoModel {
+    [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    
+    
     self.currentVideoModel = videoModel;
     
     [self setYoutubePlayerForVideoModel:videoModel];
@@ -455,7 +496,7 @@
 
 - (void)addDownloadButtonInCell:(UITableViewCell *)cell {
     
-    if (!self.downloadButtonWebView) {
+    if (!self.downloadButtonWebView && !self.downloadFinishedLabel) {
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         configuration.allowsInlineMediaPlayback = NO;
         self.downloadButtonWebView = [[DownloadButtonWebView alloc] initWithFrame:cell.contentView.frame configuration:configuration];
@@ -464,11 +505,50 @@
         self.downloadButtonWebView.navigationDelegate = self.downloadButtonWebView;
         [cell.contentView addSubview:self.downloadButtonWebView];
     }
-    NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.currentVideoModel.entityId];
-    NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
-    [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
-    self.downloadButtonWebView.videoModel = self.currentVideoModel;
+    if (![self.downloadButtonWebView.videoModel isEqual:self.currentVideoModel]) {
+        NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.currentVideoModel.entityId];
+        NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
+        [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
+        self.downloadButtonWebView.videoModel = self.currentVideoModel;
+    }
     self.downloadButtonWebView.frame = cell.contentView.frame;
+}
+
+
+- (void)updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:(double)playbackRate {
+    if ([MPNowPlayingInfoCenter class])  {
+        
+        if (playbackRate == 1) {
+            [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
+        }
+        else {
+            [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
+        }
+        
+        NSNumber *elapsedTime = [NSNumber numberWithFloat:self.youtubePlayer.currentTime];
+        NSNumber *duration = [NSNumber numberWithDouble:self.youtubePlayer.duration];
+        MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
+            
+            UIImage *image;
+            image = [ImageCacher.sharedInstance imageForSearchResultId:self.currentVideoModel.entityId];
+
+            if (!image) {
+                ThumbnailModel *thumbnail = [self.currentVideoModel.thumbnails objectForKey:@"high"];
+                image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:thumbnail.url]];
+            }
+
+            return image;
+        }];
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.currentVideoModel.channelTitle,
+                                MPMediaItemPropertyTitle: self.currentVideoModel.title,
+                                MPMediaItemPropertyPlaybackDuration: duration,
+                                MPMediaItemPropertyArtwork: artwork,
+                                MPNowPlayingInfoPropertyPlaybackRate: [NSNumber numberWithDouble:playbackRate],
+                                MPNowPlayingInfoPropertyElapsedPlaybackTime: elapsedTime,
+                                };
+        [MPNowPlayingInfoCenter.defaultCenter setNowPlayingInfo:info];
+        
+    }
 }
 
 @end
