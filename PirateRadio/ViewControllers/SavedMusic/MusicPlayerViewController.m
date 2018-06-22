@@ -16,12 +16,12 @@
 
 @interface MusicPlayerViewController ()
 
-@property (strong, nonatomic) PirateAVPlayer *player;
-@property BOOL isSeekInProgress;
-@property BOOL isSliding;
-@property CMTime chaseTime;
 @property (weak, nonatomic) IBOutlet UILabel *elapsedTimeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLeftLabel;
+@property (strong, nonatomic) PirateAVPlayer *player;
+@property BOOL isSeekInProgress;
+@property CMTime chaseTime;
+@property BOOL isSliding;
 
 @end
 
@@ -76,7 +76,6 @@
     [self setTime:time andDuration:duration];
     
 }
-
 
 - (void)configureMusicControllerView {
     [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
@@ -156,13 +155,13 @@
 - (void)itemDidEndPlaying:(NSNotification *)notification {
     
     
-    //    I will hate myself for doing this....
+//        I will hate myself for doing this....
     [self.player play];
     //    it's ok for now
     [self.songListDelegate didRequestNextForSong:self.player.currentSong];
     [self.player play];
     
-    // this is for testing
+//     this is for testing
 //    [self startAudioSession];
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
 }
@@ -186,7 +185,7 @@
     else {
         [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
         
-        //        tell the songList that song is paused;
+//                tell the songList that song is paused;
         [self.songListDelegate didPauseSong:self.player.currentSong];
     }
     
