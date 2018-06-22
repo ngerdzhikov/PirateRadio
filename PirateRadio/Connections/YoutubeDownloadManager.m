@@ -70,6 +70,9 @@
         [self.downloads removeObjectForKey:downloadTask];
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
     }
+    [self.youtubeSession resetWithCompletionHandler:^{
+        
+    }];
 }
 
 

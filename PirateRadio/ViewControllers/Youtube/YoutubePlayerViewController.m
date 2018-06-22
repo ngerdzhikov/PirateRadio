@@ -97,7 +97,7 @@
     
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self.youtubePlayer action:@selector(playVideo)];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self.youtubePlayer action:@selector(pauseVideo)];
-    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextButtonTap)];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextSong)];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -127,7 +127,6 @@
     [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1];
     [self stopAnimation];
 }
-
 
 - (void)startAnimation {
     if (!UIAccessibilityIsReduceTransparencyEnabled()) {
@@ -299,11 +298,9 @@
                 else {
                     self.nextPageToken = nil;
                 }
-                dispatch_async(dispatch_get_main_queue(), ^{
                     NSRange range = NSMakeRange(self.suggestedVideos.count - resultsPerPage.integerValue, resultsPerPage.integerValue);
                     NSArray<VideoModel *> *videosToSearch = [self.suggestedVideos subarrayWithRange:range];
                     [self makeSearchForVideoDurationsWithVideoModels:videosToSearch withStartingIndex:self.suggestedVideos.count - resultsPerPage.integerValue];
-                });
             }
         }
     }];
@@ -385,7 +382,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1)
         [self loadNextVideoWithVideoModel:self.suggestedVideos[indexPath.row]];
-
 }
 
 - (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -406,19 +402,29 @@
     }
 }
 
+- (void)playNextSong {
+    [self loadNextVideoWithVideoModel:[self nextVideoModelForVideoModel:self.currentVideoModel]];
+}
+
 - (void)loadNextVideoWithVideoModel:(VideoModel *)videoModel {
-    if (!self.isPlayingFromPlaylist) {
-        [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    }
     
     self.currentVideoModel = videoModel;
     
-    [self setYoutubePlayerForVideoModel:videoModel];
+    [self.youtubePlayer cueVideoById:videoModel.entityId startSeconds:0.1 suggestedQuality:kYTPlaybackQualityAuto];
+    [self.youtubePlayer playVideo];
     
     if (!self.isPlayingFromPlaylist) {
         [self makeSearchForSuggestedVideosForVideoId:videoModel.entityId];
     }
-    [self.suggestedVideosTableView reloadData];
+    [self.downloadFinishedLabel removeFromSuperview];
+    self.downloadFinishedLabel = nil;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.suggestedVideosTableView reloadData];
+        [self.suggestedVideosTableView layoutIfNeeded];
+        if (!self.isPlayingFromPlaylist)
+            [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    });
 }
 
 - (void)playNextButtonTap {
@@ -647,6 +653,7 @@
                      }];
     
     [self.suggestedVideosTableView endUpdates];
+
 }
 
 - (VideoModel *)nextVideoModelForVideoModel:(VideoModel *)videoModel {
