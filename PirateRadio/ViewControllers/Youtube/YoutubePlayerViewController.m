@@ -27,21 +27,23 @@
 
 @interface YoutubePlayerViewController ()
 
-@property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
 @property (weak, nonatomic) IBOutlet UITableView *suggestedVideosTableView;
+@property (strong, nonatomic) UIVisualEffectView *blurEffectView;
+@property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
+@property (strong, nonatomic) DownloadButtonWebView *downloadButtonWebView;
 @property (strong, nonatomic) CBAutoScrollLabel *videoTitle;
 @property (strong, nonatomic) UITextView *videoDescription;
 @property (strong, nonatomic) UIButton *expandTextViewButton;
+@property (strong, nonatomic) UISwitch *autoPlaySwitch;
 @property (strong, nonatomic) UILabel *videoViewsLabel;
 @property (strong, nonatomic) UILabel *autoPlayLabel;
-@property (strong, nonatomic) UIVisualEffectView *blurEffectView;
-@property (strong, nonatomic) DownloadButtonWebView *downloadButtonWebView;
 @property (strong, nonatomic) UILabel *downloadFinishedLabel;
-@property (nonatomic) double timer;
-@property BOOL isPlayingFromPlaylist;
-@property (strong, nonatomic) UISwitch *autoPlaySwitch;
-@property double descriptionHeight;
+@property (strong, nonatomic) NSMutableDictionary<NSString *, VideoModel *> *playlistVideosDict;
 
+@property double timer;
+@property double descriptionHeight;
+@property BOOL isNextPageEnabled;
+@property BOOL isPlayingFromPlaylist;
 
 @end
 
@@ -68,13 +70,15 @@
     if (self.youtubePlaylist.playlistItems.count <= 1) {
         [self setYoutubePlayerForVideoModel:self.currentVideoModel];
         [self makeSearchForSuggestedVideosForVideoId:self.currentVideoModel.entityId];
-        self.isPlayingFromPlaylist = YES;
+        self.isPlayingFromPlaylist = NO;
     }
     else {
-        [self setYoutubePlayerWithPlaylist:self.youtubePlaylist];
+        [self setYoutubePlayerForVideoModel:self.youtubePlaylist.playlistItems.firstObject];
         self.suggestedVideos = self.youtubePlaylist.playlistItems;
-        [self makeSearchForVideoDurationsWithVideoModels:self.suggestedVideos];
-        self.isPlayingFromPlaylist = NO;
+        [self makeSearchForVideoDurationsWithVideoModels:self.suggestedVideos withStartingIndex:0];
+        self.playlistVideosDict = [[NSMutableDictionary alloc] initWithObjects:self.suggestedVideos forKeys:[self.suggestedVideos valueForKey:@"entityId"]];
+        self.isPlayingFromPlaylist = YES;
+        self.isNextPageEnabled = YES;
     }
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:@"downloadingStarted" object:nil];
@@ -116,14 +120,6 @@
                                  @"origin" : @"https://www.example.com"
                                  };
     [self.youtubePlayer loadWithVideoId:videoModel.entityId playerVars:playerVars];
-}
-
-- (void)setYoutubePlayerWithPlaylist:(YoutubePlaylistModel *)youtubePlaylist {
-    NSDictionary *playerVars = @{
-                                 @"playsinline" : @1,
-                                 @"origin" : @"https://www.example.com"
-                                 };
-    [self.youtubePlayer loadWithPlaylistId:youtubePlaylist.entityId playerVars:playerVars];
 }
 
 - (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
@@ -230,13 +226,13 @@
                     
                     [self.suggestedVideos addObject:videoModel];
                 }
-                [self makeSearchForVideoDurationsWithVideoModels:self.suggestedVideos];
+                [self makeSearchForVideoDurationsWithVideoModels:self.suggestedVideos withStartingIndex:0];
             }
         }
     }];
 }
 
-- (void)makeSearchForVideoDurationsWithVideoModels:(NSMutableArray<VideoModel *> *)videoModels {
+- (void)makeSearchForVideoDurationsWithVideoModels:(NSArray<VideoModel *> *)videoModels withStartingIndex:(NSUInteger)indexToStart {
     NSArray<NSString *> *videoIds = [[NSArray alloc] initWithArray:[videoModels valueForKey:@"entityId"]];
     [YoutubeConnectionManager makeYoutubeRequestForVideoDurationsWithVideoIds:videoIds andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
@@ -250,9 +246,8 @@
             if (serializationError) {
                 NSLog(@"Error = %@", serializationError.localizedDescription);
             }
-            
             else {
-                NSUInteger index = 0;
+                NSUInteger index = indexToStart;
                 NSArray *items = [responseDict objectForKey:@"items"];
                 for (NSDictionary *item in items) {
                     NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
@@ -261,11 +256,53 @@
                     self.suggestedVideos[index].videoViews = views;
                     index++;
                 }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self stopAnimation];
+                    [self.suggestedVideosTableView reloadData];
+                });
             }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self stopAnimation];
-                [self.suggestedVideosTableView reloadData];
-            });
+        }
+    }];
+}
+
+- (void)makeSearchForPlaylistItemsWithPlaylist:(YoutubePlaylistModel *)youtubePlaylistModel andNextPageToken:(NSString *)nextPageToken {
+    [YoutubeConnectionManager makeYoutubeRequestForPlaylistItemsForPlaylistId:youtubePlaylistModel.entityId withNextPageToken:nextPageToken andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Error searching for playlist items = %@", error);
+        }
+        else {
+            
+            NSError *serializationError;
+            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+            if (serializationError) {
+                NSLog(@"Error = %@", serializationError.localizedDescription);
+            }
+            
+            else {
+                
+                NSArray *items = [responseDict objectForKey:@"items"];
+                for (NSDictionary *item in items) {
+                    NSDictionary *snippet = [item objectForKey:@"snippet"];
+                    NSDictionary *contentDetails = [item objectForKey:@"contentDetails"];
+                    NSString *entityId = [contentDetails objectForKey:@"videoId"];
+                    VideoModel *entity = [[VideoModel alloc] initWithSnippet:snippet entityId:entityId andKind:@"youtube#video"];
+                    [youtubePlaylistModel addPlaylistItem:entity];
+                }
+                NSString *totalResults = [[responseDict objectForKey:@"pageInfo"] objectForKey:@"totalResults"];
+                NSString *resultsPerPage = [[responseDict objectForKey:@"pageInfo"] objectForKey:@"resultsPerPage"];
+                if (totalResults.integerValue != youtubePlaylistModel.playlistItems.count) {
+                    NSString *newNextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                    self.nextPageToken = newNextPageToken;
+                }
+                else {
+                    self.nextPageToken = nil;
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSRange range = NSMakeRange(self.suggestedVideos.count - resultsPerPage.integerValue, resultsPerPage.integerValue);
+                    NSArray<VideoModel *> *videosToSearch = [self.suggestedVideos subarrayWithRange:range];
+                    [self makeSearchForVideoDurationsWithVideoModels:videosToSearch withStartingIndex:self.suggestedVideos.count - resultsPerPage.integerValue];
+                });
+            }
         }
     }];
 }
@@ -317,6 +354,7 @@
         UIImage *thumbnail = [ImageCacher.sharedInstance imageForSearchResultId:videoModel.entityId];
         if (!thumbnail) {
             thumbnail = [UIImage imageWithData:[NSData dataWithContentsOfURL:[videoModel.thumbnails objectForKey:@"high"].url]];
+            [ImageCacher.sharedInstance cacheImage:thumbnail forSearchResultId:videoModel.entityId];
         }
         cell.videoImage.image = thumbnail;
         cell.videoTitle.text = videoModel.title;
@@ -354,15 +392,32 @@
     return NO;
 }
 
-- (void)loadNextVideoWithVideoModel:(VideoModel *)videoModel {
-    [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGFloat offset = scrollView.contentOffset.y;
+    CGFloat maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
     
+    if ((maximumOffset - offset) <= 200) {
+        if (self.nextPageToken && self.isNextPageEnabled && self.isPlayingFromPlaylist) {
+            self.isNextPageEnabled = NO;
+            [self makeSearchForPlaylistItemsWithPlaylist:self.youtubePlaylist andNextPageToken:self.nextPageToken];
+        }
+    }
+}
+
+
+
+
+
+- (void)loadNextVideoWithVideoModel:(VideoModel *)videoModel {
+    if (!self.isPlayingFromPlaylist) {
+        [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
     
     self.currentVideoModel = videoModel;
     
     [self setYoutubePlayerForVideoModel:videoModel];
     
-    if (self.isPlayingFromPlaylist) {
+    if (!self.isPlayingFromPlaylist) {
         [self makeSearchForSuggestedVideosForVideoId:videoModel.entityId];
     }
 }

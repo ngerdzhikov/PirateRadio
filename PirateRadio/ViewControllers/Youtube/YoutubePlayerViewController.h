@@ -20,6 +20,6 @@
 @property (strong, nonatomic) YoutubePlaylistModel *youtubePlaylist;
 @property (strong, nonatomic) NSMutableArray<VideoModel *> *suggestedVideos;
 @property (weak, nonatomic) IBOutlet YTPlayerView *youtubePlayer;
-
+@property (strong, nonatomic) NSString *nextPageToken;
 
 @end
