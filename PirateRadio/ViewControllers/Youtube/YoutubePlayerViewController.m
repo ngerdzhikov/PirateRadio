@@ -205,6 +205,8 @@
     }
 }
 
+#pragma mark Youtube requests
+
 - (void)makeSearchForSuggestedVideosForVideoId:(NSString *)videoId {
     [YoutubeConnectionManager makeYoutubeRequestForSuggestedVideosForVideoId:videoId andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
@@ -404,10 +406,6 @@
     }
 }
 
-
-
-
-
 - (void)loadNextVideoWithVideoModel:(VideoModel *)videoModel {
     if (!self.isPlayingFromPlaylist) {
         [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
@@ -420,13 +418,16 @@
     if (!self.isPlayingFromPlaylist) {
         [self makeSearchForSuggestedVideosForVideoId:videoModel.entityId];
     }
+    [self.suggestedVideosTableView reloadData];
 }
 
 - (void)playNextButtonTap {
-    [self loadNextVideoWithVideoModel:self.suggestedVideos[0]];
+    self.timer = 6;
 }
 
 - (void)startAutoPlayAnimation {
+    VideoModel *nextVideo = [self nextVideoModelForVideoModel:self.currentVideoModel];
+    
     UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
     self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
     self.blurEffectView.frame = self.youtubePlayer.bounds;
@@ -448,7 +449,7 @@
                           CGRectMake(self.youtubePlayer.frame.origin.x, circularProgressBar.frame.origin.y - 30, self.youtubePlayer.frame.size.width, 20)];
     nextVideoLabel.font = [UIFont systemFontOfSize:17];
     nextVideoLabel.textAlignment = NSTextAlignmentCenter;
-    nextVideoLabel.text = [NSString stringWithFormat:@"Next: %@", self.suggestedVideos[0].title];
+    nextVideoLabel.text = [NSString stringWithFormat:@"Next: %@", nextVideo.title];
     [self.youtubePlayer addSubview:nextVideoLabel];
     
     UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -480,7 +481,7 @@
         circularProgressBar.value = self.timer;
         if (self.timer >= 5) {
             [timer invalidate];
-            [self loadNextVideoWithVideoModel:self.suggestedVideos[0]];
+            [self loadNextVideoWithVideoModel:nextVideo];
         }
     }] fire];
 
@@ -501,6 +502,8 @@
     });
     self.downloadButtonWebView.hidden = YES;
 }
+
+#pragma mark Cells contents adding
 
 - (void)addVideoTitleInCell:(UITableViewCell *)cell {
     if (!self.videoTitle) {
@@ -644,6 +647,17 @@
                      }];
     
     [self.suggestedVideosTableView endUpdates];
+}
+
+- (VideoModel *)nextVideoModelForVideoModel:(VideoModel *)videoModel {
+    if (!self.isPlayingFromPlaylist) {
+        return self.suggestedVideos[0];
+    }
+    NSInteger index = [self.suggestedVideos indexOfObject:videoModel];
+    if (++index < self.suggestedVideos.count) {
+        return self.suggestedVideos[index];
+    }
+    else return self.suggestedVideos[0];
 }
 
 @end
