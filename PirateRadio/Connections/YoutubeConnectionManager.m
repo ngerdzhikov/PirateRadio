@@ -11,7 +11,8 @@
 #define YOUTUBE_API_SEARCH_PREFIX @"https://www.googleapis.com/youtube/v3/search"
 #define YOUTUBE_API_VIDEO_DURATION_REQUEST_PREFIX @"https://www.googleapis.com/youtube/v3/videos"
 #define SEARCH_SUGGESTION_REQUEST_PREFIX @"http://clients1.google.com/complete/search"
-#define YOUTUBE_API_PLAYLIST_PREFIX @"https://www.googleapis.com/youtube/v3/playlistItems"
+#define YOUTUBE_API_PLAYLISTITEMS_PREFIX @"https://www.googleapis.com/youtube/v3/playlistItems"
+#define YOUTUBE_API_PLAYLIST_PREFIX @"https://www.googleapis.com/youtube/v3/playlists"
 
 @implementation YoutubeConnectionManager
 
@@ -84,12 +85,24 @@
 }
 
 + (void)makeYoutubeRequestForPlaylistItemsForPlaylistId:(NSString *)playlistId withNextPageToken:(NSString *)nextPageToken andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
-    NSURL *url = [NSURL URLWithString:YOUTUBE_API_PLAYLIST_PREFIX];
+    NSURL *url = [NSURL URLWithString:YOUTUBE_API_PLAYLISTITEMS_PREFIX];
     NSArray<NSURLQueryItem *> *queryItems = @[
                                               [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails"],
                                               [NSURLQueryItem queryItemWithName:@"playlistId" value:playlistId],
                                               [NSURLQueryItem queryItemWithName:@"maxResults" value:@"50"],
-                                              [NSURLQueryItem queryItemWithName:@"nextPageToken" value:nextPageToken],
+                                              [NSURLQueryItem queryItemWithName:@"pageToken" value:nextPageToken],
+                                              [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
+                                              ];
+    url = [url URLByAppendingQueryItems:queryItems];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [self.class makeGetRequestWithURLRequest:request withCompletion:completion];
+}
+
++ (void)makeSearchForPlaylistItemsCountForPlaylistIds:(NSArray<NSString *> *)playlistIds andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
+    NSURL *url = [NSURL URLWithString:YOUTUBE_API_PLAYLIST_PREFIX];
+    NSArray<NSURLQueryItem *> *queryItems = @[
+                                              [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails"],
+                                              [NSURLQueryItem queryItemWithName:@"id" value:[playlistIds componentsJoinedByString:@","]],
                                               [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
                                               ];
     url = [url URLByAppendingQueryItems:queryItems];

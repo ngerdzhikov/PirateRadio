@@ -15,6 +15,7 @@
 @interface YoutubePlaylistModel : YoutubeEntityModel
 
 @property (strong, nonatomic, readonly) NSMutableArray<VideoModel *> *playlistItems;
+@property NSInteger itemsCount;
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet andPlaylistId:(NSString *)playlistId;
 - (void)addPlaylistItem:(YoutubeEntityModel *)entity;
