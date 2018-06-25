@@ -60,8 +60,7 @@
     
     self.descriptionHeight = 50;
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
+    
     
     self.suggestedVideosTableView.delegate = self;
     self.suggestedVideosTableView.dataSource = self;
@@ -81,8 +80,10 @@
         self.isNextPageEnabled = YES;
     }
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:@"downloadingStarted" object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopDownloadingAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     
 }
 
@@ -149,16 +150,30 @@
     [self.activityIndicatorView startAnimating];
 }
 
-- (void)stopAnimation:(NSNotification *)notification {
+- (void)didStartDownloading:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeLineScalePulseOutRapid];
+        self.activityIndicatorView.tintColor = [UIColor blackColor];
+        UITableViewCell *cell = [self.suggestedVideosTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]];
+        self.activityIndicatorView.frame = self.downloadButtonWebView.frame;
+        [cell addSubview:self.activityIndicatorView];
+        [self.activityIndicatorView startAnimating];
+    });
+    self.downloadButtonWebView.hidden = YES;
+    
+}
+
+- (void)stopDownloadingAnimation:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.activityIndicatorView stopAnimating];
         [self.activityIndicatorView removeFromSuperview];
+        UITableViewCell *cell = [self.suggestedVideosTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]];
+//        CGRect frame = cell.frame;
         self.downloadFinishedLabel = [[UILabel alloc] initWithFrame:self.downloadButtonWebView.frame];
         self.downloadFinishedLabel.text = @"Download finished.";
         self.downloadFinishedLabel.textAlignment = NSTextAlignmentCenter;
         self.downloadFinishedLabel.font = [UIFont boldSystemFontOfSize:20];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:3 inSection:0];
-        [[self.suggestedVideosTableView cellForRowAtIndexPath:indexPath] addSubview:self.downloadFinishedLabel];
+        [cell addSubview:self.downloadFinishedLabel];
         self.downloadButtonWebView = nil;
     });
 }
@@ -518,17 +533,6 @@
 
 - (void)cancelButtonClicked {
     [self.autoPlaySwitch setOn:NO animated:YES];
-}
-
-- (void)didStartDownloading:(NSNotification *)notification {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeLineScalePulseOutRapid];
-        self.activityIndicatorView.tintColor = [UIColor blackColor];
-        self.activityIndicatorView.frame = self.downloadButtonWebView.frame;
-        [[self.suggestedVideosTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]] addSubview:self.activityIndicatorView];
-        [self.activityIndicatorView startAnimating];
-    });
-    self.downloadButtonWebView.hidden = YES;
 }
 
 #pragma mark Cells contents adding

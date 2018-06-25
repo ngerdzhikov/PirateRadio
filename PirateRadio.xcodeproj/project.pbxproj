@@ -178,7 +178,6 @@
 		069C32D620BD90670079C5C5 /* Youtube */ = {
 			isa = PBXGroup;
 			children = (
-				06D1870D20DA821500818C12 /* Cells */,
 				06BE0CB320A44FDA007D9319 /* YoutubePlayerViewController.h */,
 				06BE0CB420A44FDA007D9319 /* YoutubePlayerViewController.m */,
 				06BE0CB020A44F9D007D9319 /* SearchTableViewController.h */,
@@ -254,13 +253,6 @@
 				0634628720D7F3070044EF85 /* YoutubeEntityModel.m */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		06D1870D20DA821500818C12 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Cells;
 			sourceTree = "<group>";
 		};
 		06D65A3B20B31317000AC0FC /* Resources */ = {

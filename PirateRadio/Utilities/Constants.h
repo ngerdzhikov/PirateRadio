@@ -14,6 +14,7 @@
 #define NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING @"NotificationYoutubeVideoStartedPlaying"
 #define NOTIFICATION_AVPLAYER_STARTED_PLAYING @"NotificationAVPlayerStartedPlaying"
 #define NOTIFICATION_REMOVED_SONG_FROM_FILES @"NotificationRemovedSongFromFiles"
+#define NOTIFICATION_DID_START_DOWNLOADING @"NotificationDidStartDownloading"
 
 #define USER_DEFAULTS_KEY_PLAYLISTS @"UserDefaultsKeyPlaylists"
 

@@ -10,6 +10,7 @@
 #import "VideoModel.h"
 #import "DownloadModel.h"
 #import "YoutubeDownloadManager.h"
+#import "Constants.h"
 
 @implementation DownloadButtonWebView
 
@@ -36,7 +37,7 @@
     NSString *contentType = [[httpResponse allHeaderFields] objectForKey:@"Content-Type"];
     if ([contentType isEqualToString:@"audio/mpeg"] || [contentType isEqualToString:@"application/force-download"]) {
 
-        [NSNotificationCenter.defaultCenter postNotificationName:@"downloadingStarted" object:nil];
+        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DID_START_DOWNLOADING object:nil];
 
         DownloadModel *download = [[DownloadModel alloc] initWithVideoModel:self.videoModel andURL:httpResponse.URL];
         [YoutubeDownloadManager.sharedInstance downloadVideoWithDownloadModel:download];
