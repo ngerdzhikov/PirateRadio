@@ -98,6 +98,9 @@
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self.youtubePlayer action:@selector(playVideo)];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self.youtubePlayer action:@selector(pauseVideo)];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextSong)];
+    if (self.isPlayingFromPlaylist) {
+        [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(playPreviousSong)];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -219,7 +222,7 @@
             }
             else {
                 NSArray *items = [responseDict objectForKey:@"items"];
-                self.suggestedVideos = [[NSMutableArray alloc] initWithCapacity:items.count];
+                self.suggestedVideos = [[NSMutableArray alloc] init];
                 for (NSDictionary *item in items) {
                     NSString *videoId = [[item objectForKey:@"id"] objectForKey:@"videoId"];
                     NSDictionary *snippet = [item objectForKey:@"snippet"];
@@ -329,6 +332,10 @@
     return 255.0f;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [self tableView:tableView heightForRowAtIndexPath:indexPath];
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"defaultCell"];
@@ -406,6 +413,10 @@
     [self loadNextVideoWithVideoModel:[self nextVideoModelForVideoModel:self.currentVideoModel]];
 }
 
+- (void)playPreviousSong {
+    [self loadNextVideoWithVideoModel:[self previousVideoModelForVideoModel:self.currentVideoModel]];
+}
+
 - (void)loadNextVideoWithVideoModel:(VideoModel *)videoModel {
     
     self.currentVideoModel = videoModel;
@@ -419,11 +430,22 @@
     [self.downloadFinishedLabel removeFromSuperview];
     self.downloadFinishedLabel = nil;
     
+    
+//    removes the added information about next song and play and cancel buttons
+    for (UIView *view in self.youtubePlayer.subviews) {
+        if (![view isKindOfClass:UIWebView.class]) {
+            [view removeFromSuperview];
+        }
+    }
+   
+//  reload table view and scroll to top if you're not in tableview
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.suggestedVideosTableView reloadData];
         [self.suggestedVideosTableView layoutIfNeeded];
         if (!self.isPlayingFromPlaylist)
             [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        else
+            [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self.suggestedVideos indexOfObject:videoModel] inSection:1] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     });
 }
 
@@ -658,13 +680,23 @@
 
 - (VideoModel *)nextVideoModelForVideoModel:(VideoModel *)videoModel {
     if (!self.isPlayingFromPlaylist) {
-        return self.suggestedVideos[0];
+        return self.suggestedVideos.firstObject;
     }
     NSInteger index = [self.suggestedVideos indexOfObject:videoModel];
     if (++index < self.suggestedVideos.count) {
         return self.suggestedVideos[index];
     }
-    else return self.suggestedVideos[0];
+    else return self.suggestedVideos.firstObject;
+}
+
+- (VideoModel *)previousVideoModelForVideoModel:(VideoModel *)videoModel {
+    NSInteger index = [self.suggestedVideos indexOfObject:videoModel];
+    if (--index > 0) {
+        return self.suggestedVideos[index];
+    }
+    else {
+        return self.suggestedVideos.lastObject;
+    }
 }
 
 @end
