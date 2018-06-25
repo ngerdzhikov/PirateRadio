@@ -47,20 +47,7 @@
     [self.navigationController pushViewController:allSongsTVC animated:YES];
 }
 
-- (void)editSongs:(id)sender {
-    if (!self.isFiltering) {
-        self.editing = !self.editing;
-        if ([sender isKindOfClass:UIBarButtonItem.class]) {
-            UIBarButtonItem *editButton = (UIBarButtonItem *)sender;
-            if (self.editing) {
-                [editButton setTitle:@"Done"];
-            }
-            else {
-                [editButton setTitle:@"Edit"];
-            }
-        }
-    }
-}
+
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;

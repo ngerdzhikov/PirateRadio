@@ -110,6 +110,8 @@
     }
     else {
         self.songListViewController = [storyBoard instantiateViewControllerWithIdentifier:@"savedMusicViewController"];
+        UIBarButtonItem *editSongsButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self.songListViewController action:@selector(editSongs:)];
+        self.navigationItem.rightBarButtonItem = editSongsButton;
         self.songListViewController.allSongs = [self songsFromDisk];
     }
     

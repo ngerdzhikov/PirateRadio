@@ -191,6 +191,21 @@
     [self didSelectSongFromCellForIndexPath:indexPath];
 }
 
+- (void)editSongs:(id)sender {
+    if (!self.isFiltering) {
+        self.editing = !self.editing;
+        if ([sender isKindOfClass:UIBarButtonItem.class]) {
+            UIBarButtonItem *editButton = (UIBarButtonItem *)sender;
+            if (self.editing) {
+                [editButton setTitle:@"Done"];
+            }
+            else {
+                [editButton setTitle:@"Edit"];
+            }
+        }
+    }
+}
+
 -(NSIndexPath *)indexPathOfLastPlayed {
     
     LocalSongModel *nowPlayingSong = self.musicPlayerDelegate.nowPlaying;
