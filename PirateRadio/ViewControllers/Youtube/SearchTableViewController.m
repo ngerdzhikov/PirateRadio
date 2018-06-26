@@ -174,8 +174,9 @@ typedef enum {
     if (!UIAccessibilityIsReduceTransparencyEnabled()) {
         UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
         self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        self.blurEffectView.frame = self.view.bounds;
-        [self.view addSubview:self.blurEffectView];
+        self.blurEffectView.frame = self.navigationController.view.bounds;
+        [self.navigationController.view addSubview:self.blurEffectView];
+        [self.navigationController.view bringSubviewToFront:self.blurEffectView];
     }
     self.activityIndicatorView = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeFiveDots];
     self.activityIndicatorView.tintColor = [UIColor blackColor];
