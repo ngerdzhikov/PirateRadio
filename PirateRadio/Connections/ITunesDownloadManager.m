@@ -34,14 +34,13 @@
     if (self) {
         self.downloadDict = [[NSMutableDictionary alloc] init];
         self.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"itunesDownload"] delegate:self delegateQueue:nil];
-//        self.session = NSURLSession.sharedSession;
     }
     return self;
 }
 
 
 - (void)downloadArtworkForLocalSongModel:(LocalSongModel *)localSong {
-    [ITunesRequestManager makeItunesSearchRequestWithKeywords:localSong.keywordsFromAuthorAndTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [ITunesRequestManager makeLastFMSearchRequestWithKeywords:localSong.keywordsFromAuthorAndTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSError *serializationError;
         NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
         if (serializationError) {
@@ -50,11 +49,15 @@
         else {
             if ([[responseDict objectForKey:@"results"] count] > 0) {
                 NSLog(@"Found artwork");
-                NSURL *artworkURL = [NSURL URLWithString:[[responseDict objectForKey:@"results"][0] objectForKey:@"artworkUrl100"]];
-                //            NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
-                NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
-                [self.downloadDict setObject:localSong forKey:downloadTask];
-                [downloadTask resume];
+                NSArray *track = [[[responseDict objectForKey:@"results"] objectForKey:@"albummatches"] objectForKey:@"album"];
+                if (track.count > 0) {
+                    NSDictionary *thumbDictionary = [[track[0] objectForKey:@"image"] objectAtIndex:3];
+                    
+                    NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
+                    NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
+                    [self.downloadDict setObject:localSong forKey:downloadTask];
+                    [downloadTask resume];
+                }
             }
         }
     }];
