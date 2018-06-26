@@ -17,6 +17,7 @@
 #define NOTIFICATION_DID_START_DOWNLOADING @"NotificationDidStartDownloading"
 
 #define USER_DEFAULTS_KEY_PLAYLISTS @"UserDefaultsKeyPlaylists"
+#define USER_DEFAULTS_SEGUE_DONE @"UserDefaultsSegueDone"
 
 #define BUTTON_TITLE_PLAY_STRING  @"c"
 #define BUTTON_TITLE_PAUSE_STRING @"d"

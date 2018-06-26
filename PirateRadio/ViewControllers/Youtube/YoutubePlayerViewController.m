@@ -17,6 +17,7 @@
 #import "CBAutoScrollLabel.h"
 #import "YoutubePlaylistModel.h"
 #import "SearchResultTableViewCell.h"
+#import "MainTabBarController.h"
 #import "ImageCacher.h"
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
@@ -44,6 +45,7 @@
 @property double descriptionHeight;
 @property BOOL isNextPageEnabled;
 @property BOOL isPlayingFromPlaylist;
+@property BOOL isSegueDone;
 
 @end
 
@@ -60,11 +62,8 @@
     
     self.descriptionHeight = 50;
     
-    
-    
     self.suggestedVideosTableView.delegate = self;
     self.suggestedVideosTableView.dataSource = self;
-    
     
     if (self.youtubePlaylist.playlistItems.count <= 1) {
         [self setYoutubePlayerForVideoModel:self.currentVideoModel];
@@ -84,6 +83,43 @@
     [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopDownloadingAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
+    
+    self.isSegueDone = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_SEGUE_DONE];
+    
+    if ([self.currentVideoModel.entityId isEqualToString:@"P_XaNKWZsXc"] || [self.currentVideoModel.entityId isEqualToString:@"ROAVuLc28IY"])
+        [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkForSegue:) userInfo:nil repeats:YES];
+    
+}
+
+- (void)checkForSegue:(NSTimer *)timer {
+    if ([self.currentVideoModel.entityId isEqualToString:@"ROAVuLc28IY"]) {
+        if (self.youtubePlayer.currentTime < 13.0 && self.youtubePlayer.currentTime > 12.0) {
+            [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_SEGUE_DONE];
+            [NSUserDefaults.standardUserDefaults synchronize];
+            self.isSegueDone = NO;
+            
+            MainTabBarController *mainTabBarController = (MainTabBarController *)self.parentViewController.parentViewController;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [mainTabBarController checkIfSegueDone];
+            });
+            [timer invalidate];
+            [self.suggestedVideosTableView reloadData];
+        }
+    }
+    else {
+        if (self.youtubePlayer.currentTime < 127.2 && self.youtubePlayer.currentTime > 126.2) {
+            [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_SEGUE_DONE];
+            [NSUserDefaults.standardUserDefaults synchronize];
+            self.isSegueDone = YES;
+            
+            MainTabBarController *mainTabBarController = (MainTabBarController *)self.parentViewController.parentViewController;
+            [mainTabBarController checkIfSegueDone];
+            [timer invalidate];
+            [self.suggestedVideosTableView reloadData];
+            
+//            [self loadRequestForDownloadButton];
+        }
+    }
     
 }
 
@@ -341,6 +377,9 @@
     if (indexPath.section == 0) {
         if (indexPath.row == 2) {
             return self.descriptionHeight;
+        }
+        if (indexPath.row == 3 && !self.isSegueDone) {
+            return 0.0f;
         }
         return 50.0f;
     }
@@ -609,14 +648,17 @@
         [cell.contentView addSubview:self.downloadButtonWebView];
     }
     if (![self.downloadButtonWebView.videoModel isEqual:self.currentVideoModel]) {
-        NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.currentVideoModel.entityId];
-        NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
-        [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
-        self.downloadButtonWebView.videoModel = self.currentVideoModel;
+        [self loadRequestForDownloadButton];
     }
     self.downloadButtonWebView.frame = cell.contentView.frame;
 }
 
+- (void)loadRequestForDownloadButton {
+    NSURLQueryItem *idItem = [NSURLQueryItem queryItemWithName:@"id" value:self.currentVideoModel.entityId];
+    NSURL *buttonURL = [[NSURL URLWithString:DOWNLOAD_BUTTON_URL_PREFIX] URLByAppendingQueryItems:@[idItem]];
+    [self.downloadButtonWebView loadRequest:[NSURLRequest requestWithURL:buttonURL]];
+    self.downloadButtonWebView.videoModel = self.currentVideoModel;
+}
 
 - (void)updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:(double)playbackRate {
     if ([MPNowPlayingInfoCenter class])  {
