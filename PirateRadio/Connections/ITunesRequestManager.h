@@ -11,5 +11,6 @@
 @interface ITunesRequestManager : NSObject
 
 + (void)makeItunesSearchRequestWithKeywords:(NSArray<NSString *> *)keywords andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion;
++ (void)makeLastFMSearchRequestWithKeywords:(NSArray<NSString *> *)keywords andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion;
 
 @end
