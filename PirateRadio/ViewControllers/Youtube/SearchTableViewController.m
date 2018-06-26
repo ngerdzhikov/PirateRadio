@@ -51,14 +51,16 @@ typedef enum {
     
     UIBarButtonItem *searchButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(displaySearchBar)];
     self.navigationItem.rightBarButtonItem = searchButton;
+    UIBarButtonItem *homeButton = [[UIBarButtonItem alloc] initWithTitle:@"Home" style:UIBarButtonItemStylePlain target:self action:@selector(homeButtonPressed)];
+    self.navigationItem.leftBarButtonItem = homeButton;
     
     self.searchHistory = [[NSUserDefaults.standardUserDefaults objectForKey:@"searchHistory"] mutableCopy];
     if (!self.searchHistory) {
         self.searchHistory = [[NSMutableArray alloc] init];
     }
     self.isNextPageEnabled = NO;
-    self.searchSuggestions = [[NSMutableArray alloc] init];
     self.videoModelsDict = [[NSMutableDictionary alloc] init];
+    self.searchSuggestions = [[NSMutableArray alloc] init];
     self.youtubePlaylistsDict = [[NSMutableDictionary alloc] init];
     self.youtubeSearchEntities = [[NSMutableArray alloc] init];
     self.tableView.showsVerticalScrollIndicator = YES;
@@ -81,6 +83,10 @@ typedef enum {
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 255.0f;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 255.0f;
 }
 
@@ -256,7 +262,7 @@ typedef enum {
     [self manageSearchHistory];
 }
 
-- (void) makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
+- (void)makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
     [YoutubeConnectionManager makeSearchWithNextPageToken:self.nextPageToken andKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Error = %@", error.localizedDescription);
@@ -449,6 +455,14 @@ typedef enum {
             }
         }
     }];
+}
+
+- (void)homeButtonPressed {
+    if (self.lastSearchType != EnumLastSearchTypeSuggestions) {
+        self.youtubeSearchEntities = [[NSMutableArray alloc] init];
+        self.nextPageToken = nil;
+        [self makeSearchForMostPopularVideos];
+    }
 }
 
 - (void)presentSearchSuggestoinsTableView {
