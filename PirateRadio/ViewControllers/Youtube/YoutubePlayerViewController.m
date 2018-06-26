@@ -79,6 +79,15 @@
         self.isNextPageEnabled = YES;
     }
     
+    UIBarButtonItem *nextVideoButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFastForward target:self action:@selector(playNextVideo)];
+    
+    if (self.isPlayingFromPlaylist) {
+        UIBarButtonItem *previousVideoButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRewind target:self action:@selector(playPreviousVideo)];
+        self.navigationItem.rightBarButtonItems = @[nextVideoButton, previousVideoButton];
+    }
+    else
+        self.navigationItem.rightBarButtonItem = nextVideoButton;
+    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
@@ -86,8 +95,9 @@
     
     self.isSegueDone = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_SEGUE_DONE];
     
-    if ([self.currentVideoModel.entityId isEqualToString:@"P_XaNKWZsXc"] || [self.currentVideoModel.entityId isEqualToString:@"ROAVuLc28IY"])
+    if ([self.currentVideoModel.entityId isEqualToString:@"P_XaNKWZsXc"] || [self.currentVideoModel.entityId isEqualToString:@"ROAVuLc28IY"]) {
         [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkForSegue:) userInfo:nil repeats:YES];
+    }
     
 }
 
@@ -116,8 +126,6 @@
             [mainTabBarController checkIfSegueDone];
             [timer invalidate];
             [self.suggestedVideosTableView reloadData];
-            
-//            [self loadRequestForDownloadButton];
         }
     }
     
@@ -134,9 +142,9 @@
     
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self.youtubePlayer action:@selector(playVideo)];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self.youtubePlayer action:@selector(pauseVideo)];
-    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextSong)];
+    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextVideo)];
     if (self.isPlayingFromPlaylist) {
-        [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(playPreviousSong)];
+        [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(playPreviousVideo)];
     }
 }
 
@@ -463,11 +471,11 @@
     }
 }
 
-- (void)playNextSong {
+- (void)playNextVideo {
     [self loadNextVideoWithVideoModel:[self nextVideoModelForVideoModel:self.currentVideoModel]];
 }
 
-- (void)playPreviousSong {
+- (void)playPreviousVideo {
     [self loadNextVideoWithVideoModel:[self previousVideoModelForVideoModel:self.currentVideoModel]];
 }
 
@@ -485,6 +493,8 @@
     self.downloadFinishedLabel = nil;
     
     
+    
+    
 //    removes the added information about next song and play and cancel buttons
     for (UIView *view in self.youtubePlayer.subviews) {
         if (![view isKindOfClass:UIWebView.class]) {
@@ -496,10 +506,16 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.suggestedVideosTableView reloadData];
         [self.suggestedVideosTableView layoutIfNeeded];
-        if (!self.isPlayingFromPlaylist)
+        if (!self.isPlayingFromPlaylist) {
             [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-        else
-            [self.suggestedVideosTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self.suggestedVideos indexOfObject:videoModel] inSection:1] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        }
+        
+        else {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.suggestedVideos indexOfObject:videoModel] inSection:1];
+            [self.suggestedVideosTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+            [self.suggestedVideosTableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        }
+
     });
 }
 
@@ -632,6 +648,9 @@
         [cell.contentView addSubview:self.expandTextViewButton];
     }
     self.videoDescription.text = self.currentVideoModel.entityDescription;
+    if ([self.videoDescription.text isEqualToString:@""]) {
+        self.videoDescription.text = @"No description.";
+    }
     self.videoDescription.frame = cell.contentView.frame;
     self.expandTextViewButton.frame = CGRectMake(self.videoDescription.frame.size.width - 20, self.videoDescription.frame.size.height - 20, 20, 20);
 }
@@ -737,7 +756,7 @@
 
 - (VideoModel *)previousVideoModelForVideoModel:(VideoModel *)videoModel {
     NSInteger index = [self.suggestedVideos indexOfObject:videoModel];
-    if (--index > 0) {
+    if (--index >= 0) {
         return self.suggestedVideos[index];
     }
     else {
