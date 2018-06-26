@@ -1,5 +1,5 @@
 //
-//  ITunesDownloadManager.h
+//  ArtworkDownload.h
 //  PirateRadio
 //
 //  Created by A-Team User on 18.05.18.
@@ -10,7 +10,7 @@
 
 @class LocalSongModel;
 
-@interface ITunesDownloadManager : NSObject<NSURLSessionDownloadDelegate>
+@interface ArtworkDownload : NSObject<NSURLSessionDownloadDelegate>
 
 + (instancetype)sharedInstance;
 - (void)downloadArtworkForLocalSongModel:(LocalSongModel *)localSong;

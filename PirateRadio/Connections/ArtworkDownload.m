@@ -1,16 +1,16 @@
 //
-//  ITunesDownloadManager.m
+//  ArtworkDownload.m
 //  PirateRadio
 //
 //  Created by A-Team User on 18.05.18.
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
-#import "ITunesDownloadManager.h"
-#import "ITunesRequestManager.h"
+#import "ArtworkDownload.h"
+#import "ArtworkRequest.h"
 #import "LocalSongModel.h"
 
-@interface ITunesDownloadManager ()
+@interface ArtworkDownload ()
 
 @property (strong, nonatomic) NSURLSession *session;
 @property (strong, nonatomic) NSMutableDictionary<NSURLSessionDownloadTask *, LocalSongModel *> *downloadDict;
@@ -18,10 +18,10 @@
 @end
 
 
-@implementation ITunesDownloadManager
+@implementation ArtworkDownload
 
 + (instancetype)sharedInstance {
-    static ITunesDownloadManager *sharedMyManager = nil;
+    static ArtworkDownload *sharedMyManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedMyManager = [[self alloc] init];
@@ -40,7 +40,7 @@
 
 
 - (void)downloadArtworkForLocalSongModel:(LocalSongModel *)localSong {
-    [ITunesRequestManager makeLastFMSearchRequestWithKeywords:localSong.keywordsFromAuthorAndTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [ArtworkRequest makeLastFMSearchRequestWithKeywords:localSong.keywordsFromAuthorAndTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSError *serializationError;
         NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
         if (serializationError) {

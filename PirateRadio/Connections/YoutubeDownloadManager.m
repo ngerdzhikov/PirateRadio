@@ -8,8 +8,7 @@
 
 #import "YoutubeDownloadManager.h"
 #import "DownloadModel.h"
-#import "ITunesRequestManager.h"
-#import "ITunesDownloadManager.h"
+#import "ArtworkDownload.h"
 #import "LocalSongModel.h"
 #import "Constants.h"
 
@@ -66,7 +65,7 @@
     }
     else {
         LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
-        [ITunesDownloadManager.sharedInstance downloadArtworkForLocalSongModel:song];
+        [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModel:song];
         [self.downloads removeObjectForKey:downloadTask];
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
     }

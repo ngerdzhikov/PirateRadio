@@ -1,12 +1,12 @@
 //
-//  ITunesRequestManager.m
+//  ArtworkRequest.m
 //  PirateRadio
 //
 //  Created by A-Team User on 17.05.18.
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
-#import "ITunesRequestManager.h"
+#import "ArtworkRequest.h"
 #import "NSURL+URLWithQueryItems.h"
 
 #define LAST_FM_API_KEY @"170edf925171e574a3ac568a6557f7e9"
@@ -14,7 +14,7 @@
 
 #define ITUNES_SEARCH_PREFIX @"https://itunes.apple.com/search?"
 
-@implementation ITunesRequestManager
+@implementation ArtworkRequest
 
 + (void)makeLastFMSearchRequestWithKeywords:(NSArray<NSString *> *)keywords andCompletion:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completion {
     NSURL *url = [NSURL URLWithString:LAST_FM_SEARCH_PREFIX];
