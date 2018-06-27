@@ -33,13 +33,27 @@
     NSString *modifiedTitle = title;
     modifiedTitle = [title stringByTrimmingCharactersInSet:NSCharacterSet.symbolCharacterSet];
     NSError *err;
-    //@"(\\[|\\()Official(\\s*\\w*)*(\\]|\\))
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(\\[|\\()(\\s*)Official(\\s*\\w*)*(\\]|\\))" options:NSRegularExpressionCaseInsensitive error:&err];
+    
+//    NSRegularExpression *regexForMusic = [NSRegularExpression regularExpressionWithPattern:@"((\\[|\\()Music(\\s*\\w*)*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
+//    if (err) {
+//        NSLog(@"Error = %@", err);
+//    }
+//    else {
+//        modifiedTitle = [regexForMusic stringByReplacingMatchesInString:title options:0 range:NSMakeRange(0, modifiedTitle.length) withTemplate:@""];
+//    }
+//    NSRegularExpression *regexForAudio = [NSRegularExpression regularExpressionWithPattern:@"((\\[|\\()Audio(\\s*\\w*)*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
+//    if (err) {
+//        NSLog(@"Error = %@", err);
+//    }
+//    else {
+//        modifiedTitle = [regexForAudio stringByReplacingMatchesInString:modifiedTitle options:0 range:NSMakeRange(0, modifiedTitle.length) withTemplate:@""];
+//    }
+    NSRegularExpression *regexForOfficial = [NSRegularExpression regularExpressionWithPattern:@"(\\[|\\()(\\s*)Official(\\s*\\w*.*)*(\\]|\\))|((\\[|\\()Audio(\\s*\\w*)*(\\]|\\)))|((\\[|\\()Music(\\s*\\w*)*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
     if (err) {
         NSLog(@"Error = %@", err);
     }
     else {
-        modifiedTitle = [regex stringByReplacingMatchesInString:title options:0 range:NSMakeRange(0, [title length]) withTemplate:@""];
+        modifiedTitle = [regexForOfficial stringByReplacingMatchesInString:title options:0 range:NSMakeRange(0, title.length) withTemplate:@""];
     }
     return [modifiedTitle substringToIndex:modifiedTitle.length - 8];
 }
@@ -78,7 +92,9 @@
 -(NSArray<NSString *> *)keywordsFromAuthorAndTitle {
     NSMutableArray<NSString *> *keywords = [[NSMutableArray alloc] init];
     [keywords addObjectsFromArray:[self.artistName componentsSeparatedByString:@" "]];
-    [keywords addObjectsFromArray:[self.songTitle componentsSeparatedByString:@" "]];
+    NSArray *titleWithoutFt = [self.songTitle componentsSeparatedByString:@" ft"];
+    NSArray *titleWithoutFeat = [titleWithoutFt[0] componentsSeparatedByString:@" feat"];
+    [keywords addObjectsFromArray:[titleWithoutFeat[0] componentsSeparatedByString:@" "]];
     return keywords;
 }
 
