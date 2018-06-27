@@ -41,7 +41,6 @@
     }];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
-
     
 }
 
@@ -169,13 +168,11 @@
 - (void)updateMusicPlayerContent {
     
     UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
-    if (image) {
-        
-        self.songImage.image = image;
+    if (!image) {
+        self.songImage.image = [UIImage imageNamed:@"unknown_artist"];
     }
     else {
-        
-        self.songImage.image = [UIImage imageNamed:@"unknown_artist_transperent"];
+        self.songImage.image = image;
     }
     self.songName.text = self.player.currentSong.songTitle;
     
@@ -184,7 +181,6 @@
     }
     else {
         [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
-        
 //                tell the songList that song is paused;
         [self.songListDelegate didPauseSong:self.player.currentSong];
     }
@@ -195,7 +191,7 @@
     UIGraphicsEndImageContext();
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-    
+
 }
 
 
@@ -353,7 +349,7 @@
         MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
             UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
             if (!image) {
-                image = [UIImage imageNamed:@"unknown_artist_transperent"];
+                image = [UIImage imageNamed:@"unknown_artist"];
             }
             return image;
         }];

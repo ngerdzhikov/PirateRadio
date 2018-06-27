@@ -53,7 +53,7 @@
                     NSDictionary *thumbDictionary = [[track[0] objectForKey:@"image"] objectAtIndex:3];
                     
                     NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
-                    if (artworkURL) {
+                    if (artworkURL != nil) {
                         NSLog(@"Found artwork");
                         NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
                         [self.downloadDict setObject:localSong forKey:downloadTask];
