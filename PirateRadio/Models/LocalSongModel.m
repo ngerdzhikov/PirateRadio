@@ -34,21 +34,7 @@
     modifiedTitle = [title stringByTrimmingCharactersInSet:NSCharacterSet.symbolCharacterSet];
     NSError *err;
     
-//    NSRegularExpression *regexForMusic = [NSRegularExpression regularExpressionWithPattern:@"((\\[|\\()Music(\\s*\\w*)*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
-//    if (err) {
-//        NSLog(@"Error = %@", err);
-//    }
-//    else {
-//        modifiedTitle = [regexForMusic stringByReplacingMatchesInString:title options:0 range:NSMakeRange(0, modifiedTitle.length) withTemplate:@""];
-//    }
-//    NSRegularExpression *regexForAudio = [NSRegularExpression regularExpressionWithPattern:@"((\\[|\\()Audio(\\s*\\w*)*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
-//    if (err) {
-//        NSLog(@"Error = %@", err);
-//    }
-//    else {
-//        modifiedTitle = [regexForAudio stringByReplacingMatchesInString:modifiedTitle options:0 range:NSMakeRange(0, modifiedTitle.length) withTemplate:@""];
-//    }
-    NSRegularExpression *regexForOfficial = [NSRegularExpression regularExpressionWithPattern:@"(\\[|\\()(\\s*)Official(\\s*\\w*.*)*(\\]|\\))|((\\[|\\()Audio(\\s*\\w*)*(\\]|\\)))|((\\[|\\()Music(\\s*\\w*)*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
+    NSRegularExpression *regexForOfficial = [NSRegularExpression regularExpressionWithPattern:@"(\\[|\\().*Official.*(\\]|\\))|((\\[|\\().*Audio.*(\\]|\\)))|((\\[|\\().*Music.*(\\]|\\)))|((\\[|\\().*Video.*(\\]|\\)))" options:NSRegularExpressionCaseInsensitive error:&err];
     if (err) {
         NSLog(@"Error = %@", err);
     }
@@ -60,10 +46,11 @@
 
 -(void)extractArtistNameAndSongTitleFromSongURL:(NSURL *)songURL {
     NSString *song = [[[songURL lastPathComponent] stringByDeletingPathExtension] stringByRemovingPercentEncoding];
-    NSArray<NSString *> *components = [song componentsSeparatedByString:@" - "];
+    NSString *artistNamePlusSongName = [self extractedSongTitleFromString:song];
+    NSArray<NSString *> *components = [artistNamePlusSongName componentsSeparatedByString:@" - "];
     if (components.count == 2) {
         self.artistName = components[0];
-        self.songTitle = [self extractedSongTitleFromString:components[1]];
+        self.songTitle = components[1];
     }
     else if (components.count > 2) {
         self.artistName = components[0];
@@ -72,7 +59,7 @@
     }
     else {
         self.artistName = @"Unknown artist";
-        self.songTitle = [self extractedSongTitleFromString:song];
+        self.songTitle = artistNamePlusSongName;
     }
 }
 
@@ -90,6 +77,9 @@
 }
 
 -(NSArray<NSString *> *)keywordsFromAuthorAndTitle {
+    if ([self.artistName isEqualToString:@"Unknown artist"]) {
+        return [self keywordsFromTitle];
+    }
     NSMutableArray<NSString *> *keywords = [[NSMutableArray alloc] init];
     [keywords addObjectsFromArray:[self.artistName componentsSeparatedByString:@" "]];
     NSArray *titleWithoutFt = [self.songTitle componentsSeparatedByString:@" ft"];
