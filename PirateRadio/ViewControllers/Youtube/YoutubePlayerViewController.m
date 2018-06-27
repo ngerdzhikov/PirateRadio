@@ -666,9 +666,7 @@
         self.downloadButtonWebView.navigationDelegate = self.downloadButtonWebView;
         [cell.contentView addSubview:self.downloadButtonWebView];
     }
-    if (![self.downloadButtonWebView.videoModel isEqual:self.currentVideoModel]) {
-        [self loadRequestForDownloadButton];
-    }
+    [self loadRequestForDownloadButton];
     self.downloadButtonWebView.frame = cell.contentView.frame;
 }
 

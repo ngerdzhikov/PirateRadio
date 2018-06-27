@@ -48,15 +48,18 @@
         }
         else {
             if ([[responseDict objectForKey:@"results"] count] > 0) {
-                NSLog(@"Found artwork");
                 NSArray *track = [[[responseDict objectForKey:@"results"] objectForKey:@"albummatches"] objectForKey:@"album"];
                 if (track.count > 0) {
                     NSDictionary *thumbDictionary = [[track[0] objectForKey:@"image"] objectAtIndex:3];
                     
                     NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
-                    NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
-                    [self.downloadDict setObject:localSong forKey:downloadTask];
-                    [downloadTask resume];
+                    if (artworkURL) {
+                        NSLog(@"Found artwork");
+                        NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
+                        [self.downloadDict setObject:localSong forKey:downloadTask];
+                        [downloadTask resume];
+                    }
+                    
                 }
             }
         }

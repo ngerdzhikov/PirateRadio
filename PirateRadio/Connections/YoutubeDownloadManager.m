@@ -14,7 +14,7 @@
 
 @interface YoutubeDownloadManager ()
 
-@property (strong, nonatomic) NSMutableDictionary<id, DownloadModel *> *downloads;
+@property (strong, nonatomic) NSMutableArray<DownloadModel *> *downloads;
 @property (strong, nonatomic) NSURLSession *youtubeSession;
 
 @end
@@ -33,7 +33,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.downloads = [[NSMutableDictionary alloc] init];
+        self.downloads = [[NSMutableArray alloc] init];
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"youtubeDownload"];
         configuration.waitsForConnectivity = YES;
         configuration.shouldUseExtendedBackgroundIdleMode = YES;
@@ -45,8 +45,7 @@
 - (void)downloadVideoWithDownloadModel:(DownloadModel *)download {
     
     NSURLSessionDownloadTask *downloadTask = [self.youtubeSession downloadTaskWithURL:download.URL];
-    [self.downloads setObject:download forKey:downloadTask];
-    
+    [self.downloads addObject:download];
     [downloadTask resume];
 }
 
@@ -54,7 +53,8 @@
     
     NSFileManager *fileManager = NSFileManager.defaultManager;
     
-    DownloadModel *download = self.downloads[downloadTask];
+    DownloadModel *download = self.downloads.firstObject;
+    
     NSURL *localURL = download.localURLWithTimeStamp;
     
     NSError *error;
@@ -66,7 +66,7 @@
     else {
         LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
         [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModel:song];
-        [self.downloads removeObjectForKey:downloadTask];
+        [self.downloads removeObject:download];
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
     }
     [self.youtubeSession resetWithCompletionHandler:^{

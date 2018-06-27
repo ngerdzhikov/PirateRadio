@@ -33,7 +33,9 @@
     
     self.songListSearchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     
-    
+    if (!self.allSongs) {
+        self.allSongs = [[NSMutableArray alloc] init];
+    }
     self.allSongsDurations = [[NSMutableDictionary alloc] init];
     [self loadAllSongsDurations];
     
@@ -367,6 +369,7 @@
     LocalSongModel *newSong = [notification.userInfo objectForKey:@"song"];
     [self.allSongs addObject:newSong];
     AVURLAsset *songAsset = [AVURLAsset assetWithURL:newSong.localSongURL];
+    
     [self.allSongsDurations setObject:[NSNumber numberWithDouble:CMTimeGetSeconds(songAsset.duration)] forKey:newSong.localSongURL.absoluteString];
     
     dispatch_async(dispatch_get_main_queue(), ^{
