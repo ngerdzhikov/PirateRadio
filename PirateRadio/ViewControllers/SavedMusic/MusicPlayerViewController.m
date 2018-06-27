@@ -189,7 +189,15 @@
         [self.songListDelegate didPauseSong:self.player.currentSong];
     }
     
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [image drawInRect:self.view.bounds blendMode:kCGBlendModeNormal alpha:0.15f];
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
 }
+
 
 
 - (void)sliderIsSliding {
