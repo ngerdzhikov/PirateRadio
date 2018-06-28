@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class MBCircularProgressBarView;
+@class DGActivityIndicatorView;
 
 @interface SavedMusicTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *musicTitle;
-@property (strong, nonatomic) MBCircularProgressBarView *circleProgressBar;
 @property (weak, nonatomic) IBOutlet UILabel *songDurationLabel;
+@property (weak, nonatomic) IBOutlet UIView *progressPlaceHolderView;
+@property (strong, nonnull) DGActivityIndicatorView *playIndicator;
 
 @end

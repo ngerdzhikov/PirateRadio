@@ -11,8 +11,8 @@
 
 
 typedef enum {
-    EnumCellMediaPlaybackStatePlay,
-    EnumCellMediaPlaybackStatePause
+    EnumCellMediaPlaybackStatePlaying,
+    EnumCellMediaPlaybackStatePaused
 } EnumCellMediaPlaybackState;
 
 @protocol SearchSuggestionsDelegate
@@ -30,7 +30,6 @@ typedef enum {
 
 @protocol SongListDelegate
 
-- (void)updateProgress:(double)progress forSong:(LocalSongModel *)song;
 - (void)didPauseSong:(LocalSongModel *)song;
 - (void)didStartPlayingSong:(LocalSongModel *)song;
 - (void)didRequestNextForSong:(LocalSongModel *)song;

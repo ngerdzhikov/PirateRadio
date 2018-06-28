@@ -6,7 +6,6 @@
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
-#import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "SavedMusicTableViewController.h"
 #import "AllSongsTableViewController.h"
 #import "MusicPlayerViewController.h"
@@ -15,12 +14,14 @@
 #import "PlaylistModel.h"
 #import "PlaylistsDatabase.h"
 #import "Constants.h"
+#import "DGActivityIndicatorView.h"
 
 
 @interface SavedMusicTableViewController ()
 
 @property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
 @property (strong, nonatomic) UIImageView *noSongsImageView;
+
 
 @end
 
@@ -65,6 +66,15 @@
         NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
         [self.allSongsDurations setObject:duration forKey:song.localSongURL.absoluteString];
     }
+}
+
+- (NSManagedObjectContext *)managedObjectContext {
+    NSManagedObjectContext *context = nil;
+    id delegate = [[UIApplication sharedApplication] delegate];
+    if ([delegate performSelector:@selector(managedObjectContext)]) {
+        context = [delegate managedObjectContext];
+    }
+    return context;
 }
 
 - (void)displayEmptyListImageIfNeeded {
@@ -132,19 +142,19 @@
     LocalSongModel *song = self.songs[indexPath.row];
     cell.musicTitle.text = [self properMusicTitleForSong:song];
     cell.songDurationLabel.text = [self extractSongDurationFromNumber:[self.allSongsDurations objectForKey:song.localSongURL.absoluteString]];
-    
     if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         if (self.musicPlayerDelegate.isPlaying) {
-            cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
-            cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
+            [cell.playIndicator setType:DGActivityIndicatorAnimationTypeLineScalePulseOut];
+            [cell.playIndicator startAnimating];
+        }
+        else {
+            [cell.playIndicator setType:DGActivityIndicatorAnimationTypeBallBeat];
+            [cell.playIndicator startAnimating];
         }
     }
     else {
-        cell.circleProgressBar.unitString = BUTTON_TITLE_PLAY_STRING;
-        cell.circleProgressBar.textOffset = CGPointMake(0, -0.5);
-        cell.circleProgressBar.value = 0;
+        [cell.playIndicator stopAnimating];
     }
-    
     return cell;
 }
 
@@ -229,7 +239,7 @@
         [self.musicPlayerDelegate playLoadedSong];
         
         [self.musicPlayerDelegate setPlayerPlayPauseButtonState:NO];
-        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
     }
     else {
         if (self.musicPlayerDelegate.isPlaying) {
@@ -237,13 +247,13 @@
             [self.musicPlayerDelegate pauseLoadedSong];
             
             [self.musicPlayerDelegate setPlayerPlayPauseButtonState:YES];
-            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlay forCellAtIndexPath:indexPath];
+            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePaused forCellAtIndexPath:indexPath];
         }
         else {
             [self.musicPlayerDelegate playLoadedSong];
             
             [self.musicPlayerDelegate setPlayerPlayPauseButtonState:NO];
-            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
         }
     }
 }
@@ -270,22 +280,21 @@
 
 - (void)clearProgressForCellAtIndexPath:(NSIndexPath *)indexPath {
     SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlay forCellAtIndexPath:indexPath];
-    cell.circleProgressBar.value = 0;
+
+    [cell.playIndicator stopAnimating];
 }
 
 - (void)setMediaPlayBackState:(EnumCellMediaPlaybackState) playbackState forCellAtIndexPath:(NSIndexPath *)indexPath {
     
     SavedMusicTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    if (playbackState == EnumCellMediaPlaybackStatePlay) {
-        
-        cell.circleProgressBar.unitString = BUTTON_TITLE_PLAY_STRING;
-        cell.circleProgressBar.textOffset = CGPointMake(0, -0.5);
+    
+    if (playbackState == EnumCellMediaPlaybackStatePaused) {
+        [cell.playIndicator setType:DGActivityIndicatorAnimationTypeBallBeat];
+        [cell.playIndicator startAnimating];
     }
     else {
-        
-        cell.circleProgressBar.unitString = BUTTON_TITLE_PAUSE_STRING;
-        cell.circleProgressBar.textOffset = CGPointMake(-1.5, -1.5);
+        [cell.playIndicator setType:DGActivityIndicatorAnimationTypeLineScalePulseOut];
+        [cell.playIndicator startAnimating];
     }
 }
 
@@ -306,30 +315,18 @@
     return cell;
 }
 
-- (void)updateProgress:(double)progress forSong:(LocalSongModel *)song {
-    
-    SavedMusicTableViewCell *cell = [self cellForSong:song];
-    cell.circleProgressBar.value = progress;
-    if (progress >= 10) {
-        cell.circleProgressBar.textOffset = CGPointMake(-3.5, -1.5);
-    }
-    else {
-        cell.circleProgressBar.textOffset = CGPointMake(-2.5, -1.5);
-    }
-}
-
 #pragma mark songListDelegate
 
 - (void)didPauseSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
-    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlay forCellAtIndexPath:indexPath];
+    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePaused forCellAtIndexPath:indexPath];
 }
 
 - (void)didStartPlayingSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
-    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
 }
 
 - (void)didRequestNextForSong:(LocalSongModel *)song {
@@ -343,7 +340,10 @@
         [self.musicPlayerDelegate prepareSong:nextSong];
         
         indexPath = [self indexPathForSong:nextSong];
-        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+        if (self.musicPlayerDelegate.isPlaying)
+            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
+        else
+            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePaused forCellAtIndexPath:indexPath];
     }
     
     [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
@@ -360,7 +360,10 @@
         [self.musicPlayerDelegate prepareSong:previousSong];
         
         indexPath = [self indexPathForSong:previousSong];
-        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePause forCellAtIndexPath:indexPath];
+        if (self.musicPlayerDelegate.isPlaying)
+            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
+        else
+            [self setMediaPlayBackState:EnumCellMediaPlaybackStatePaused forCellAtIndexPath:indexPath];
     }
     [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
 }

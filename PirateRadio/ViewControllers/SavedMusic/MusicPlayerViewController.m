@@ -70,7 +70,6 @@
     if (!self.isSliding) {
         
         self.songTimeProgress.value = (time / duration) * 100;
-        [self.songListDelegate updateProgress:(time / duration) * 100 forSong:self.player.currentSong];
     }
     [self setTime:time andDuration:duration];
     

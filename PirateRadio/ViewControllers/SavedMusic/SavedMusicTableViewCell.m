@@ -8,7 +8,7 @@
 
 #import "SavedMusicTableViewCell.h"
 #import "Constants.h"
-#import <MBCircularProgressBar/MBCircularProgressBarView.h>
+#import "DGActivityIndicatorView.h"
 
 typedef enum {
     EnumCellMediaPlaybackStatePlay,
@@ -16,8 +16,6 @@ typedef enum {
 } EnumCellMediaPlaybackState;
 
 @interface SavedMusicTableViewCell ()
-
-@property (weak, nonatomic) IBOutlet UIView *progressPlaceHolderView;
 
 @end
 
@@ -29,8 +27,9 @@ typedef enum {
     [super awakeFromNib];
     self.progressPlaceHolderView.center = self.contentView.center;
     [self.contentView bringSubviewToFront:self.progressPlaceHolderView];
-    self.circleProgressBar = [self circularProgressBarWithFrame:self.progressPlaceHolderView.bounds];
-    [self.progressPlaceHolderView addSubview:self.circleProgressBar];
+    self.playIndicator = [[DGActivityIndicatorView alloc] initWithType:DGActivityIndicatorAnimationTypeLineScalePulseOutRapid tintColor:[UIColor colorWithRed:0.14 green:0.38 blue:0.56 alpha:1.0] size:17];
+    [self.progressPlaceHolderView addSubview:self.playIndicator];
+    self.playIndicator.frame = self.progressPlaceHolderView.bounds;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -39,28 +38,6 @@ typedef enum {
     // Configure the view for the selected state
 }
 
-- (MBCircularProgressBarView *) circularProgressBarWithFrame:(CGRect) frame {
-    MBCircularProgressBarView *circleProgressBar = [[MBCircularProgressBarView alloc] initWithFrame:frame];
-    circleProgressBar.progressRotationAngle = 50;
-    circleProgressBar.progressAngle = 100;
-    circleProgressBar.backgroundColor = [UIColor clearColor];
-    circleProgressBar.progressColor = [UIColor blueColor];
-    circleProgressBar.progressStrokeColor = [UIColor blueColor];
-    circleProgressBar.emptyLineColor = [UIColor clearColor];
-    circleProgressBar.emptyLineStrokeColor = [UIColor clearColor];
-    circleProgressBar.progressLineWidth = 3;
-    circleProgressBar.showValueString = YES;
-    circleProgressBar.textOffset = CGPointMake(0, -0.5);
-    circleProgressBar.emptyLineColor = [UIColor grayColor];
-    circleProgressBar.showUnitString = YES;
-    circleProgressBar.value = 0;
-    circleProgressBar.maxValue = 100;
-    circleProgressBar.unitString = @"c";
-    circleProgressBar.unitFontSize = 18;
-    circleProgressBar.valueFontName = @"Icons South St";
-    circleProgressBar.unitFontName = @"Icons South St";
-    return circleProgressBar;
-}
 
 
 @end
