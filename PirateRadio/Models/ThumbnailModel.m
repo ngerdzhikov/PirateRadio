@@ -28,4 +28,14 @@
     return self;
 }
 
+- (instancetype)initWithURL:(NSURL *)url width:(NSNumber *)width height:(NSNumber *)height {
+    self = [super init];
+    if (self) {
+        self.url = url;
+        self.width = width.integerValue;
+        self.height = height.integerValue;
+    }
+    return self;
+}
+
 @end

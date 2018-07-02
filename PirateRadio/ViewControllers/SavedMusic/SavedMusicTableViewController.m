@@ -68,15 +68,6 @@
     }
 }
 
-- (NSManagedObjectContext *)managedObjectContext {
-    NSManagedObjectContext *context = nil;
-    id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate performSelector:@selector(managedObjectContext)]) {
-        context = [delegate managedObjectContext];
-    }
-    return context;
-}
-
 - (void)displayEmptyListImageIfNeeded {
     if (self.songs.count == 0) {
         if (![self.view.subviews containsObject:self.noSongsImageView]) {

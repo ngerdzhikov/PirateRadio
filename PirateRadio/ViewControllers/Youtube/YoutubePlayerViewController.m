@@ -21,6 +21,7 @@
 #import "ImageCacher.h"
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
+#import "DataBase.h"
 
 @import MediaPlayer;
 
@@ -53,7 +54,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    [self reloadView];
+}
+
+- (void)reloadView {
     [self startAnimation];
     
     self.youtubePlayer.delegate = self;
@@ -80,13 +84,14 @@
     }
     
     UIBarButtonItem *nextVideoButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFastForward target:self action:@selector(playNextVideo)];
+    UIBarButtonItem *addToFavourites = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemBookmarks target:self action:@selector(addVideoToFavourites)];
     
     if (self.isPlayingFromPlaylist) {
         UIBarButtonItem *previousVideoButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRewind target:self action:@selector(playPreviousVideo)];
-        self.navigationItem.rightBarButtonItems = @[nextVideoButton, previousVideoButton];
+        self.navigationItem.rightBarButtonItems = @[nextVideoButton, previousVideoButton, addToFavourites];
     }
     else
-        self.navigationItem.rightBarButtonItem = nextVideoButton;
+        self.navigationItem.rightBarButtonItems = @[nextVideoButton, addToFavourites];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
@@ -98,7 +103,6 @@
     if ([self.currentVideoModel.entityId isEqualToString:@"P_XaNKWZsXc"] || [self.currentVideoModel.entityId isEqualToString:@"ROAVuLc28IY"]) {
         [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkForSegue:) userInfo:nil repeats:YES];
     }
-    
 }
 
 - (void)checkForSegue:(NSTimer *)timer {
@@ -760,6 +764,19 @@
     else {
         return self.suggestedVideos.lastObject;
     }
+}
+
+- (void)addVideoToFavourites {
+    NSString *username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
+    if (![username isEqualToString:@""]) {
+        [DataBase.sharedManager addFavouriteVideo:self.currentVideoModel ForUsername:username];
+    }
+}
+
+- (void)reloadVCWithNewYoutubePlaylist:(YoutubePlaylistModel *)playlist {
+    self.youtubePlaylist = playlist;
+    [self reloadView];
+    [self.suggestedVideosTableView reloadData];
 }
 
 @end

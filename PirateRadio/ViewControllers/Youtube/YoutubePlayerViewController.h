@@ -22,4 +22,6 @@
 @property (weak, nonatomic) IBOutlet YTPlayerView *youtubePlayer;
 @property (strong, nonatomic) NSString *nextPageToken;
 
+- (void)reloadVCWithNewYoutubePlaylist:(YoutubePlaylistModel *)playlist;
+
 @end

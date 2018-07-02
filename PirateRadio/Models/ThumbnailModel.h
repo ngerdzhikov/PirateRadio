@@ -15,5 +15,6 @@
 @property (readonly) NSUInteger height;
 
 - (instancetype)initWithJSONDictionary:(NSDictionary<NSString *, id> *)jsonDict;
+- (instancetype)initWithURL:(NSURL *)url width:(NSNumber *)width height:(NSNumber *)height;
 
 @end

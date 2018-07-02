@@ -17,6 +17,7 @@
 @property (strong, nonatomic) NSString *videoViews;
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet andVideoId:(NSString *)videoId;
+- (instancetype)initWithVideoId:(NSString *)videoId title:(NSString *)title channel:(NSString *)channel publishedAt:(NSString *)publishedAt thumbnail:(ThumbnailModel *)thumbnailModel views:(NSString *)views duration:(NSString *)duration;
 - (NSString *)formattedDuration;
 
 @end

@@ -50,4 +50,16 @@
     return self;
 }
 
+- (instancetype)initWithVideoId:(NSString *)videoId title:(NSString *)title channel:(NSString *)channel publishedAt:(NSString *)publishedAt thumbnail:(ThumbnailModel *)thumbnailModel {
+    self = [super init];
+    if (self) {
+        self.entityId = videoId;
+        self.title = title;
+        self.channelTitle = channel;
+        self.publishedAt = publishedAt;
+        self.thumbnails = @{@"high" : thumbnailModel ?: nil};
+    }
+    return self;
+}
+
 @end

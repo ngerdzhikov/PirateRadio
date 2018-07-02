@@ -40,7 +40,7 @@
     BOOL segueDone = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_SEGUE_DONE];
     
     if (!segueDone) {
-        [self setViewControllers:[NSArray arrayWithObject:self.allVCs[0]]];
+        [self setViewControllers:@[self.allVCs[0],self.allVCs[3]]];
     }
     else {
         [self setViewControllers:self.allVCs];

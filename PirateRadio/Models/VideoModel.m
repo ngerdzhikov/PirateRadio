@@ -25,6 +25,15 @@
     return self;
 }
 
+- (instancetype)initWithVideoId:(NSString *)videoId title:(NSString *)title channel:(NSString *)channel publishedAt:(NSString *)publishedAt thumbnail:(ThumbnailModel *)thumbnailModel views:(NSString *)views duration:(NSString *)duration {
+    self = [super initWithVideoId:videoId title:title channel:channel publishedAt:publishedAt thumbnail:thumbnailModel];
+    if (self) {
+        self.videoViews = views;
+        self.videoDuration = duration;
+    }
+    return self;
+}
+
 - (NSString*)formattedDuration {
     int hours = 0;
     int minutes = 0;
