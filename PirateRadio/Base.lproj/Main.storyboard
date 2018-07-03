@@ -36,7 +36,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jxl-5H-pi6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3821" y="2072"/>
+            <point key="canvasLocation" x="-3823" y="1899"/>
         </scene>
         <!--Search Table View Controller-->
         <scene sceneID="5ML-XR-iel">
@@ -403,7 +403,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rsu-OW-1Nb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5647" y="2747"/>
+            <point key="canvasLocation" x="-5838" y="3117"/>
         </scene>
         <!--Profile View Controller-->
         <scene sceneID="tAG-05-yn7">
@@ -453,7 +453,6 @@
                                             <constraints>
                                                 <constraint firstItem="xyW-d3-WfK" firstAttribute="leading" secondItem="HZk-zO-l8H" secondAttribute="trailing" constant="20" id="5eY-HA-tjJ"/>
                                                 <constraint firstItem="lPh-Fa-mSD" firstAttribute="leading" secondItem="HZk-zO-l8H" secondAttribute="trailing" constant="20" id="HIS-jY-NjM"/>
-                                                <constraint firstAttribute="bottom" secondItem="HZk-zO-l8H" secondAttribute="bottom" constant="4.6666666666666643" id="IRn-7f-D3v"/>
                                                 <constraint firstItem="xyW-d3-WfK" firstAttribute="top" secondItem="eey-EJ-0Uf" secondAttribute="top" constant="3" id="Roe-GN-QqN"/>
                                                 <constraint firstItem="lPh-Fa-mSD" firstAttribute="top" secondItem="xyW-d3-WfK" secondAttribute="bottom" constant="-1" id="Vha-gC-TjO"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xyW-d3-WfK" secondAttribute="trailing" constant="20" symbolic="YES" id="ZeB-Rt-QJ7"/>
@@ -520,7 +519,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qxB-Sw-zDL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4690.3999999999996" y="2454.6798029556653"/>
+            <point key="canvasLocation" x="-5838" y="2455"/>
         </scene>
         <!--Youtube Player View Controller-->
         <scene sceneID="tne-QT-ifu">

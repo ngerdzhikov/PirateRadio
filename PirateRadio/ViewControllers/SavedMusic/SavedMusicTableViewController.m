@@ -16,6 +16,7 @@
 #import "Constants.h"
 #import "DataBase.h"
 #import "DGActivityIndicatorView.h"
+#import "Toast.h"
 
 
 @interface SavedMusicTableViewController ()
@@ -173,7 +174,6 @@
             
 //            post notification that song is deleted and pass it
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
-//            [PlaylistsDatabase removeSong:song];
             
             [self displayEmptyListImageIfNeeded];
             
@@ -419,7 +419,7 @@
         NSURL *videoURL = [db videoURLForLocalSongModel:self.allSongs[indexPath.row]];
         
         [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-        NSLog(@"URL copied");
+        [Toast displayToastWithMessage:@"Video url copied!"];
     }
 }
 

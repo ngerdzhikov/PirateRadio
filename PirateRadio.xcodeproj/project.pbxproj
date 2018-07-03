@@ -22,6 +22,7 @@
 		0660029B20E4F8100000884E /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0660029A20E4F8100000884E /* LoginViewController.m */; };
 		0660029E20E500260000884E /* DataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0660029D20E500260000884E /* DataBase.m */; };
 		066463D120D1260F00E5551D /* MainTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 066463D020D1260F00E5551D /* MainTabBarController.m */; };
+		067792F420EBB42800E0032E /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 067792F320EBB42800E0032E /* Toast.m */; };
 		067A6A7D20E27BFF00F861C0 /* ArtworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 067A6A7C20E27BFF00F861C0 /* ArtworkRequest.m */; };
 		067A6A8020E27C7900F861C0 /* ArtworkDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 067A6A7F20E27C7900F861C0 /* ArtworkDownload.m */; };
 		069C32CD20BC071C0079C5C5 /* SongListPlusPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32CC20BC071C0079C5C5 /* SongListPlusPlayerViewController.m */; };
@@ -80,6 +81,8 @@
 		0660029D20E500260000884E /* DataBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataBase.m; path = PirateRadio/Utilities/DataBase.m; sourceTree = "<group>"; };
 		066463CF20D1260F00E5551D /* MainTabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainTabBarController.h; sourceTree = "<group>"; };
 		066463D020D1260F00E5551D /* MainTabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainTabBarController.m; sourceTree = "<group>"; };
+		067792F220EBB42800E0032E /* Toast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Toast.h; path = PirateRadio/Utilities/Toast.h; sourceTree = "<group>"; };
+		067792F320EBB42800E0032E /* Toast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Toast.m; path = PirateRadio/Utilities/Toast.m; sourceTree = "<group>"; };
 		067A6A7B20E27BFF00F861C0 /* ArtworkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtworkRequest.h; sourceTree = "<group>"; };
 		067A6A7C20E27BFF00F861C0 /* ArtworkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtworkRequest.m; sourceTree = "<group>"; };
 		067A6A7E20E27C7900F861C0 /* ArtworkDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtworkDownload.h; sourceTree = "<group>"; };
@@ -232,6 +235,8 @@
 				06B53DF920C98A3800D3AD79 /* PirateAVPlayer.m */,
 				0660029C20E500260000884E /* DataBase.h */,
 				0660029D20E500260000884E /* DataBase.m */,
+				067792F220EBB42800E0032E /* Toast.h */,
+				067792F320EBB42800E0032E /* Toast.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -513,6 +518,7 @@
 				066463D120D1260F00E5551D /* MainTabBarController.m in Sources */,
 				0608885420C5883E00860DBC /* PlaylistModel.m in Sources */,
 				06B53DF520C959C700D3AD79 /* PlaylistsDatabase.m in Sources */,
+				067792F420EBB42800E0032E /* Toast.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
 				063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */,
 			);

@@ -12,6 +12,7 @@
 #import "FavouriteVideoTableViewCell.h"
 #import "LoginViewController.h"
 #import "DataBase.h"
+#import "Toast.h"
 #import "ThumbnailModel.h"
 #import "YoutubePlaylistModel.h"
 #import "YoutubePlayerViewController.h"
@@ -74,6 +75,10 @@
 
 #pragma mark - Table view data source
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 45;
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -122,8 +127,6 @@
         youtubeVC.youtubePlaylist = playlist;
         [self.tabBarController.selectedViewController pushViewController:youtubeVC animated:NO];
     }
-    
-    
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -159,7 +162,8 @@
         NSURL *videoURL = [NSURL URLWithString:strURL];
         
         [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-        NSLog(@"URL copied");
+        
+        [Toast displayToastWithMessage:@"Video url copied!"];
     }
 }
 
