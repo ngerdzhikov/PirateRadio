@@ -14,6 +14,7 @@
 #import "PlaylistModel.h"
 #import "PlaylistsDatabase.h"
 #import "Constants.h"
+#import "DataBase.h"
 #import "DGActivityIndicatorView.h"
 
 
@@ -21,7 +22,6 @@
 
 @property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
 @property (strong, nonatomic) UIImageView *noSongsImageView;
-
 
 @end
 
@@ -37,17 +37,14 @@
     if (!self.allSongs) {
         self.allSongs = [[NSMutableArray alloc] init];
     }
-    self.allSongsDurations = [[NSMutableDictionary alloc] init];
-    [self loadAllSongsDurations];
     
+    UILongPressGestureRecognizer* longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
+    [self.tableView addGestureRecognizer:longPressRecognizer];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (self.songs.count != self.allSongsDurations.count) {
-        [self loadAllSongsDurations];
-    }
     [self displayEmptyListImageIfNeeded];
     
     
@@ -57,15 +54,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)loadAllSongsDurations {
-    
-    for (LocalSongModel *song in self.allSongs) {
-        AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
-        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
-        [self.allSongsDurations setObject:duration forKey:song.localSongURL.absoluteString];
-    }
 }
 
 - (void)displayEmptyListImageIfNeeded {
@@ -132,7 +120,7 @@
     
     LocalSongModel *song = self.songs[indexPath.row];
     cell.musicTitle.text = [self properMusicTitleForSong:song];
-    cell.songDurationLabel.text = [self extractSongDurationFromNumber:[self.allSongsDurations objectForKey:song.localSongURL.absoluteString]];
+    cell.songDurationLabel.text = [self extractSongDurationFromNumber:song.duration];
     if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         if (self.musicPlayerDelegate.isPlaying) {
             [cell.playIndicator setType:DGActivityIndicatorAnimationTypeLineScalePulseOut];
@@ -146,6 +134,7 @@
     else {
         [cell.playIndicator stopAnimating];
     }
+    
     return cell;
 }
 
@@ -177,10 +166,14 @@
             
 //            remove from dataSource
             [self.allSongs removeObjectAtIndex:indexPath.row];
-            [self.allSongsDurations removeObjectForKey:song.localSongURL.absoluteString];
+            
+//            remove from DB
+            DataBase *db = [[DataBase alloc] init];
+            [db deleteDBSongforLocalSong:song];
+            
 //            post notification that song is deleted and pass it
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
-            [PlaylistsDatabase removeSong:song];
+//            [PlaylistsDatabase removeSong:song];
             
             [self displayEmptyListImageIfNeeded];
             
@@ -362,9 +355,6 @@
 - (void)didRecieveNewSong:(NSNotification *)notification {
     LocalSongModel *newSong = [notification.userInfo objectForKey:@"song"];
     [self.allSongs addObject:newSong];
-    AVURLAsset *songAsset = [AVURLAsset assetWithURL:newSong.localSongURL];
-    
-    [self.allSongsDurations setObject:[NSNumber numberWithDouble:CMTimeGetSeconds(songAsset.duration)] forKey:newSong.localSongURL.absoluteString];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
@@ -417,6 +407,19 @@
     }
     else {
         return [NSString stringWithFormat:@"%d:%d%d:%d%d", hours, (minutes / 10), (minutes % 10), (seconds / 10), (seconds % 10)];
+    }
+}
+
+- (void)onCellLongPress:(UILongPressGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        CGPoint touchPoint = [recognizer locationInView:self.tableView];
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchPoint];
+        DataBase *db = [[DataBase alloc] init];
+        
+        NSURL *videoURL = [db videoURLForLocalSongModel:self.allSongs[indexPath.row]];
+        
+        [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
+        NSLog(@"URL copied");
     }
 }
 

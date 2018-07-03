@@ -96,11 +96,11 @@
     
     if ([object isKindOfClass:[LocalSongModel class]]) {
         LocalSongModel *songToCompare = (LocalSongModel *)object;
-        if (![songToCompare.localSongURL.lastPathComponent isEqual:self.localSongURL.lastPathComponent]) {
-            return NO;
+        if ([songToCompare.localSongURL.lastPathComponent isEqual:self.localSongURL.lastPathComponent]) {
+            return YES;
         }
     }
-    return YES;
+    return NO;
     
 }
 
@@ -109,6 +109,8 @@
     [encoder encodeObject:fileName forKey:@"localSongURL"];
     [encoder encodeObject:self.artistName forKey:@"artistName"];
     [encoder encodeObject:self.songTitle forKey:@"songTitle"];
+    [encoder encodeObject:self.videoURL forKey:@"videoURL"];
+    [encoder encodeObject:self.duration forKey:@"duration"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder {
@@ -120,6 +122,8 @@
         self.localSongURL = [sourcePath URLByAppendingPathComponent:fileName isDirectory:NO];
         self.artistName = [decoder decodeObjectForKey:@"artistName"];
         self.songTitle = [decoder decodeObjectForKey:@"songTitle"];
+        self.videoURL = [decoder decodeObjectForKey:@"videoURL"];
+        self.duration = [decoder decodeObjectForKey:@"duration"];
     }
     return self;
 }

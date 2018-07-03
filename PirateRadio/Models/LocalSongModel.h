@@ -13,7 +13,8 @@
 @property (strong, nonatomic, readonly) NSURL *localSongURL;
 @property (strong, nonatomic, readonly) NSString *artistName;
 @property (strong, nonatomic, readonly) NSString *songTitle;
-
+@property (strong, nonatomic) NSURL *videoURL;
+@property (strong, nonatomic) NSNumber *duration;
 
 -(instancetype) initWithLocalSongURL:(NSURL *)songURL;
 -(NSURL *)localArtworkURL;

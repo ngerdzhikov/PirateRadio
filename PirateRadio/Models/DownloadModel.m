@@ -42,4 +42,9 @@
     return self;
 }
 
+- (NSURL *)videoURL {
+    NSString *url = [@"https://www.youtube.com/watch?v=" stringByAppendingString:self.video.entityId];;
+    return [NSURL URLWithString:url];
+}
+
 @end

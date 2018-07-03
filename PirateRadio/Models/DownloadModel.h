@@ -14,7 +14,8 @@
 
 @property (strong, nonatomic, readonly) NSURL *URL;
 
-- (instancetype) initWithVideoModel:(VideoModel *)videoModel andURL:(NSURL *)url;
-- (NSURL *) localURLWithTimeStamp;
+- (instancetype)initWithVideoModel:(VideoModel *)videoModel andURL:(NSURL *)url;
+- (NSURL *)localURLWithTimeStamp;
+- (NSURL *)videoURL;
 
 @end
