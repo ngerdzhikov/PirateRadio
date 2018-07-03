@@ -59,15 +59,8 @@
         shouldContinue = NO;
     }
     if (shouldContinue) {
-        NSManagedObjectContext *context = [self managedObjectContext];
-        NSManagedObject *transaction = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:context];
-        [transaction setValue:self.userNameTextField.text forKey:@"username"];
-        [transaction setValue:self.passwordTextField.text forKey:@"password"];
-        
-        NSError *err;
-        if (![context save:&err]) {
-            NSLog(@"Save Error");
-        }
+        DataBase *db = [[DataBase alloc] init];
+        [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
     }
     else {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Register Fail" message:messageToDisplay preferredStyle:UIAlertControllerStyleAlert];
@@ -84,15 +77,9 @@
     [self authenticateUsername:username andPassword:password];
 }
 
-- (NSManagedObjectContext *)managedObjectContext {
-    NSManagedObjectContext *context = nil;
-    id delegate = [[UIApplication sharedApplication] delegate];
-    context = [delegate managedObjectContext];
-    return context;
-}
-
 - (void)authenticateUsername:(NSString *)username andPassword:(NSString *)password {
-    NSArray *users = DataBase.sharedManager.users;
+    DataBase *db = [[DataBase alloc] init];
+    NSArray *users = db.users;
     for (NSManagedObject *user in users) {
         NSArray *keys = [[[user entity] attributesByName] allKeys];
         NSDictionary *userInfo = [user dictionaryWithValuesForKeys:keys];
@@ -109,8 +96,9 @@
 
 - (void)checkIfUserIsLogged {
     if (self.isLogged) {
-        ProfileViewController *profileVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ProfileViewController"];
-        [self.navigationController setViewControllers:@[profileVC]];
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+            
+        }];
     }
 }
 

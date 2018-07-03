@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *favouriteVideosLabel;
 @property (weak, nonatomic) IBOutlet UITableView *favouriteVideosTableView;
 @property (weak, nonatomic) IBOutlet UIButton *logOutButton;
+@property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 
 @property (strong, nonatomic) NSArray<VideoModel *> *favouriteVideos;
 @property (strong, nonatomic) NSString *username;
@@ -31,17 +32,27 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
+    
     self.favouriteVideosTableView.delegate = self;
     self.favouriteVideosTableView.dataSource = self;
     
-
+    BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:@"isLogged"];
+    if (!isLogged) {
+        LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
+        [self presentViewController:loginVC animated:YES completion:^{
+            
+        }];
+    }
     
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.favouriteVideos = [[NSArray alloc] initWithArray:[DataBase.sharedManager favouriteVideosForUsername:self.username]];
+    DataBase *db = [[DataBase alloc] init];
+    self.username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
+    self.usernameLabel.text = [NSString stringWithFormat:@"Hello %@!", self.username];
+    self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUsername:self.username]];
     [self.favouriteVideosTableView reloadData];
 }
 
@@ -54,7 +65,10 @@
     [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"isLogged"];
     [NSUserDefaults.standardUserDefaults setValue:@"" forKey:@"loggedUsername"];
     LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    [self.navigationController setViewControllers:@[loginVC]];
+    [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
+    [self presentViewController:loginVC animated:YES completion:^{
+        
+    }];
 }
 
 #pragma mark - Table view data source
@@ -109,6 +123,10 @@
     }
     
     
+}
+
+-(UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
+    return UIModalPresentationNone;
 }
 
 
