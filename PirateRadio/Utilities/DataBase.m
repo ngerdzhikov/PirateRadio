@@ -189,17 +189,10 @@
 
 - (void)deleteDBSongforLocalSong:(LocalSongModel *)localSong {
     
-    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"LocalSong"];
-    NSError *error = nil;
-    [request setPredicate:[NSPredicate predicateWithFormat:@"identityName = %@", localSong.localSongURL.lastPathComponent]];
-    NSArray *results = [self.context executeFetchRequest:request error:&error];
-    for (NSManagedObject *obj in results) {
-        NSArray *keys = [[[obj entity] attributesByName] allKeys];
-        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
-        if ([[dictionary objectForKey:@"identityName"] isEqualToString:localSong.localSongURL.lastPathComponent]) {
-            [self.context deleteObject:obj];
-        }
-    }
+    NSManagedObject *dbSong = [self dbSongForLocalSongModel:localSong];
+    [self.context deleteObject:dbSong];
+    
+    [self.context save:nil];
 }
 
 - (void)addNewPlaylist:(PlaylistModel *)playlist {
