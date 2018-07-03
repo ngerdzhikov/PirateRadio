@@ -11,7 +11,8 @@
 #import "LocalSongModel.h"
 #import "SongListPlusPlayerViewController.h"
 #import "Constants.h"
-#import "PlaylistsDatabase.h"
+#import "CoreData/CoreData.h"
+#import "DataBase.h"
 
 @interface AllSongsTableViewController ()<UISearchBarDelegate>
 
@@ -26,6 +27,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.allSongs = [[NSMutableArray alloc] init];
     [self loadSongsFromDisk];
     self.selectedSongs = [[NSMutableArray alloc] init];
     self.navigationItem.title = @"Songs to add";
@@ -39,6 +41,7 @@
     self.navigationItem.searchController.searchBar.delegate = self;
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -48,20 +51,25 @@
 
 - (void)loadSongsFromDisk {
     
-    self.allSongs = [[NSMutableArray alloc] init];
+    DataBase *db = [[DataBase alloc] init];
+    
     NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
-    NSArray* dirs = [NSFileManager.defaultManager contentsOfDirectoryAtURL:sourcePath includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
-    [dirs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *filePath = ((NSURL *)obj).absoluteString;
-        NSString *extension = [[filePath pathExtension] lowercaseString];
-        if ([extension isEqualToString:@"mp3"]) {
-            LocalSongModel *localSong = [[LocalSongModel alloc] initWithLocalSongURL:[NSURL URLWithString:filePath]];
-            if (![self.playlist.songs containsObject:localSong]) {
-                [self.allSongs addObject:localSong];
-            }
+    
+    
+    NSArray *allSongs = db.allSongs;
+    for (NSManagedObject *obj in allSongs) {
+        NSArray *keys = [[[obj entity] attributesByName] allKeys];
+        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
+        NSString *songLastPathComponent = [dictionary valueForKey:@"identityName"];
+        NSURL *localURL = [sourcePath URLByAppendingPathComponent:songLastPathComponent];
+        LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
+        song.videoURL = [dictionary valueForKey:@"videoURL"];
+        song.duration = [dictionary valueForKey:@"duration"];
+        if (![self.playlist.songs containsObject:song]) {
+            [self.allSongs addObject:song];
         }
-    }];
+    }
     
     [self.tableView reloadData];
 }
@@ -69,7 +77,8 @@
 - (void)commitSelected {
     [self.playlist.songs addObjectsFromArray:self.selectedSongs];
 //    get playlists
-    [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+    DataBase *db = [[DataBase alloc] init];
+    [db addArrayOfSongs:self.selectedSongs forPlaylist:self.playlist];
     
     [self.navigationController popViewControllerAnimated:YES];
 }

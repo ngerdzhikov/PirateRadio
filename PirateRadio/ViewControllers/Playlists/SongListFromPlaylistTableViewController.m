@@ -11,7 +11,7 @@
 #import "AllSongsTableViewController.h"
 #import "MusicPlayerViewController.h"
 #import "SavedMusicTableViewCell.h"
-#import "PlaylistsDatabase.h"
+#import "DataBase.h"
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
 #import "Constants.h"
@@ -55,9 +55,10 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.allSongsDurations removeObjectForKey:self.playlist.songs[indexPath.row].localSongURL.absoluteString];
+        DataBase *db = [[DataBase alloc] init];
+        [db removeArrayOfSongs:@[self.playlist.songs[indexPath.row]] fromPlaylist:self.playlist];
         [self.playlist.songs removeObjectAtIndex:indexPath.row];
-        [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         [super displayEmptyListImageIfNeeded];
     }
@@ -84,7 +85,8 @@
     }
     self.playlist.songs = self.allSongs;
 
-    [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+    DataBase *db = [[DataBase alloc] init];
+//    [db updatePlaylist:self.playlist];
     
     [self.tableView reloadData];
 }
@@ -106,7 +108,8 @@
         
         [self.playlist.songs removeObject:song];
         
-        [PlaylistsDatabase updateDatabaseForChangedPlaylist:self.playlist];
+        DataBase *db = [[DataBase alloc] init];
+        [db removeArrayOfSongs:@[song] fromPlaylist:self.playlist];
         
         [super displayEmptyListImageIfNeeded];
         

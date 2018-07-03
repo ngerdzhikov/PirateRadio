@@ -11,6 +11,10 @@
 #import "UIKit/UIKit.h"
 #import "VideoModel.h"
 #import "ThumbnailModel.h"
+#import "LocalSongModel.h"
+#import "AVKit/AVKit.h"
+#import "AppDelegate.h"
+#import "PlaylistModel.h"
 
 @interface DataBase ()
 
@@ -19,15 +23,6 @@
 @end
 
 @implementation DataBase
-
-+ (instancetype)sharedManager {
-    static DataBase *sharedManager = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedManager = [[self alloc] init];
-    });
-    return sharedManager;
-}
 
 - (instancetype)init {
     self = [super init];
@@ -47,6 +42,12 @@
 }
 
 - (void)addUser:(NSString *)username forPassword:(NSString *)password {
+    NSManagedObject *transaction = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:self.context];
+    [transaction setValue:username forKey:@"username"];
+    [transaction setValue:password forKey:@"password"];
+    
+    NSError *err;
+    [self.context save:&err];
     
 }
 
@@ -105,5 +106,174 @@
 
     return videos;
 }
+
+- (NSArray *)allSongs {
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"LocalSong"];
+    NSSortDescriptor *titleSort = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
+    NSSortDescriptor *artistSort = [NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES];
+    [request setSortDescriptors:@[artistSort, titleSort]];
+    NSError *error = nil;
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    
+    return results;
+}
+
+- (void)addNewSong:(LocalSongModel *)song withURL:(NSURL *)url {
+    NSManagedObject *dbSong = [NSEntityDescription insertNewObjectForEntityForName:@"LocalSong" inManagedObjectContext:self.context];
+    [dbSong setValue:song.artistName forKey:@"artist"];
+    [dbSong setValue:song.songTitle forKey:@"title"];
+    [dbSong setValue:url forKey:@"videoURL"];
+    [dbSong setValue:song.localSongURL.lastPathComponent forKey:@"identityName"];
+    
+    AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
+    NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
+    [dbSong setValue:[NSString stringWithFormat:@"%@", duration] forKey:@"duration"];
+    
+    NSError *err;
+    [self.context save:&err];
+    
+}
+
+- (NSURL *)videoURLForLocalSongModel:(LocalSongModel *)localSong {
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"LocalSong"];
+    NSError *error = nil;
+    [request setPredicate:[NSPredicate predicateWithFormat:@"identityName = %@", localSong.localSongURL.lastPathComponent]];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    for (NSManagedObject *obj in results) {
+        NSArray *keys = [[[obj entity] attributesByName] allKeys];
+        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
+        if ([[dictionary objectForKey:@"identityName"] isEqualToString:localSong.localSongURL.lastPathComponent]) {
+            return [dictionary valueForKey:@"videoURL"];
+        }
+    }
+    return nil;
+}
+
+- (void)deleteDBSongforLocalSong:(LocalSongModel *)localSong {
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"LocalSong"];
+    NSError *error = nil;
+    [request setPredicate:[NSPredicate predicateWithFormat:@"identityName = %@", localSong.localSongURL.lastPathComponent]];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    for (NSManagedObject *obj in results) {
+        NSArray *keys = [[[obj entity] attributesByName] allKeys];
+        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
+        if ([[dictionary objectForKey:@"identityName"] isEqualToString:localSong.localSongURL.lastPathComponent]) {
+            [self.context deleteObject:obj];
+        }
+    }
+}
+
+- (void)addNewPlaylist:(PlaylistModel *)playlist {
+    NSManagedObject *dbPlaylist = [NSEntityDescription insertNewObjectForEntityForName:@"Playlist" inManagedObjectContext:self.context];
+    
+    [dbPlaylist setValue:playlist.name forKey:@"name"];
+    
+    [self.context save:nil];
+}
+
+- (void)addArrayOfSongs:(NSArray<LocalSongModel *> *)songs forPlaylist:(PlaylistModel *)playlist {
+    NSError *error;
+    
+    NSFetchRequest *songRequest = [[NSFetchRequest alloc]initWithEntityName:@"LocalSong"];
+    NSArray *songURLs = [songs valueForKey:@"localSongURL"];
+    NSMutableArray<NSString *> *identityNames = [[NSMutableArray alloc] init];
+    for (NSURL *songURL in songURLs) {
+        [identityNames addObject:songURL.lastPathComponent];
+    }
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identityName IN %@", identityNames];
+    [songRequest setPredicate:predicate];
+    NSArray *dbSongs = [self.context executeFetchRequest:songRequest error:&error];
+    
+    if (!error) {
+        
+        NSFetchRequest *playlistRequest = [[NSFetchRequest alloc]initWithEntityName:@"Playlist"];
+        [playlistRequest setPredicate:[NSPredicate predicateWithFormat:@"name = %@", playlist.name]];
+        NSArray *dbPlaylist = [self.context executeFetchRequest:playlistRequest error:&error];
+        
+        if (!error && dbPlaylist.firstObject != nil) {
+            NSMutableSet *dbPlaylistSongs = [dbPlaylist.firstObject mutableSetValueForKey:@"songs"];
+            for (NSManagedObject *obj in dbSongs) {
+                [dbPlaylistSongs addObject:obj];
+            }
+            [self.context save:&error];
+        }
+
+    }
+    
+}
+
+- (void)removeArrayOfSongs:(NSArray<LocalSongModel *> *)songs fromPlaylist:(PlaylistModel *)playlist {
+    NSError *error;
+    
+    NSFetchRequest *songRequest = [[NSFetchRequest alloc]initWithEntityName:@"LocalSong"];
+    NSArray *songURLs = [songs valueForKey:@"localSongURL"];
+    NSMutableArray<NSString *> *identityNames = [[NSMutableArray alloc] init];
+    for (NSURL *songURL in songURLs) {
+        [identityNames addObject:songURL.lastPathComponent];
+    }
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identityName IN %@", identityNames];
+    [songRequest setPredicate:predicate];
+    NSArray *dbSongs = [self.context executeFetchRequest:songRequest error:&error];
+    
+    if (!error) {
+        
+        NSFetchRequest *playlistRequest = [[NSFetchRequest alloc]initWithEntityName:@"Playlist"];
+        [playlistRequest setPredicate:[NSPredicate predicateWithFormat:@"name = %@", playlist.name]];
+        NSArray *dbPlaylist = [self.context executeFetchRequest:playlistRequest error:&error];
+        
+        if (!error && dbPlaylist.firstObject != nil) {
+            NSMutableSet *dbPlaylistSongs = [dbPlaylist.firstObject mutableSetValueForKey:@"songs"];
+            for (NSManagedObject *obj in dbSongs) {
+                [dbPlaylistSongs removeObject:obj];
+            }
+            [self.context save:&error];
+        }
+    }
+}
+
+- (void)renamePlaylistWithNewName:(NSString *)newName forOldPlaylistName:(NSString *)oldName {
+    NSError *error;
+    
+    NSFetchRequest *playlistRequest = [[NSFetchRequest alloc]initWithEntityName:@"Playlist"];
+    [playlistRequest setPredicate:[NSPredicate predicateWithFormat:@"name = %@", oldName]];
+    NSArray *dbPlaylist = [self.context executeFetchRequest:playlistRequest error:&error];
+    
+    [dbPlaylist.firstObject setValue:newName forKey:@"name"];
+    
+    [self.context save:&error];
+}
+
+- (NSArray *)allPlaylists {
+    
+    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"Playlist"];
+    NSError *error = nil;
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    NSMutableArray<PlaylistModel *> *playlists = [[NSMutableArray alloc] init];
+    for (NSManagedObject *obj in results) {
+        PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:[obj valueForKey:@"name"]];
+        NSSet *dbSongsSet = [obj valueForKey:@"songs"];
+        NSSortDescriptor *titleSort = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
+        NSSortDescriptor *artistSort = [NSSortDescriptor sortDescriptorWithKey:@"artist" ascending:YES];
+        
+        NSMutableArray *dbSongs = dbSongsSet.allObjects.mutableCopy;
+        [dbSongs sortUsingDescriptors:@[artistSort, titleSort]];
+        
+        for (NSManagedObject *dbSong in dbSongs) {
+            NSURL *localSongURL = [sourcePath URLByAppendingPathComponent:[dbSong valueForKey:@"identityName"]];
+            LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localSongURL];
+            song.videoURL = [dbSong valueForKey:@"videoURL"];
+            song.duration = [dbSong valueForKey:@"duration"];
+            [playlist.songs addObject:song];
+        }
+        [playlists addObject:playlist];
+    }
+    return playlists;
+}
+
+
 
 @end

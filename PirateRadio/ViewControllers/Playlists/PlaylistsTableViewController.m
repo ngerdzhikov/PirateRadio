@@ -10,7 +10,7 @@
 #import "PlaylistModel.h"
 #import "SongListPlusPlayerViewController.h"
 #import "Constants.h"
-#import "PlaylistsDatabase.h"
+#import "DataBase.h"
 
 @interface PlaylistsTableViewController ()
 
@@ -29,7 +29,8 @@
     
 //    clear NSUserDefaults for debug
 //    [NSUserDefaults.standardUserDefaults setObject:nil forKey:@"playlists"];
-    
+    DataBase *db = [[DataBase alloc] init];
+    self.playlists = db.allPlaylists.mutableCopy;
     
     
 }
@@ -41,14 +42,12 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [PlaylistsDatabase savePlaylistArray:self.playlists];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    // load playlists from UserDefaults
-    self.playlists = [[PlaylistsDatabase loadPlaylistsFromUserDefaults] mutableCopy];
+    
     // if there are no playlists allocate memory for playlists array
     if (!self.playlists) {
         self.playlists = [[NSMutableArray alloc] init];
@@ -132,7 +131,7 @@
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = @"Playlist name";
     }];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         if (alertController.textFields[0].text.length > 1 && ![(NSArray<NSString *> *)[self.playlists valueForKey:@"name"] containsObject:alertController.textFields[0].text]) {
             PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:alertController.textFields[0].text];
@@ -140,14 +139,15 @@
             
             [self.tableView reloadData];
             
-            [PlaylistsDatabase savePlaylistArray:self.playlists];
+            DataBase *db = [[DataBase alloc] init];
+            [db addNewPlaylist:playlist];
         }
     }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
         // Called when user taps outside
     }];
-    [alertController addAction:okAction];
     [alertController addAction:cancelAction];
+    [alertController addAction:okAction];
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
@@ -158,22 +158,26 @@
             textField.placeholder = @"New playlist name";
             textField.text = recognizer.name;
         }];
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            // Called when user taps outside
+        }]];
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             if (alertController.textFields[0].text.length > 1) {
                 for (PlaylistModel *playlist in self.playlists) {
                     if ([playlist.name isEqualToString:recognizer.name]) {
+                        DataBase *db = [[DataBase alloc] init];
+                        [db renamePlaylistWithNewName:alertController.textFields[0].text forOldPlaylistName:playlist.name];
                         playlist.name = alertController.textFields[0].text;
                         break;
                     }
                 }
                 [self.tableView reloadData];
                 
-                [PlaylistsDatabase savePlaylistArray:self.playlists];
             }
         }]];
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-            // Called when user taps outside
-        }]];
+        
         [self presentViewController:alertController animated:YES completion:nil];
     }
 }

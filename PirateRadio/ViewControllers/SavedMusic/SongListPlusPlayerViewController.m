@@ -10,8 +10,10 @@
 #import "SavedMusicTableViewController.h"
 #import "MusicPlayerViewController.h"
 #import "PlaylistModel.h"
+#import "DataBase.h"
 #import "LocalSongModel.h"
 #import "SongListFromPlaylistTableViewController.h"
+#import "CoreData/CoreData.h"
 
 @interface SongListPlusPlayerViewController ()<UISearchBarDelegate>
 
@@ -125,18 +127,24 @@
 
 - (NSMutableArray<LocalSongModel *> *)songsFromDisk {
     
+    DataBase *db = [[DataBase alloc] init];
+    
     NSMutableArray<LocalSongModel *> * songs = [[NSMutableArray alloc] init];
     NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
-    NSArray* dirs = [NSFileManager.defaultManager contentsOfDirectoryAtURL:sourcePath includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
-    [dirs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *filePath = ((NSURL *)obj).absoluteString;
-        NSString *extension = [[filePath pathExtension] lowercaseString];
-        if ([extension isEqualToString:@"mp3"]) {
-            LocalSongModel *localSong = [[LocalSongModel alloc] initWithLocalSongURL:[NSURL URLWithString:filePath]];
-            [songs addObject:localSong];
-        }
-    }];
+    
+    NSArray *allSongs = db.allSongs;
+    for (NSManagedObject *obj in allSongs) {
+        NSArray *keys = [[[obj entity] attributesByName] allKeys];
+        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
+        NSString *songLastPathComponent = [dictionary valueForKey:@"identityName"];
+        NSURL *localURL = [sourcePath URLByAppendingPathComponent:songLastPathComponent];
+        LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
+        song.videoURL = [dictionary valueForKey:@"videoURL"];
+        song.duration = [dictionary valueForKey:@"duration"];
+        [songs addObject:song];
+    }
+    
     return songs;
 }
 
