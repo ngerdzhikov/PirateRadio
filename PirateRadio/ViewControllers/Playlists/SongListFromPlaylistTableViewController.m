@@ -55,9 +55,11 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        DataBase *db = [[DataBase alloc] init];
-        [db removeArrayOfSongs:@[self.playlist.songs[indexPath.row]] fromPlaylist:self.playlist];
+        
         [self.playlist.songs removeObjectAtIndex:indexPath.row];
+        
+        DataBase *db = [[DataBase alloc] init];
+        [db updateArrayOfSongsForPlaylist:self.playlist];
         
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         [super displayEmptyListImageIfNeeded];
@@ -85,8 +87,7 @@
     }
     self.playlist.songs = self.allSongs;
 
-    DataBase *db = [[DataBase alloc] init];
-//    [db updatePlaylist:self.playlist];
+
     
     [self.tableView reloadData];
 }
@@ -109,7 +110,7 @@
         [self.playlist.songs removeObject:song];
         
         DataBase *db = [[DataBase alloc] init];
-        [db removeArrayOfSongs:@[song] fromPlaylist:self.playlist];
+        [db updateArrayOfSongsForPlaylist:self.playlist];
         
         [super displayEmptyListImageIfNeeded];
         
@@ -117,5 +118,21 @@
     }
 }
 
+- (void)editSongs:(id)sender {
+    if (!self.isFiltering) {
+        self.editing = !self.editing;
+        if ([sender isKindOfClass:UIBarButtonItem.class]) {
+            UIBarButtonItem *editButton = (UIBarButtonItem *)sender;
+            if (self.editing) {
+                [editButton setTitle:@"Done"];
+            }
+            else {
+                DataBase *db = [[DataBase alloc] init];
+                [db updateArrayOfSongsForPlaylist:self.playlist];
+                [editButton setTitle:@"Edit"];
+            }
+        }
+    }
+}
 
 @end

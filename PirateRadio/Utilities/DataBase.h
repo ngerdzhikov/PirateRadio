@@ -23,8 +23,8 @@
 - (NSArray *)allSongs;
 - (NSURL *)videoURLForLocalSongModel:(LocalSongModel *)localSong;
 - (void)deleteDBSongforLocalSong:(LocalSongModel *)localSong;
-- (void)addArrayOfSongs:(NSArray<LocalSongModel *> *)songs forPlaylist:(PlaylistModel *)playlist;
-- (void)removeArrayOfSongs:(NSArray<LocalSongModel *> *)songs fromPlaylist:(PlaylistModel *)playlist;
+
+- (void)updateArrayOfSongsForPlaylist:(PlaylistModel *)playlist;
 - (void)addNewPlaylist:(PlaylistModel *)playlist;
 - (void)renamePlaylistWithNewName:(NSString *)newName forOldPlaylistName:(NSString *)oldName;
 - (NSArray *)allPlaylists;

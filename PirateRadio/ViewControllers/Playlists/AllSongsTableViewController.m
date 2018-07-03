@@ -78,7 +78,7 @@
     [self.playlist.songs addObjectsFromArray:self.selectedSongs];
 //    get playlists
     DataBase *db = [[DataBase alloc] init];
-    [db addArrayOfSongs:self.selectedSongs forPlaylist:self.playlist];
+    [db updateArrayOfSongsForPlaylist:self.playlist];
     
     [self.navigationController popViewControllerAnimated:YES];
 }
