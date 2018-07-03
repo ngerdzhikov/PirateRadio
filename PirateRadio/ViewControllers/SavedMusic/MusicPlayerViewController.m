@@ -124,19 +124,22 @@
 
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
-    if (self.isPlaying) {
-        
-        [self pauseLoadedSong];
-        [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
-        
-        [self.songListDelegate didPauseSong:self.player.currentSong];
-    }
-    else {
-        
-        [self playLoadedSong];
-        [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
-        
-        [self.songListDelegate didStartPlayingSong:self.player.currentSong];
+    
+    if (self.player.currentSong != nil) {
+        if (self.isPlaying) {
+            
+            [self pauseLoadedSong];
+            [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
+            
+            [self.songListDelegate didPauseSong:self.player.currentSong];
+        }
+        else {
+            
+            [self playLoadedSong];
+            [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
+            
+            [self.songListDelegate didStartPlayingSong:self.player.currentSong];
+        }
     }
 }
 
