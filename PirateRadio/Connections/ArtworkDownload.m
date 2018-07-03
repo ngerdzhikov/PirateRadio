@@ -54,10 +54,15 @@
                     
                     NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
                     if (artworkURL != nil) {
-                        NSLog(@"Found artwork");
-                        NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
-                        [self.downloadDict setObject:localSong forKey:downloadTask];
-                        [downloadTask resume];
+                        if ([artworkURL.absoluteString isEqualToString:@""]) {
+                            [self downloadArtworkByTitleForLocalSongModel:localSong];
+                        }
+                        else {
+                            NSLog(@"Found artwork");
+                            NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
+                            [self.downloadDict setObject:localSong forKey:downloadTask];
+                            [downloadTask resume];
+                        }
                     }
                     
                 }
@@ -66,6 +71,37 @@
     }];
 }
 
+- (void)downloadArtworkByTitleForLocalSongModel:(LocalSongModel *)localSong {
+    [ArtworkRequest makeLastFMSearchRequestWithKeywords:localSong.keywordsFromTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSError *serializationError;
+        NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+        if (serializationError) {
+            NSLog(@"serializationError = %@", serializationError);
+        }
+        else {
+            if ([[responseDict objectForKey:@"results"] count] > 0) {
+                NSArray *track = [[[responseDict objectForKey:@"results"] objectForKey:@"albummatches"] objectForKey:@"album"];
+                if (track.count > 0) {
+                    NSDictionary *thumbDictionary = [[track[0] objectForKey:@"image"] objectAtIndex:3];
+                    
+                    NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
+                    if (artworkURL != nil) {
+                        if ([artworkURL.absoluteString isEqualToString:@""]) {
+                            [self downloadArtworkByTitleForLocalSongModel:localSong];
+                        }
+                        else {
+                            NSLog(@"Found artwork");
+                            NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
+                            [self.downloadDict setObject:localSong forKey:downloadTask];
+                            [downloadTask resume];
+                        }
+                    }
+                    
+                }
+            }
+        }
+    }];
+}
 
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location {
     NSError *err;
