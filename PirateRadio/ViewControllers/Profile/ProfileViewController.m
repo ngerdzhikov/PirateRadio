@@ -155,15 +155,19 @@
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         CGPoint touchPoint = [recognizer locationInView:self.favouriteVideosTableView];
         NSIndexPath *indexPath = [self.favouriteVideosTableView indexPathForRowAtPoint:touchPoint];
-        VideoModel *video = self.favouriteVideos[indexPath.row];
         
-        NSString *strURL = [@"https://www.youtube.com/watch?v=" stringByAppendingString:video.entityId];
+        if (indexPath) {
+            VideoModel *video = self.favouriteVideos[indexPath.row];
+            
+            NSString *strURL = [@"https://www.youtube.com/watch?v=" stringByAppendingString:video.entityId];
+            
+            NSURL *videoURL = [NSURL URLWithString:strURL];
+            
+            [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
+            
+            [Toast displayToastWithMessage:@"Video url copied!"];
+        }
         
-        NSURL *videoURL = [NSURL URLWithString:strURL];
-        
-        [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-        
-        [Toast displayToastWithMessage:@"Video url copied!"];
     }
 }
 

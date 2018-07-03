@@ -26,12 +26,9 @@
     UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self action:@selector(editPlaylists)];
     self.navigationItem.rightBarButtonItems = @[addPlaylistButton, editButton];
     self.navigationItem.title = @"Playlists";
-    
-//    clear NSUserDefaults for debug
-//    [NSUserDefaults.standardUserDefaults setObject:nil forKey:@"playlists"];
-    DataBase *db = [[DataBase alloc] init];
-    self.playlists = db.allPlaylists.mutableCopy;
-    
+
+    UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
+    [self.tableView addGestureRecognizer:longPressGesture];
     
 }
 
@@ -48,6 +45,8 @@
     [super viewDidAppear:animated];
     
     
+    DataBase *db = [[DataBase alloc] init];
+    self.playlists = db.allPlaylists.mutableCopy;
     // if there are no playlists allocate memory for playlists array
     if (!self.playlists) {
         self.playlists = [[NSMutableArray alloc] init];
@@ -80,11 +79,6 @@
     else {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-    
-    UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
-    longPressGesture.minimumPressDuration = 1.3;
-    longPressGesture.name = playlist.name;
-    [cell addGestureRecognizer:longPressGesture];
     
     return cell;
 }
@@ -153,32 +147,35 @@
 
 - (void)onCellLongPress:(UILongPressGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Rename playlist" message:nil preferredStyle:UIAlertControllerStyleAlert];
-        [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-            textField.placeholder = @"New playlist name";
-            textField.text = recognizer.name;
-        }];
         
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
-            // Called when user taps outside
-        }]];
+        CGPoint touchPoint = [recognizer locationInView:self.tableView];
+        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchPoint];
         
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            if (alertController.textFields[0].text.length > 1) {
-                for (PlaylistModel *playlist in self.playlists) {
-                    if ([playlist.name isEqualToString:recognizer.name]) {
-                        DataBase *db = [[DataBase alloc] init];
-                        [db renamePlaylistWithNewName:alertController.textFields[0].text forOldPlaylistName:playlist.name];
-                        playlist.name = alertController.textFields[0].text;
-                        break;
-                    }
+        if (indexPath) {
+            PlaylistModel *playlist = self.playlists[indexPath.row];
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Rename playlist" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+                textField.placeholder = @"New playlist name";
+                textField.text = playlist.name;
+            }];
+            
+            [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+                // Called when user taps outside
+            }]];
+            
+            [alertController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                if (alertController.textFields[0].text.length > 1) {
+                    DataBase *db = [[DataBase alloc] init];
+                    [db renamePlaylistWithNewName:alertController.textFields[0].text forOldPlaylistName:playlist.name];
+                    playlist.name = alertController.textFields[0].text;
+                    [self.tableView reloadData];
+                    
                 }
-                [self.tableView reloadData];
-                
-            }
-        }]];
-        
-        [self presentViewController:alertController animated:YES completion:nil];
+            }]];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
     }
 }
 

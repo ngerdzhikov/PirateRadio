@@ -20,7 +20,7 @@
         toastView.textColor = [UIColor blackColor];
         toastView.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0];
         toastView.textAlignment = NSTextAlignmentCenter;
-        toastView.frame = CGRectMake(0.0, 0.0, keyWindow.frame.size.width/2.0, 20);
+        toastView.frame = CGRectMake(0.0, 0.0, keyWindow.frame.size.width/2.0, 30);
         toastView.layer.cornerRadius = 5;
         toastView.layer.masksToBounds = YES;
         toastView.center = CGPointMake(keyWindow.center.x, keyWindow.frame.size.height - 100);

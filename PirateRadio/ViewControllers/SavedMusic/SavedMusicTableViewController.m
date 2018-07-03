@@ -414,12 +414,15 @@
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         CGPoint touchPoint = [recognizer locationInView:self.tableView];
         NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchPoint];
-        DataBase *db = [[DataBase alloc] init];
         
-        NSURL *videoURL = [db videoURLForLocalSongModel:self.allSongs[indexPath.row]];
-        
-        [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-        [Toast displayToastWithMessage:@"Video url copied!"];
+        if (indexPath) {
+            DataBase *db = [[DataBase alloc] init];
+            
+            NSURL *videoURL = [db videoURLForLocalSongModel:self.allSongs[indexPath.row]];
+            
+            [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
+            [Toast displayToastWithMessage:@"Video url copied!"];
+        }
     }
 }
 
