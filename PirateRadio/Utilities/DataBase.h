@@ -16,6 +16,7 @@
 
 - (NSArray *)users;
 - (void)addFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username;
+- (void)deleteFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username;
 - (NSArray *)favouriteVideosForUsername:(NSString *)username;
 - (void)addUser:(NSString *)username forPassword:(NSString *)password;
 - (void)addNewSong:(LocalSongModel *)song withURL:(NSURL *)url;

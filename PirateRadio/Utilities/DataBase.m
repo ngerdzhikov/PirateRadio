@@ -64,26 +64,56 @@
 }
 
 - (void)addFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username {
+    NSError *err;
+    
     NSManagedObject *user = [self userObjectForUsername:username];
     NSMutableSet *favVideos = [user mutableSetValueForKey:@"favouriteVideos"];
-    NSManagedObject *favVideo = [NSEntityDescription insertNewObjectForEntityForName:@"YoutubeVideoModel" inManagedObjectContext:self.context];
     
-    [favVideo setValue:video.entityId forKey:@"videoId"];
-    [favVideo setValue:video.title forKey:@"title"];
-    [favVideo setValue:video.channelTitle forKey:@"channel"];
-    [favVideo setValue:video.videoDuration forKey:@"duration"];
-    [favVideo setValue:video.publishedAt forKey:@"publishedAt"];
-    [favVideo setValue:video.videoViews forKey:@"views"];
-    ThumbnailModel *thumbnail = [video.thumbnails objectForKey:@"high"];
-    [favVideo setValue:thumbnail.url forKey:@"thumbnail"];
+    NSFetchRequest *checkIfVideoExistsRequest = [[NSFetchRequest alloc] initWithEntityName:@"YoutubeVideoModel"];
+    [checkIfVideoExistsRequest setPredicate:[NSPredicate predicateWithFormat:@"videoId = %@", video.entityId]];
+    NSArray *resultFromCheck = [self.context executeFetchRequest:checkIfVideoExistsRequest error:&err];
+    NSManagedObject *favVideo;
+    if (resultFromCheck.count > 0) {
+        favVideo = resultFromCheck.firstObject;
+        
+    }
+    else {
+        favVideo = [NSEntityDescription insertNewObjectForEntityForName:@"YoutubeVideoModel" inManagedObjectContext:self.context];
+        
+        [favVideo setValue:video.entityId forKey:@"videoId"];
+        [favVideo setValue:video.title forKey:@"title"];
+        [favVideo setValue:video.channelTitle forKey:@"channel"];
+        [favVideo setValue:video.videoDuration forKey:@"duration"];
+        [favVideo setValue:video.publishedAt forKey:@"publishedAt"];
+        [favVideo setValue:video.videoViews forKey:@"views"];
+        ThumbnailModel *thumbnail = [video.thumbnails objectForKey:@"high"];
+        [favVideo setValue:thumbnail.url forKey:@"thumbnail"];
+        
+        
+    }
+    if (![favVideos containsObject:favVideo]) {
+        [favVideos addObject:favVideo];
+    }
     
-    NSMutableSet *usersForCurrentFavVideo = [favVideo mutableSetValueForKey:@"users"];
-    [usersForCurrentFavVideo addObject:user];
-    
-    [favVideos addObject:favVideo];
-    
-    NSError *err;
     [self.context save:&err];
+}
+
+- (void)deleteFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username {
+    NSError *err;
+    NSManagedObject *user = [self userObjectForUsername:username];
+    NSMutableSet *favVideos = [user mutableSetValueForKey:@"favouriteVideos"];
+    NSFetchRequest *checkIfExistsRequest = [[NSFetchRequest alloc] initWithEntityName:@"YoutubeVideoModel"];
+    [checkIfExistsRequest setPredicate:[NSPredicate predicateWithFormat:@"videoId = %@", video.entityId]];
+    NSArray *resultFromCheck = [self.context executeFetchRequest:checkIfExistsRequest error:&err];
+    NSManagedObject *favVideo = resultFromCheck.firstObject;
+    [favVideos removeObject:favVideo];
+    NSSet *usersForThisVideo = [favVideo valueForKey:@"users"];
+    if (usersForThisVideo.allObjects.count < 1) {
+        [self.context deleteObject:favVideo];
+    }
+    
+    [self.context save:&err];
+    
 }
 
 - (NSArray *)favouriteVideosForUsername:(NSString *)username {

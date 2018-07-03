@@ -44,7 +44,8 @@
             
         }];
     }
-    
+    UILongPressGestureRecognizer* longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
+    [self.favouriteVideosTableView addGestureRecognizer:longPressRecognizer];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -125,8 +126,41 @@
     
 }
 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        VideoModel *video = self.favouriteVideos[indexPath.row];
+        NSMutableArray *mutableCopy = self.favouriteVideos.mutableCopy;
+        [mutableCopy removeObjectAtIndex:indexPath.row];
+        self.favouriteVideos = [NSArray arrayWithArray:mutableCopy];
+        
+        DataBase *db = [[DataBase alloc] init];
+        [db deleteFavouriteVideo:video ForUsername:self.username];
+        
+        [tableView reloadData];
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
 -(UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
     return UIModalPresentationNone;
+}
+
+- (void)onCellLongPress:(UILongPressGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        CGPoint touchPoint = [recognizer locationInView:self.favouriteVideosTableView];
+        NSIndexPath *indexPath = [self.favouriteVideosTableView indexPathForRowAtPoint:touchPoint];
+        VideoModel *video = self.favouriteVideos[indexPath.row];
+        
+        NSString *strURL = [@"https://www.youtube.com/watch?v=" stringByAppendingString:video.entityId];
+        
+        NSURL *videoURL = [NSURL URLWithString:strURL];
+        
+        [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
+        NSLog(@"URL copied");
+    }
 }
 
 
