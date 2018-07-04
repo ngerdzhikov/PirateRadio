@@ -13,6 +13,8 @@
 #import "Constants.h"
 #import "DataBase.h"
 #import "AVKit/AVKit.h"
+#import "DropBox.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @interface YoutubeDownloadManager ()
 
@@ -80,6 +82,7 @@
             [db addNewSong:song withURL:download.videoURL];
         });
         
+        [DropBox uploadLocalSong:song];
     }
     [self.youtubeSession resetWithCompletionHandler:^{
         

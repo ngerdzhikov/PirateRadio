@@ -15,6 +15,7 @@
 #import "PlaylistsDatabase.h"
 #import "Constants.h"
 #import "DataBase.h"
+#import "SelectedSongOptionsPopoverViewController.h"
 #import "DGActivityIndicatorView.h"
 #import "Toast.h"
 
@@ -414,16 +415,24 @@
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         CGPoint touchPoint = [recognizer locationInView:self.tableView];
         NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchPoint];
-        
+        LocalSongModel *song = self.allSongs[indexPath.row];
         if (indexPath) {
-            DataBase *db = [[DataBase alloc] init];
+            SavedMusicTableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
             
-            NSURL *videoURL = [db videoURLForLocalSongModel:self.allSongs[indexPath.row]];
-            
-            [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-            [Toast displayStandardToastWithMessage:@"Video url copied!"];
+            SelectedSongOptionsPopoverViewController *selectedSongVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SelectedSongOptionsPopover"];
+            selectedSongVC.song = song;
+            selectedSongVC.modalPresentationStyle = UIModalPresentationPopover;
+            selectedSongVC.preferredContentSize = CGSizeMake(150, 75);
+            UIPopoverPresentationController *popOverController = selectedSongVC.popoverPresentationController;
+            popOverController.delegate = selectedSongVC;
+            popOverController.sourceView = selectedCell;
+            popOverController.sourceRect = CGRectMake(touchPoint.x - self.view.frame.size.width / 2, selectedCell.bounds.origin.y, selectedCell.bounds.size.width, selectedCell.bounds.size.height);
+            popOverController.permittedArrowDirections = UIPopoverArrowDirectionUp;
+            [self presentViewController:selectedSongVC animated:YES completion:nil];
         }
     }
 }
+
+
 
 @end

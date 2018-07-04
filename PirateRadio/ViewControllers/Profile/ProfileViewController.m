@@ -16,6 +16,7 @@
 #import "ThumbnailModel.h"
 #import "YoutubePlaylistModel.h"
 #import "YoutubePlayerViewController.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @interface ProfileViewController ()
 
@@ -23,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *favouriteVideosTableView;
 @property (weak, nonatomic) IBOutlet UIButton *logOutButton;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
+@property (weak, nonatomic) IBOutlet UIButton *dropboxButton;
 
 @property (strong, nonatomic) NSArray<VideoModel *> *favouriteVideos;
 @property (strong, nonatomic) NSString *username;
@@ -47,6 +49,13 @@
     }
     UILongPressGestureRecognizer* longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
     [self.favouriteVideosTableView addGestureRecognizer:longPressRecognizer];
+    
+    if ([self isLoggedInDropbox]) {
+        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
+    }
+    else {
+        [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -69,9 +78,28 @@
     LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
     [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
     [self presentViewController:loginVC animated:YES completion:^{
-        
+
     }];
 }
+
+- (IBAction)dropboxButtonTap:(id)sender {
+    if ([self isLoggedInDropbox]) {
+        [DBClientsManager unlinkAndResetClients];
+        [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+    }
+    else {
+        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
+        [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
+                                       controller:[[self class] topMostController]
+                                          openURL:^(NSURL *url) {
+                                              [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                                                  
+                                              }];
+                                          }];
+    }
+    
+}
+
 
 #pragma mark - Table view data source
 
@@ -170,6 +198,22 @@
         
     }
 }
+
+- (BOOL)isLoggedInDropbox {
+    return [DBClientsManager authorizedClient] != nil;
+}
+
++ (UIViewController*)topMostController {
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+    
+    return topController;
+}
+
+
 
 
 @end

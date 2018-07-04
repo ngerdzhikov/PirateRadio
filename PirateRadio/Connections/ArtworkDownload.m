@@ -9,6 +9,7 @@
 #import "ArtworkDownload.h"
 #import "ArtworkRequest.h"
 #import "LocalSongModel.h"
+#import "DropBox.h"
 
 @interface ArtworkDownload ()
 
@@ -85,16 +86,11 @@
                     NSDictionary *thumbDictionary = [[track[0] objectForKey:@"image"] objectAtIndex:3];
                     
                     NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
-                    if (artworkURL != nil) {
-                        if ([artworkURL.absoluteString isEqualToString:@""]) {
-                            [self downloadArtworkByTitleForLocalSongModel:localSong];
-                        }
-                        else {
+                    if (artworkURL != nil && ![artworkURL.absoluteString isEqualToString:@""]) {
                             NSLog(@"Found artwork");
                             NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
                             [self.downloadDict setObject:localSong forKey:downloadTask];
                             [downloadTask resume];
-                        }
                     }
                     
                 }
@@ -109,6 +105,9 @@
     [NSFileManager.defaultManager moveItemAtURL:location toURL:urlToSave error:&err];
     if (err) {
         NSLog(@"Error moving item = %@", err);
+    }
+    else {
+        [DropBox uploadArtworkForLocalSong:self.downloadDict[downloadTask]];
     }
     
 }

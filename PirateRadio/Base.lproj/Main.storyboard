@@ -472,6 +472,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n6O-yr-W9w">
+                                <rect key="frame" x="10" y="88" width="59" height="30"/>
+                                <state key="normal" title="Dropbox"/>
+                                <connections>
+                                    <action selector="dropboxButtonTap:" destination="bra-08-ahU" eventType="touchUpInside" id="JrR-Wi-bDF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -479,25 +486,23 @@
                             <constraint firstItem="7pA-3c-7Rr" firstAttribute="top" secondItem="ver-An-ftJ" secondAttribute="bottom" constant="8" id="1RO-tY-dIK"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="bottom" secondItem="7pA-3c-7Rr" secondAttribute="bottom" id="2AX-05-Z8n"/>
                             <constraint firstItem="7pA-3c-7Rr" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" id="3i1-Y5-XFK"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="n6O-yr-W9w" secondAttribute="trailing" constant="20" symbolic="YES" id="5sh-bL-hzU"/>
                             <constraint firstItem="7pA-3c-7Rr" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="EtV-3F-a1F"/>
+                            <constraint firstItem="n6O-yr-W9w" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="NlE-cb-Xce"/>
+                            <constraint firstItem="n6O-yr-W9w" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" constant="10" id="Wos-ks-sCs"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="yr3-RJ-EH4" secondAttribute="trailing" constant="10" id="cKD-7q-0M3"/>
                             <constraint firstItem="IYt-eo-pBD" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="fVU-tw-oYV"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RJ3-qF-56m" secondAttribute="leading" constant="20" symbolic="YES" id="ghu-a2-7ex"/>
                             <constraint firstItem="ver-An-ftJ" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="h0j-xC-NAU"/>
-                            <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="yr3-RJ-EH4" secondAttribute="trailing" constant="16" id="hPP-nc-LdE"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="l4L-D1-uIS"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="7pA-3c-7Rr" secondAttribute="trailing" id="pQr-W8-dUm"/>
                             <constraint firstItem="ver-An-ftJ" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="114" id="z0H-4c-mxl"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="87i-sU-1aG"/>
-                        <variation key="heightClass=regular-widthClass=compact">
-                            <mask key="constraints">
-                                <exclude reference="hPP-nc-LdE"/>
-                            </mask>
-                        </variation>
                     </view>
                     <navigationItem key="navigationItem" id="PxT-ZT-mHq"/>
                     <connections>
+                        <outlet property="dropboxButton" destination="n6O-yr-W9w" id="gcY-2l-4ik"/>
                         <outlet property="favouriteVideosLabel" destination="ver-An-ftJ" id="syZ-3s-fuN"/>
                         <outlet property="favouriteVideosTableView" destination="7pA-3c-7Rr" id="VGH-U4-owL"/>
                         <outlet property="logOutButton" destination="yr3-RJ-EH4" id="pt9-RU-WT1"/>
@@ -528,14 +533,14 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cOP-p8-oyP">
-                                                    <rect key="frame" x="-40" y="7" width="400" height="170"/>
+                                                    <rect key="frame" x="-12.666666666666657" y="7" width="400.33333333333326" height="170"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="170" id="Icd-km-Bpa"/>
                                                         <constraint firstAttribute="width" constant="400" id="QVA-r5-Xa5"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gorillaz - Clint Eastwood (Official Video)" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Qw-M6-MUX">
-                                                    <rect key="frame" x="16" y="185" width="288" height="18"/>
+                                                    <rect key="frame" x="16" y="185" width="343" height="18"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="1id-hQ-Wi7"/>
                                                     </constraints>
@@ -550,19 +555,19 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nug-yi-SBC">
-                                                    <rect key="frame" x="268" y="211" width="42" height="20"/>
+                                                    <rect key="frame" x="323" y="211" width="42" height="20"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--:--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dDD-hf-wTC">
-                                                    <rect key="frame" x="325" y="156" width="35" height="21"/>
+                                                    <rect key="frame" x="352.66666666666669" y="156" width="35" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3uq-Uv-gGv">
-                                                    <rect key="frame" x="268.33333333333331" y="232" width="41.666666666666686" height="20.333333333333343"/>
+                                                    <rect key="frame" x="323.33333333333331" y="232" width="41.666666666666686" height="20.333333333333343"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -839,7 +844,7 @@
                                         </subviews>
                                     </stackView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="GzL-15-2zn">
-                                        <rect key="frame" x="37.333333333333329" y="95.666666666666657" width="175" height="174.99999999999997"/>
+                                        <rect key="frame" x="37.666666666666657" y="95.666666666666657" width="175" height="174.99999999999997"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="GzL-15-2zn" secondAttribute="height" multiplier="1:1" id="oGs-Ne-XhT"/>
                                             <constraint firstAttribute="height" constant="175" id="vl6-3e-KKJ"/>
@@ -888,6 +893,43 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rt2-SH-Y5u" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-3115" y="545"/>
+        </scene>
+        <!--Selected Song Options Popover View Controller-->
+        <scene sceneID="EIR-mh-3H8">
+            <objects>
+                <viewController storyboardIdentifier="SelectedSongOptionsPopover" id="1aa-eT-XMD" customClass="SelectedSongOptionsPopoverViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mTP-CP-hLm">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v1Y-l3-cgo">
+                                <rect key="frame" x="122" y="84" width="130" height="30"/>
+                                <state key="normal" title="Upload to Dropbox"/>
+                                <connections>
+                                    <action selector="uploadToDropboxButtonTap:" destination="1aa-eT-XMD" eventType="touchUpInside" id="t7v-GJ-Fpy"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rjf-lZ-sLd">
+                                <rect key="frame" x="134.66666666666666" y="49" width="105" height="30"/>
+                                <state key="normal" title="Copy video link"/>
+                                <connections>
+                                    <action selector="copyVideoLinkButtonTap:" destination="1aa-eT-XMD" eventType="touchUpInside" id="1Ut-Sp-LkU"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Rjf-lZ-sLd" firstAttribute="centerX" secondItem="QAd-7r-ep9" secondAttribute="centerX" id="GaI-pA-YLw"/>
+                            <constraint firstItem="v1Y-l3-cgo" firstAttribute="centerX" secondItem="QAd-7r-ep9" secondAttribute="centerX" id="NMx-cc-i1Q"/>
+                            <constraint firstItem="v1Y-l3-cgo" firstAttribute="top" secondItem="Rjf-lZ-sLd" secondAttribute="bottom" constant="5" id="VZU-jk-7zA"/>
+                            <constraint firstItem="Rjf-lZ-sLd" firstAttribute="top" secondItem="QAd-7r-ep9" secondAttribute="top" constant="5" id="jLh-QU-1vd"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="QAd-7r-ep9"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="phI-Nk-9Dn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2263" y="771"/>
         </scene>
         <!--Youtube-->
         <scene sceneID="WgX-HI-Olx">
