@@ -67,7 +67,7 @@
     NSError *err;
     
     NSManagedObject *user = [self userObjectForUsername:username];
-    NSMutableSet *favVideos = [user mutableSetValueForKey:@"favouriteVideos"];
+    NSMutableOrderedSet *favVideos = [user mutableOrderedSetValueForKey:@"favouriteVideos"];
     
     NSFetchRequest *checkIfVideoExistsRequest = [[NSFetchRequest alloc] initWithEntityName:@"YoutubeVideoModel"];
     [checkIfVideoExistsRequest setPredicate:[NSPredicate predicateWithFormat:@"videoId = %@", video.entityId]];
@@ -101,7 +101,7 @@
 - (void)deleteFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username {
     NSError *err;
     NSManagedObject *user = [self userObjectForUsername:username];
-    NSMutableSet *favVideos = [user mutableSetValueForKey:@"favouriteVideos"];
+    NSMutableOrderedSet *favVideos = [user mutableOrderedSetValueForKey:@"favouriteVideos"];
     NSFetchRequest *checkIfExistsRequest = [[NSFetchRequest alloc] initWithEntityName:@"YoutubeVideoModel"];
     [checkIfExistsRequest setPredicate:[NSPredicate predicateWithFormat:@"videoId = %@", video.entityId]];
     NSArray *resultFromCheck = [self.context executeFetchRequest:checkIfExistsRequest error:&err];
@@ -118,8 +118,8 @@
 
 - (NSArray *)favouriteVideosForUsername:(NSString *)username {
     NSManagedObject *user = [self userObjectForUsername:username];
-    NSSet *videosSet = [user valueForKey:@"favouriteVideos"];
-    NSArray *allVideos = videosSet.allObjects;
+    NSOrderedSet *videosSet = [user valueForKey:@"favouriteVideos"];
+    NSArray *allVideos = videosSet.array;
     NSMutableArray<VideoModel *> *videos = [[NSMutableArray alloc] init];
     for (NSManagedObject *entity in allVideos) {
         NSString *videoId = [entity valueForKey:@"videoId"];

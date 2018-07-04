@@ -16,7 +16,7 @@
     <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="favouriteVideos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="YoutubeVideoModel" inverseName="users" inverseEntity="YoutubeVideoModel" syncable="YES"/>
+        <relationship name="favouriteVideos" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="YoutubeVideoModel" inverseName="users" inverseEntity="YoutubeVideoModel" syncable="YES"/>
     </entity>
     <entity name="YoutubeVideoModel" representedClassName="YoutubeVideoModel" syncable="YES" codeGenerationType="class">
         <attribute name="channel" optional="YES" attributeType="String" syncable="YES"/>
