@@ -10,6 +10,7 @@
 
 @interface Toast : NSObject
 
-+ (void)displayToastWithMessage:(NSString *)toastMessage;
++ (void)displayStandardToastWithMessage:(NSString *)toastMessage;
++ (void)displayToastWithMessage:(NSString *)toastMessage andDuration:(double)duration;
 
 @end

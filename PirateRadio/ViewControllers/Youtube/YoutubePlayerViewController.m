@@ -22,6 +22,7 @@
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "DataBase.h"
+#import "Toast.h"
 
 @import MediaPlayer;
 
@@ -779,6 +780,7 @@
     if (![username isEqualToString:@""]) {
         DataBase *db = [[DataBase alloc] init];
         [db addFavouriteVideo:self.currentVideoModel ForUsername:username];
+        [Toast displayStandardToastWithMessage:@"Video added to favourites!"];
     }
 }
 

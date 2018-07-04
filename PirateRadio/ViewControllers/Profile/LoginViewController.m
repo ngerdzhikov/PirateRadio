@@ -10,12 +10,11 @@
 #import "CoreData/CoreData.h"
 #import "ProfileViewController.h"
 #import "DataBase.h"
+#import "Toast.h"
 
 @interface LoginViewController ()
 
-@property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UITextField *userNameTextField;
-@property (weak, nonatomic) IBOutlet UILabel *passwordLabel;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
 @property (weak, nonatomic) IBOutlet UIButton *registerButton;
@@ -63,11 +62,7 @@
         [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
     }
     else {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Register Fail" message:messageToDisplay preferredStyle:UIAlertControllerStyleAlert];
-        [self presentViewController:alertController animated:YES completion:^{
-            
-            [alertController dismissViewControllerAnimated:YES completion:nil];
-        }];
+        [Toast displayToastWithMessage:messageToDisplay andDuration:2];
     }
 }
 
@@ -89,9 +84,12 @@
                 [NSUserDefaults.standardUserDefaults setValue:username forKey:@"loggedUsername"];
                 [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"isLogged"];
                 [self checkIfUserIsLogged];
+                break;
             }
         }
     }
+    if (!self.isLogged)
+        [Toast displayToastWithMessage:@"Invalid username or password" andDuration:2];
 }
 
 - (void)checkIfUserIsLogged {

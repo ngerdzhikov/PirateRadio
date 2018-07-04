@@ -165,7 +165,7 @@
             
             [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
             
-            [Toast displayToastWithMessage:@"Video url copied!"];
+            [Toast displayStandardToastWithMessage:@"Video url copied!"];
         }
         
     }
