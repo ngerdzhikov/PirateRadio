@@ -143,12 +143,21 @@
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
+    [MPRemoteCommandCenter.sharedCommandCenter.togglePlayPauseCommand removeTarget:nil];
     
-    [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self.youtubePlayer action:@selector(playVideo)];
-    [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self.youtubePlayer action:@selector(pauseVideo)];
-    [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextVideo)];
-    if (self.isPlayingFromPlaylist) {
-        [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(playPreviousVideo)];
+    if (self.isSegueDone) {
+        [MPRemoteCommandCenter.sharedCommandCenter.playCommand setEnabled:YES];
+        [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand setEnabled:YES];
+        [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self.youtubePlayer action:@selector(playVideo)];
+        [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self.youtubePlayer action:@selector(pauseVideo)];
+        [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(playNextVideo)];
+        if (self.isPlayingFromPlaylist) {
+            [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand addTarget:self action:@selector(playPreviousVideo)];
+        }
+    }
+    else {
+        [MPRemoteCommandCenter.sharedCommandCenter.playCommand setEnabled:NO];
+        [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand setEnabled:NO];
     }
 }
 
@@ -251,15 +260,14 @@
         }
     }
     else {
-        
     }
  
 }
 
 - (void)didEnterBackground:(NSNotification *)notification {
 
-    if (self.youtubePlayer.playerState == kYTPlayerStatePlaying) {
-
+    if (self.youtubePlayer.playerState == kYTPlayerStatePlaying && self.isSegueDone) {
+        
         [self.youtubePlayer playVideo];
     }
 }
