@@ -196,12 +196,28 @@
     [self.context save:nil];
 }
 
-- (void)addNewPlaylist:(PlaylistModel *)playlist {
+- (BOOL)addNewPlaylist:(PlaylistModel *)playlist {
+    NSError *err;
+    
     NSManagedObject *dbPlaylist = [NSEntityDescription insertNewObjectForEntityForName:@"Playlist" inManagedObjectContext:self.context];
     
     [dbPlaylist setValue:playlist.name forKey:@"name"];
     
-    [self.context save:nil];
+    [self.context save:&err];
+    
+    return err == nil;
+}
+
+- (BOOL)deletePlaylist:(PlaylistModel *)playlist {
+    NSError *err;
+    
+    NSFetchRequest *playlistRequest = [[NSFetchRequest alloc]initWithEntityName:@"Playlist"];
+    [playlistRequest setPredicate:[NSPredicate predicateWithFormat:@"name = %@", playlist.name]];
+    NSArray *dbPlaylist = [self.context executeFetchRequest:playlistRequest error:&err];
+    [self.context deleteObject:dbPlaylist.firstObject];
+    [self.context save:&err];
+    
+    return err == nil;
 }
 
 

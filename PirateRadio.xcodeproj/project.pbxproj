@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0608885020C587A600860DBC /* PlaylistsTableViewController.m */; };
 		0608885420C5883E00860DBC /* PlaylistModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0608885320C5883E00860DBC /* PlaylistModel.m */; };
+		06265A3D20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06265A3C20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m */; };
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
@@ -58,6 +59,8 @@
 		0608885020C587A600860DBC /* PlaylistsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistsTableViewController.m; sourceTree = "<group>"; };
 		0608885220C5883E00860DBC /* PlaylistModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistModel.h; sourceTree = "<group>"; };
 		0608885320C5883E00860DBC /* PlaylistModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistModel.m; sourceTree = "<group>"; };
+		06265A3B20EE4EBD00D64B77 /* FavouriteVideosTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FavouriteVideosTableViewController.h; sourceTree = "<group>"; };
+		06265A3C20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FavouriteVideosTableViewController.m; sourceTree = "<group>"; };
 		062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubeDownloadManager.h; sourceTree = "<group>"; };
 		062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubeDownloadManager.m; sourceTree = "<group>"; };
 		062E7EA820A5E911006F1221 /* DownloadModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadModel.h; sourceTree = "<group>"; };
@@ -164,6 +167,14 @@
 				0656EFCD20C68ED800ECB25F /* AllSongsTableViewController.m */,
 				06B998EB20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.h */,
 				06B998EC20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m */,
+				067792FB20ED018200E0032E /* DropboxSongListTableViewController.h */,
+				067792FC20ED018200E0032E /* DropboxSongListTableViewController.m */,
+				067792FE20ED11F400E0032E /* SelectedDropboxCellPopoverViewController.h */,
+				067792FF20ED11F400E0032E /* SelectedDropboxCellPopoverViewController.m */,
+				06265A3B20EE4EBD00D64B77 /* FavouriteVideosTableViewController.h */,
+				06265A3C20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m */,
+				0660029620E4CF6E0000884E /* FavouriteVideoTableViewCell.h */,
+				0660029720E4CF6E0000884E /* FavouriteVideoTableViewCell.m */,
 			);
 			path = Playlists;
 			sourceTree = "<group>";
@@ -182,8 +193,6 @@
 			children = (
 				0660029020E4C7040000884E /* ProfileViewController.h */,
 				0660029120E4C7040000884E /* ProfileViewController.m */,
-				0660029620E4CF6E0000884E /* FavouriteVideoTableViewCell.h */,
-				0660029720E4CF6E0000884E /* FavouriteVideoTableViewCell.m */,
 				0660029920E4F8100000884E /* LoginViewController.h */,
 				0660029A20E4F8100000884E /* LoginViewController.m */,
 			);
@@ -212,10 +221,6 @@
 				06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */,
 				067792F820ECE93B00E0032E /* SelectedSongOptionsPopoverViewController.h */,
 				067792F920ECE93B00E0032E /* SelectedSongOptionsPopoverViewController.m */,
-				067792FB20ED018200E0032E /* DropboxSongListTableViewController.h */,
-				067792FC20ED018200E0032E /* DropboxSongListTableViewController.m */,
-				067792FE20ED11F400E0032E /* SelectedDropboxCellPopoverViewController.h */,
-				067792FF20ED11F400E0032E /* SelectedDropboxCellPopoverViewController.m */,
 			);
 			path = SavedMusic;
 			sourceTree = "<group>";
@@ -513,6 +518,7 @@
 				06FC537720A335D4003238BF /* main.m in Sources */,
 				0634628820D7F3070044EF85 /* YoutubeEntityModel.m in Sources */,
 				0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */,
+				06265A3D20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m in Sources */,
 				062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */,
 				06BE0CCA20A4A106007D9319 /* NSURL+URLWithQueryItems.m in Sources */,
 				0634628520D7A1040044EF85 /* YoutubePlaylistModel.m in Sources */,

@@ -9,6 +9,8 @@
 #import "PlaylistsTableViewController.h"
 #import "PlaylistModel.h"
 #import "SongListPlusPlayerViewController.h"
+#import "DropboxSongListTableViewController.h"
+#import "FavouriteVideosTableViewController.h"
 #import "Constants.h"
 #import "DataBase.h"
 
@@ -44,13 +46,16 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    self.playlists = [[NSMutableArray alloc] init];
+    PlaylistModel *favouriteVideosPlaylist = [[PlaylistModel alloc] initWithName:@"Favourite Videos"];
+    PlaylistModel *dropboxFiles = [[PlaylistModel alloc] initWithName:@"Dropbox"];
+    
+    [self.playlists addObject:favouriteVideosPlaylist];
+    [self.playlists addObject:dropboxFiles];
     
     DataBase *db = [[DataBase alloc] init];
-    self.playlists = db.allPlaylists.mutableCopy;
+    [self.playlists addObjectsFromArray:db.allPlaylists];
     // if there are no playlists allocate memory for playlists array
-    if (!self.playlists) {
-        self.playlists = [[NSMutableArray alloc] init];
-    }
     
     [self.tableView reloadData];
 }
@@ -79,6 +84,15 @@
     else {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
+    if (indexPath.row == 1) {
+        cell.imageView.image = [UIImage imageNamed:@"dropbox_icon"];
+    }
+    else if (indexPath.row == 0) {
+        cell.imageView.image = [UIImage imageNamed:@"video_icon"];
+    }
+    else {
+        cell.imageView.image = [UIImage imageNamed:@"playlist_icon"];
+    }
     
     return cell;
 }
@@ -86,23 +100,36 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
-    if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
-        self.songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
+    if (indexPath.row == 0) {
+        FavouriteVideosTableViewController *favouriteVideosTVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"FavouriteVideosTableViewController"];
+        [self.navigationController pushViewController:favouriteVideosTVC animated:YES];
     }
-    [self.navigationController pushViewController:self.songListPlusPlayerVC animated:YES];
+    else if (indexPath.row == 1) {
+        DropboxSongListTableViewController *dropboxSongListVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"DropboxSongList"];
+        [self.navigationController pushViewController:dropboxSongListVC animated:YES];
+    }
+    else {
+        if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
+            self.songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
+        }
+        [self.navigationController pushViewController:self.songListPlusPlayerVC animated:YES];
+    }
 
 }
 
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    if (indexPath.row < 2) return NO;
     return YES;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.playlists removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        DataBase *db = [[DataBase alloc] init];
+        if ([db deletePlaylist:self.playlists[indexPath.row]]) {
+            [self.playlists removeObjectAtIndex:indexPath.row];
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
     }
 }
 
@@ -129,12 +156,14 @@
         
         if (alertController.textFields[0].text.length > 1 && ![(NSArray<NSString *> *)[self.playlists valueForKey:@"name"] containsObject:alertController.textFields[0].text]) {
             PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:alertController.textFields[0].text];
-            [self.playlists addObject:playlist];
-            
-            [self.tableView reloadData];
-            
+
             DataBase *db = [[DataBase alloc] init];
-            [db addNewPlaylist:playlist];
+            if ([db addNewPlaylist:playlist]) {
+                [self.playlists addObject:playlist];
+                
+                [self.tableView reloadData];
+                
+            }
         }
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {

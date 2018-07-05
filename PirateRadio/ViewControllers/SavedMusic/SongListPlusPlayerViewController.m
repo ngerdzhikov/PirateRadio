@@ -114,8 +114,7 @@
         self.songListViewController = [storyBoard instantiateViewControllerWithIdentifier:@"savedMusicViewController"];
         UIBarButtonItem *editSongsButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self.songListViewController action:@selector(editSongs:)];
         UIImage *dropboxImage = [UIImage imageNamed:@"dropbox_icon"];
-        UIBarButtonItem *dropBoxButton = [[UIBarButtonItem alloc] initWithImage:dropboxImage style:UIBarButtonItemStylePlain target:self.songListViewController action:@selector(dropboxButtonTap)];
-        self.navigationItem.rightBarButtonItems = @[editSongsButton, dropBoxButton];
+        self.navigationItem.rightBarButtonItems = @[editSongsButton,];
         self.songListViewController.allSongs = [self songsFromDisk];
     }
     

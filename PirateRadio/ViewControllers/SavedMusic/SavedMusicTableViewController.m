@@ -434,9 +434,4 @@
     }
 }
 
-- (void)dropboxButtonTap {
-    DropboxSongListTableViewController *dropboxSongListVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"DropboxSongList"];
-    [self.navigationController pushViewController:dropboxSongListVC animated:YES];
-}
-
 @end

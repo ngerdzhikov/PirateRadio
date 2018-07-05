@@ -21,6 +21,5 @@
 @property (strong, nonatomic) UISearchController *songListSearchController;
 
 - (void)displayEmptyListImageIfNeeded;
-- (void)dropboxButtonTap;
 
 @end

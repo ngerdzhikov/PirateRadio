@@ -25,7 +25,8 @@
 - (void)deleteDBSongforLocalSong:(LocalSongModel *)localSong;
 
 - (void)updateArrayOfSongsForPlaylist:(PlaylistModel *)playlist;
-- (void)addNewPlaylist:(PlaylistModel *)playlist;
+- (BOOL)addNewPlaylist:(PlaylistModel *)playlist;
+- (BOOL)deletePlaylist:(PlaylistModel *)playlist;
 - (void)renamePlaylistWithNewName:(NSString *)newName forOldPlaylistName:(NSString *)oldName;
 - (NSArray *)allPlaylists;
 
