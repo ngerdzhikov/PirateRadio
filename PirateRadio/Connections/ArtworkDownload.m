@@ -101,7 +101,8 @@
 
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location {
     NSError *err;
-    NSURL *urlToSave = self.downloadDict[downloadTask].localArtworkURL;
+    LocalSongModel *song = self.downloadDict[downloadTask];
+    NSURL *urlToSave = song.localArtworkURL;
     [NSFileManager.defaultManager moveItemAtURL:location toURL:urlToSave error:&err];
     if (err) {
         NSLog(@"Error moving item = %@", err);

@@ -44,7 +44,14 @@
 }
 
 - (IBAction)uploadToDropboxButtonTap:(id)sender {
-    [DropBox uploadLocalSong:self.song];
+    BOOL doesExist = [DropBox doesSongExists:self.song];
+    
+    if (doesExist) {
+        [Toast displayStandardToastWithMessage:@"File already exists in dropbox"];
+    }
+    else {
+        [DropBox uploadLocalSong:self.song];
+    }
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 

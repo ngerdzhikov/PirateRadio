@@ -42,6 +42,7 @@
           setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESUploadError * _Nullable routeError, DBRequestError * _Nullable networkError) {
               if (result) {
                   [Toast displayStandardToastWithMessage:@"Song uploaded successfully"];
+                  [[self class] uploadArtworkForLocalSong:song];
               } else {
                   [Toast displayStandardToastWithMessage:@"Error uploading song"];
               }
@@ -131,6 +132,26 @@
     fileURL = [[fileURL URLByAppendingPathComponent:@"songs"] URLByAppendingPathComponent:fileName];
     
     return fileURL;
+}
+
++ (BOOL)doesSongExists:(LocalSongModel *)song {
+    __block BOOL exists = NO;
+    
+    NSString *fileName = [[[song.artistName stringByAppendingString:@" - "] stringByAppendingString:song.songTitle] stringByAppendingString:@".mp3"];
+    NSString *filePath = [@"/PirateRadio/songs/" stringByAppendingString:fileName];
+    
+    DBUserClient *client = [DBClientsManager authorizedClient];
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    [[[client filesRoutes] getMetadata:filePath] setResponseBlock:^(DBFILESMetadata * _Nullable result, DBFILESGetMetadataError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+        if (result) {
+            exists = YES;
+        }
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW)) { [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]]; }
+    return exists;
 }
 
 @end

@@ -83,8 +83,9 @@
             DataBase *db = [[DataBase alloc] init];
             [db addNewSong:song withURL:download.videoURL];
         });
-        
-        [DropBox uploadLocalSong:song];
+        if (![DropBox doesSongExists:song]) {
+            [DropBox uploadLocalSong:song];
+        }
     }
     [self.youtubeSession resetWithCompletionHandler:^{
         
