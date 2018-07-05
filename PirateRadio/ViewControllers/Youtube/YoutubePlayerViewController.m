@@ -19,6 +19,7 @@
 #import "SearchResultTableViewCell.h"
 #import "MainTabBarController.h"
 #import "ImageCacher.h"
+#import "DownloadModel.h"
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "DataBase.h"
@@ -222,18 +223,31 @@
 }
 
 - (void)stopDownloadingAnimation:(NSNotification *)notification {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    
+    if (notification == nil) {
         [self.activityIndicatorView stopAnimating];
         [self.activityIndicatorView removeFromSuperview];
-        UITableViewCell *cell = [self.suggestedVideosTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]];
-//        CGRect frame = cell.frame;
-        self.downloadFinishedLabel = [[UILabel alloc] initWithFrame:self.downloadButtonWebView.frame];
-        self.downloadFinishedLabel.text = @"Download finished.";
-        self.downloadFinishedLabel.textAlignment = NSTextAlignmentCenter;
-        self.downloadFinishedLabel.font = [UIFont boldSystemFontOfSize:20];
-        [cell addSubview:self.downloadFinishedLabel];
-        self.downloadButtonWebView = nil;
-    });
+        [self.downloadFinishedLabel removeFromSuperview];
+        self.downloadButtonWebView.hidden = NO;
+    }
+    else {
+        DownloadModel *download = [notification.userInfo objectForKey:@"download"];
+        
+        if ([self.currentVideoModel.entityId isEqualToString:download.video.entityId]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.activityIndicatorView stopAnimating];
+                [self.activityIndicatorView removeFromSuperview];
+                UITableViewCell *cell = [self.suggestedVideosTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]];
+                self.downloadFinishedLabel = [[UILabel alloc] initWithFrame:self.downloadButtonWebView.frame];
+                self.downloadFinishedLabel.text = @"Download finished.";
+                self.downloadFinishedLabel.textAlignment = NSTextAlignmentCenter;
+                self.downloadFinishedLabel.font = [UIFont boldSystemFontOfSize:20];
+                [cell addSubview:self.downloadFinishedLabel];
+                self.downloadButtonWebView = nil;
+            });
+        }
+    }
+    
 }
 
 - (void)stopAnimation {
@@ -502,11 +516,8 @@
     if (!self.isPlayingFromPlaylist) {
         [self makeSearchForSuggestedVideosForVideoId:videoModel.entityId];
     }
-    [self.downloadFinishedLabel removeFromSuperview];
-    self.downloadFinishedLabel = nil;
     
-    
-    
+    [self stopDownloadingAnimation:nil];
     
 //    removes the added information about next song and play and cancel buttons
     for (UIView *view in self.youtubePlayer.subviews) {
@@ -670,12 +681,11 @@
 
 - (void)addDownloadButtonInCell:(UITableViewCell *)cell {
     
-    if (!self.downloadButtonWebView && !self.downloadFinishedLabel) {
+    if (!self.downloadButtonWebView) {
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         configuration.allowsInlineMediaPlayback = NO;
         self.downloadButtonWebView = [[DownloadButtonWebView alloc] initWithFrame:cell.contentView.frame configuration:configuration];
         self.downloadButtonWebView.hidden = NO;
-        [self.downloadFinishedLabel removeFromSuperview];
         self.downloadButtonWebView.navigationDelegate = self.downloadButtonWebView;
         [cell.contentView addSubview:self.downloadButtonWebView];
     }

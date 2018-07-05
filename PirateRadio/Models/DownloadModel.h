@@ -13,6 +13,7 @@
 @interface DownloadModel : NSObject
 
 @property (strong, nonatomic, readonly) NSURL *URL;
+@property (strong, nonatomic, readonly) VideoModel *video;
 
 - (instancetype)initWithVideoModel:(VideoModel *)videoModel andURL:(NSURL *)url;
 - (NSURL *)localURLWithTimeStamp;

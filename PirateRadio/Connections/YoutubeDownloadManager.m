@@ -76,7 +76,9 @@
         [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModel:song];
         [self.downloads removeObjectForKey:[NSNumber numberWithUnsignedInteger:downloadTask.taskIdentifier]];
         
-        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
+        NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:@[song, download] forKeys:@[@"song", @"download"]];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:userInfo];
         dispatch_async(dispatch_get_main_queue(), ^{
             DataBase *db = [[DataBase alloc] init];
             [db addNewSong:song withURL:download.videoURL];
