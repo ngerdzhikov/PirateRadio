@@ -33,8 +33,13 @@
     
     NSURL *videoURL = [db videoURLForLocalSongModel:self.song];
     
-    [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-    [Toast displayStandardToastWithMessage:@"Video url copied!"];
+    if ([videoURL.absoluteString isEqualToString:@""]) {
+        [Toast displayStandardToastWithMessage:@"This song doesn't have a video url"];
+    }
+    else {
+        [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
+        [Toast displayStandardToastWithMessage:@"Video url copied!"];
+    }
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 

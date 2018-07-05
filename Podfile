@@ -10,4 +10,5 @@ target 'PirateRadio' do
   pod "MBCircularProgressBar"
   pod 'DGActivityIndicatorView'
   pod "AutoScrollLabel"
+  pod 'ObjectiveDropboxOfficial'
 end

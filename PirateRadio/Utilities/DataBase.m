@@ -155,9 +155,7 @@
     [dbSong setValue:url forKey:@"videoURL"];
     [dbSong setValue:song.localSongURL.lastPathComponent forKey:@"identityName"];
     
-    AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
-    NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
-    [dbSong setValue:[NSString stringWithFormat:@"%@", duration] forKey:@"duration"];
+    [dbSong setValue:[NSString stringWithFormat:@"%@", song.duration] forKey:@"duration"];
     
     NSError *err;
     [self.context save:&err];
@@ -173,10 +171,13 @@
         NSArray *keys = [[[obj entity] attributesByName] allKeys];
         NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
         if ([[dictionary objectForKey:@"identityName"] isEqualToString:localSong.localSongURL.lastPathComponent]) {
+            if ([[dictionary valueForKey:@"videoURL"] isKindOfClass:NSNull.class]) {
+                return [NSURL URLWithString:@""];
+            }
             return [dictionary valueForKey:@"videoURL"];
         }
     }
-    return nil;
+    return [NSURL URLWithString:@""];
 }
 
 - (NSManagedObject *)dbSongForLocalSongModel:(LocalSongModel *)localSong {

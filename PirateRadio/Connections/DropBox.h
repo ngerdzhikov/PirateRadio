@@ -14,5 +14,6 @@
 
 + (void)uploadLocalSong:(LocalSongModel *)song;
 + (void)uploadArtworkForLocalSong:(LocalSongModel *)song;
++ (void)downloadSongWithName:(NSString *)songName;
 
 @end

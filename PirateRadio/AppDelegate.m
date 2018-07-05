@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 @import AVFoundation;
 
 @interface AppDelegate ()
@@ -65,6 +66,37 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
+    if (authResult != nil) {
+        if ([authResult isSuccess]) {
+            NSLog(@"Success! User is logged into Dropbox.");
+            DBUserClient *client = [DBClientsManager authorizedClient];
+            [[client.filesRoutes createFolderV2:@"/PirateRadio/songs"]
+             setResponseBlock:^(DBFILESFolderMetadata *result, DBFILESCreateFolderError *routeError, DBRequestError *networkError) {
+                 if (result) {
+                     NSLog(@"%@\n", result);
+                 } else {
+                     NSLog(@"Directory already exists or there is an error.\n");
+                 }
+             }];
+            [[client.filesRoutes createFolderV2:@"/PirateRadio/artworks"]
+             setResponseBlock:^(DBFILESFolderMetadata *result, DBFILESCreateFolderError *routeError, DBRequestError *networkError) {
+                 if (result) {
+                     NSLog(@"%@\n", result);
+                 } else {
+                     NSLog(@"Directory already exists or there is an error\n");
+                 }
+             }];
+        } else if ([authResult isCancel]) {
+            NSLog(@"Authorization flow was manually canceled by user!");
+        } else if ([authResult isError]) {
+            NSLog(@"Error: %@", authResult);
+        }
+    }
+    return NO;
+}
 
 #pragma mark - Core Data stack
 

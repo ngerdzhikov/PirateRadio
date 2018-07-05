@@ -12,10 +12,10 @@
 #import "SavedMusicTableViewCell.h"
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
-#import "PlaylistsDatabase.h"
 #import "Constants.h"
 #import "DataBase.h"
 #import "SelectedSongOptionsPopoverViewController.h"
+#import "DropboxSongListTableViewController.h"
 #import "DGActivityIndicatorView.h"
 #import "Toast.h"
 
@@ -433,6 +433,9 @@
     }
 }
 
-
+- (void)dropboxButtonTap {
+    DropboxSongListTableViewController *dropboxSongListVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"DropboxSongList"];
+    [self.navigationController pushViewController:dropboxSongListVC animated:YES];
+}
 
 @end

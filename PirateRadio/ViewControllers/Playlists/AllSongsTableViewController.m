@@ -28,7 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.allSongs = [[NSMutableArray alloc] init];
-    [self loadSongsFromDisk];
+    [self loadSongsFromCoreData];
     self.selectedSongs = [[NSMutableArray alloc] init];
     self.navigationItem.title = @"Songs to add";
     
@@ -49,7 +49,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)loadSongsFromDisk {
+- (void)loadSongsFromCoreData {
     
     DataBase *db = [[DataBase alloc] init];
     
