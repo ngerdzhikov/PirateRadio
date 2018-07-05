@@ -402,7 +402,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello username!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IYt-eo-pBD">
-                                <rect key="frame" x="96.666666666666686" y="123.00000000000001" width="182" height="31.666666666666671"/>
+                                <rect key="frame" x="96.666666666666686" y="138" width="182" height="31.666666666666657"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -414,30 +414,40 @@
                                     <action selector="dropboxButtonTap:" destination="bra-08-ahU" eventType="touchUpInside" id="JrR-Wi-bDF"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto upload to Dropbox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qqQ-Ge-DEg">
+                                <rect key="frame" x="27" y="248" width="181.66666666666666" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vkt-tc-VAe">
+                                <rect key="frame" x="231" y="243" width="51" height="31"/>
+                                <connections>
+                                    <action selector="dropboxSwitchToggle:" destination="bra-08-ahU" eventType="valueChanged" id="1NS-sw-cQB"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="IYt-eo-pBD" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="35" id="1F8-et-ifD"/>
-                            <constraint firstItem="7pA-3c-7Rr" firstAttribute="top" secondItem="ver-An-ftJ" secondAttribute="bottom" constant="8" id="1RO-tY-dIK"/>
-                            <constraint firstItem="87i-sU-1aG" firstAttribute="bottom" secondItem="7pA-3c-7Rr" secondAttribute="bottom" id="2AX-05-Z8n"/>
-                            <constraint firstItem="7pA-3c-7Rr" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" id="3i1-Y5-XFK"/>
+                            <constraint firstItem="IYt-eo-pBD" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="50" id="1F8-et-ifD"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="n6O-yr-W9w" secondAttribute="trailing" constant="20" symbolic="YES" id="5sh-bL-hzU"/>
-                            <constraint firstItem="7pA-3c-7Rr" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="EtV-3F-a1F"/>
+                            <constraint firstItem="qqQ-Ge-DEg" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" constant="27" id="9aa-9l-isJ"/>
                             <constraint firstItem="n6O-yr-W9w" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="NlE-cb-Xce"/>
+                            <constraint firstItem="qqQ-Ge-DEg" firstAttribute="top" secondItem="n6O-yr-W9w" secondAttribute="bottom" constant="130" id="WRq-cR-B4s"/>
                             <constraint firstItem="n6O-yr-W9w" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" constant="10" id="Wos-ks-sCs"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="yr3-RJ-EH4" secondAttribute="trailing" constant="10" id="cKD-7q-0M3"/>
                             <constraint firstItem="IYt-eo-pBD" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="fVU-tw-oYV"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RJ3-qF-56m" secondAttribute="leading" constant="20" symbolic="YES" id="ghu-a2-7ex"/>
-                            <constraint firstItem="ver-An-ftJ" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="h0j-xC-NAU"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="l4L-D1-uIS"/>
-                            <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="7pA-3c-7Rr" secondAttribute="trailing" id="pQr-W8-dUm"/>
-                            <constraint firstItem="ver-An-ftJ" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="114" id="z0H-4c-mxl"/>
+                            <constraint firstItem="Vkt-tc-VAe" firstAttribute="centerY" secondItem="qqQ-Ge-DEg" secondAttribute="centerY" id="qjW-Qw-VfP"/>
+                            <constraint firstItem="Vkt-tc-VAe" firstAttribute="leading" secondItem="qqQ-Ge-DEg" secondAttribute="trailing" constant="22.333333333333343" id="tse-Ur-0pm"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="87i-sU-1aG"/>
                     </view>
                     <navigationItem key="navigationItem" id="PxT-ZT-mHq"/>
                     <connections>
                         <outlet property="dropboxButton" destination="n6O-yr-W9w" id="gcY-2l-4ik"/>
+                        <outlet property="dropboxSwitch" destination="Vkt-tc-VAe" id="gbu-vq-Gnf"/>
                         <outlet property="logOutButton" destination="yr3-RJ-EH4" id="pt9-RU-WT1"/>
                         <outlet property="usernameLabel" destination="IYt-eo-pBD" id="AE1-Yf-OHx"/>
                     </connections>

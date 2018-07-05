@@ -83,7 +83,7 @@
             DataBase *db = [[DataBase alloc] init];
             [db addNewSong:song withURL:download.videoURL];
         });
-        if (![DropBox doesSongExists:song]) {
+        if (![DropBox doesSongExists:song] && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
             [DropBox uploadLocalSong:song];
         }
     }

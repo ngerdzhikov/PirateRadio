@@ -9,6 +9,7 @@
 #import "ArtworkDownload.h"
 #import "ArtworkRequest.h"
 #import "LocalSongModel.h"
+#import "Constants.h"
 #import "DropBox.h"
 
 @interface ArtworkDownload ()
@@ -108,7 +109,9 @@
         NSLog(@"Error moving item = %@", err);
     }
     else {
-        [DropBox uploadArtworkForLocalSong:self.downloadDict[downloadTask]];
+        if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
+            [DropBox uploadArtworkForLocalSong:self.downloadDict[downloadTask]];
+        }
     }
     
 }
