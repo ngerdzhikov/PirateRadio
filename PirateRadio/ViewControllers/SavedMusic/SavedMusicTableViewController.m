@@ -64,10 +64,11 @@
             self.noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
             self.noSongsImageView.frame = CGRectMake(self.tableView.frame.origin.x + self.tableView.frame.size.width / 4, self.tableView.frame.origin.y + self.tableView.frame.size.height / 4, self.view.frame.size.width / 2, self.view.frame.size.height / 2);
             self.noSongsImageView.translatesAutoresizingMaskIntoConstraints = NO;
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:3.0];
-            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:self.noSongsImageView cache:YES];
+            self.noSongsImageView.alpha = 0;
             [self.view addSubview:self.noSongsImageView];
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:1];
+            self.noSongsImageView.alpha = 1.0;
             [UIView commitAnimations];
             [self.view addConstraint:
              [NSLayoutConstraint constraintWithItem:self.noSongsImageView
