@@ -10,6 +10,7 @@
 #import "ArtworkRequest.h"
 #import "LocalSongModel.h"
 #import "Constants.h"
+#import "Reachability.h"
 #import "DropBox.h"
 
 @interface ArtworkDownload ()
@@ -109,8 +110,17 @@
         NSLog(@"Error moving item = %@", err);
     }
     else {
-        if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
-            [DropBox uploadArtworkForLocalSong:self.downloadDict[downloadTask]];
+        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+        if (reachability.isReachable && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
+            if (![DropBox doesSongExists:song]) {
+                Reachability *reachability = [Reachability reachabilityForInternetConnection];
+                if (reachability.isReachableViaWiFi) {
+                    [DropBox uploadLocalSong:song];
+                }
+                else if (reachability.isReachableViaWWAN && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR]) {
+                    [DropBox uploadLocalSong:song];
+                }
+            }
         }
     }
     

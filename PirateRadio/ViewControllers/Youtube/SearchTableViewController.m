@@ -89,11 +89,13 @@ typedef enum {
 
 - (void)reachabilityChanged:(NSNotification *)notification {
     if (self.reachability.isReachable) {
+        self.tableView.allowsSelection = YES;
         self.lastSearchType = EnumLastSearchTypeNone;
         [Toast displayToastWithMessage:@"Connection established." andDuration:3];
     }
     else {
         [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
+        self.tableView.allowsSelection = NO;
     }
 }
 

@@ -12,6 +12,7 @@
 #import "LocalSongModel.h"
 #import "Constants.h"
 #import "DataBase.h"
+#import "Reachability.h"
 #import "AVKit/AVKit.h"
 #import "DropBox.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
@@ -83,8 +84,17 @@
             DataBase *db = [[DataBase alloc] init];
             [db addNewSong:song withURL:download.videoURL];
         });
-        if (![DropBox doesSongExists:song] && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
-            [DropBox uploadLocalSong:song];
+        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+        if (reachability.isReachable && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
+            if (![DropBox doesSongExists:song]) {
+                Reachability *reachability = [Reachability reachabilityForInternetConnection];
+                if (reachability.isReachableViaWiFi) {
+                    [DropBox uploadLocalSong:song];
+                }
+                else if (reachability.isReachableViaWWAN && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR]) {
+                    [DropBox uploadLocalSong:song];
+                }
+            }
         }
     }
     [self.youtubeSession resetWithCompletionHandler:^{
