@@ -10,6 +10,8 @@
 		0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0608885020C587A600860DBC /* PlaylistsTableViewController.m */; };
 		0608885420C5883E00860DBC /* PlaylistModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0608885320C5883E00860DBC /* PlaylistModel.m */; };
 		06265A3D20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06265A3C20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m */; };
+		06265A4620EF705700D64B77 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 06265A4520EF705700D64B77 /* Reachability.m */; };
+		06265A4820EF708700D64B77 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06265A4720EF708700D64B77 /* SystemConfiguration.framework */; };
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
@@ -61,6 +63,9 @@
 		0608885320C5883E00860DBC /* PlaylistModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistModel.m; sourceTree = "<group>"; };
 		06265A3B20EE4EBD00D64B77 /* FavouriteVideosTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FavouriteVideosTableViewController.h; sourceTree = "<group>"; };
 		06265A3C20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FavouriteVideosTableViewController.m; sourceTree = "<group>"; };
+		06265A4420EF705600D64B77 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		06265A4520EF705700D64B77 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		06265A4720EF708700D64B77 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubeDownloadManager.h; sourceTree = "<group>"; };
 		062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubeDownloadManager.m; sourceTree = "<group>"; };
 		062E7EA820A5E911006F1221 /* DownloadModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadModel.h; sourceTree = "<group>"; };
@@ -151,6 +156,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06265A4820EF708700D64B77 /* SystemConfiguration.framework in Frameworks */,
 				5A14E8C8719E3454E5B8D4CA /* libPods-PirateRadio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,6 +291,8 @@
 				067A6A7F20E27C7900F861C0 /* ArtworkDownload.m */,
 				067792F520ECC8BA00E0032E /* DropBox.h */,
 				067792F620ECC8BA00E0032E /* DropBox.m */,
+				06265A4420EF705600D64B77 /* Reachability.h */,
+				06265A4520EF705700D64B77 /* Reachability.m */,
 			);
 			path = Connections;
 			sourceTree = "<group>";
@@ -377,6 +385,7 @@
 		A28ABB5990062DFC0AC5AE40 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				06265A4720EF708700D64B77 /* SystemConfiguration.framework */,
 				DBDE799839541C9F2DE21F7E /* libPods-PirateRadio.a */,
 			);
 			name = Frameworks;
@@ -515,6 +524,7 @@
 				0660029B20E4F8100000884E /* LoginViewController.m in Sources */,
 				067792FD20ED018200E0032E /* DropboxSongListTableViewController.m in Sources */,
 				06BE0CC720A4981C007D9319 /* YoutubeConnectionManager.m in Sources */,
+				06265A4620EF705700D64B77 /* Reachability.m in Sources */,
 				06FC537720A335D4003238BF /* main.m in Sources */,
 				0634628820D7F3070044EF85 /* YoutubeEntityModel.m in Sources */,
 				0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */,

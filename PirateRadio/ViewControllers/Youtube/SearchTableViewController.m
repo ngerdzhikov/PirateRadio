@@ -16,10 +16,13 @@
 #import "ImageCacher.h"
 #import "DGActivityIndicatorView.h"
 #import "YoutubePlaylistModel.h"
+#import "Toast.h"
+#import "Reachability.h"
 
 typedef enum {
     EnumLastSearchTypeWithKeywords,
-    EnumLastSearchTypeSuggestions
+    EnumLastSearchTypeSuggestions,
+    EnumLastSearchTypeNone
 }EnumLastSearchType;
 
 
@@ -31,8 +34,9 @@ typedef enum {
 @property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
 @property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
 @property (strong, nonatomic) UIVisualEffectView *blurEffectView;
-@property (weak, nonatomic) UISearchBar *searchBar;
+@property (strong, nonatomic) Reachability *reachability;
 @property (strong, nonatomic) NSString *nextPageToken;
+@property (weak, nonatomic) UISearchBar *searchBar;
 @property BOOL isNextPageEnabled;
 @property EnumLastSearchType lastSearchType;
 
@@ -64,12 +68,33 @@ typedef enum {
     self.youtubePlaylistsDict = [[NSMutableDictionary alloc] init];
     self.youtubeSearchEntities = [[NSMutableArray alloc] init];
     self.tableView.showsVerticalScrollIndicator = YES;
-    [self makeSearchForMostPopularVideos];
+    
+    self.reachability = [Reachability reachabilityForInternetConnection];
+    if (self.reachability.isReachable) {
+        [self makeSearchForMostPopularVideos];
+    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+    [self.reachability startNotifier];
+    
 }
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+
+- (void)reachabilityChanged:(NSNotification *)notification {
+    if (self.reachability.isReachable) {
+        self.lastSearchType = EnumLastSearchTypeNone;
+        [Toast displayToastWithMessage:@"Connection established." andDuration:3];
+    }
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
+    }
 }
 
 #pragma mark - Table view data source
@@ -137,20 +162,25 @@ typedef enum {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    YoutubeEntityModel *entity = self.youtubeSearchEntities[indexPath.row];
-    
-    YoutubePlaylistModel *youtubePlaylistModel;
-    
-    if ([entity.kind isEqualToString:@"youtube#video"]) {
-        VideoModel *videoModel = (VideoModel *)entity;
-        youtubePlaylistModel = [[YoutubePlaylistModel alloc] initWithVideoModel:videoModel];
-        YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
-        youtubePlayer.youtubePlaylist = youtubePlaylistModel;
-        [self.navigationController pushViewController:youtubePlayer animated:YES];
+    if (self.reachability.isReachable) {
+        YoutubeEntityModel *entity = self.youtubeSearchEntities[indexPath.row];
+        
+        YoutubePlaylistModel *youtubePlaylistModel;
+        
+        if ([entity.kind isEqualToString:@"youtube#video"]) {
+            VideoModel *videoModel = (VideoModel *)entity;
+            youtubePlaylistModel = [[YoutubePlaylistModel alloc] initWithVideoModel:videoModel];
+            YoutubePlayerViewController *youtubePlayer = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"YoutubePlayerViewController"];
+            youtubePlayer.youtubePlaylist = youtubePlaylistModel;
+            [self.navigationController pushViewController:youtubePlayer animated:YES];
+        }
+        else if ([entity.kind isEqualToString:@"youtube#playlist"]) {
+            youtubePlaylistModel = (YoutubePlaylistModel *)entity;
+            [self makeSearchForPlaylistItemsWithPlaylist:youtubePlaylistModel andNextPageToken:@""];
+        }
     }
-    else if ([entity.kind isEqualToString:@"youtube#playlist"]) {
-        youtubePlaylistModel = (YoutubePlaylistModel *)entity;
-        [self makeSearchForPlaylistItemsWithPlaylist:youtubePlaylistModel andNextPageToken:@""];
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:4];
     }
     
 }
@@ -223,96 +253,112 @@ typedef enum {
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    [YoutubeConnectionManager makeSuggestionsSearchWithPrefix:searchText andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        NSError *serializationError;
-        NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&serializationError];
-        if (serializationError) {
-            NSLog(@"serializationError = %@", serializationError);
-            [self.searchSuggestions removeAllObjects];
-        }
-        else {
-            [self.searchSuggestions removeAllObjects];
-            for (NSString *suggestion in responseArray[1]) {
-                [self.searchSuggestions addObject:suggestion];
+    if (self.reachability.isReachable) {
+        [YoutubeConnectionManager makeSuggestionsSearchWithPrefix:searchText andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+            NSError *serializationError;
+            NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&serializationError];
+            if (serializationError) {
+                NSLog(@"serializationError = %@", serializationError);
+                [self.searchSuggestions removeAllObjects];
             }
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.searchSuggestionsTable.tableView reloadData];
-        });
-    }];
+            else {
+                [self.searchSuggestions removeAllObjects];
+                for (NSString *suggestion in responseArray[1]) {
+                    [self.searchSuggestions addObject:suggestion];
+                }
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.searchSuggestionsTable.tableView reloadData];
+            });
+        }];
+    }
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
+    }
 }
 
 #pragma mark Searching
 
 - (void)makeSearchWithString:(NSString *)string {
-    if (![string isEqualToString:@""]) {
-        [self startAnimation];
-        [ImageCacher.sharedInstance clearCache];
-        self.nextPageToken = nil;
-        self.lastSearchType = EnumLastSearchTypeWithKeywords;
-        NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        self.videoModelsDict = [[NSMutableDictionary alloc] init];
-        self.youtubeSearchEntities = [[NSMutableArray alloc] init];
-        [self makeSearchWithKeywords:keywords];
+    if (self.reachability.isReachable) {
+        if (![string isEqualToString:@""]) {
+            [self startAnimation];
+            [ImageCacher.sharedInstance clearCache];
+            self.nextPageToken = nil;
+            self.lastSearchType = EnumLastSearchTypeWithKeywords;
+            NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            self.videoModelsDict = [[NSMutableDictionary alloc] init];
+            self.youtubeSearchEntities = [[NSMutableArray alloc] init];
+            [self makeSearchWithKeywords:keywords];
+        }
     }
-
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
+    }
+    
     [self.searchSuggestionsTable dismissViewControllerAnimated:NO completion:nil];
     self.navigationItem.searchController.active = NO;
     self.searchBar.text = string;
     [self manageSearchHistory];
+    
 }
 
 - (void)makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
-    [YoutubeConnectionManager makeSearchWithNextPageToken:self.nextPageToken andKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Error = %@", error.localizedDescription);
-        }
-        else {
-            NSError *serializationError;
-            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
-            if (serializationError) {
-                NSLog(@"Error = %@", serializationError.localizedDescription);
-                [self stopAnimation];
+    if (self.reachability.isReachable) {
+        [YoutubeConnectionManager makeSearchWithNextPageToken:self.nextPageToken andKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (error) {
+                NSLog(@"Error = %@", error.localizedDescription);
             }
             else {
-                NSArray *items = [responseDict objectForKey:@"items"];
-                self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
-                if (items.count == 0) {
-                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
-                    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-                    [self presentViewController:alertController animated:YES completion:^{
-                        [self stopAnimation];
-                    }];
+                NSError *serializationError;
+                NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+                if (serializationError) {
+                    NSLog(@"Error = %@", serializationError.localizedDescription);
+                    [self stopAnimation];
                 }
                 else {
-                    for (NSDictionary *item in items) {
-                        NSDictionary<NSString *, NSString *> *itemId = [item objectForKey:@"id"];
-//                        if it is a video
-                        if ([[itemId objectForKey:@"kind"] isEqualToString:@"youtube#video"]) {
-                            NSString *videoId = [itemId objectForKey:@"videoId"];
-                            NSDictionary *snippet = [item objectForKey:@"snippet"];
-                            VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                            [self.youtubeSearchEntities addObject:videoModel];
-                            [self.videoModelsDict setObject:videoModel forKey:videoId];
-                        }
-//                        if it is a playlist
-                        else if ([[itemId objectForKey:@"kind"] isEqualToString:@"youtube#playlist"]) {
-                            NSString *playlistId = [itemId objectForKey:@"playlistId"];
-                            NSDictionary *snippet = [item objectForKey:@"snippet"];
-                            YoutubePlaylistModel *youtubePlaylist = [[YoutubePlaylistModel alloc] initWithSnippet:snippet andPlaylistId:playlistId];
-                            [self.youtubeSearchEntities addObject:youtubePlaylist];
-                            [self.youtubePlaylistsDict setObject:youtubePlaylist forKey:playlistId];
-                        }
+                    NSArray *items = [responseDict objectForKey:@"items"];
+                    self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                    if (items.count == 0) {
+                        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"WTF" message:@"What the hell are you trying to find? Please use normal keywords (e.g. Azis, Mile Kitic etc)." preferredStyle:UIAlertControllerStyleAlert];
+                        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                        [self presentViewController:alertController animated:YES completion:^{
+                            [self stopAnimation];
+                        }];
                     }
-                    NSString *resultsPerPage = [[responseDict objectForKey:@"pageInfo"] objectForKey:@"resultsPerPage"];
-                    
-                    NSRange subArrayRange = NSMakeRange(self.youtubeSearchEntities.count - resultsPerPage.integerValue, resultsPerPage.integerValue);
-                    [self makeSearchForVideoDurationsWithVideoModels:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
-                    [self makeSearchForPlaylistContentDetailsForPlaylists:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
+                    else {
+                        for (NSDictionary *item in items) {
+                            NSDictionary<NSString *, NSString *> *itemId = [item objectForKey:@"id"];
+                            //                        if it is a video
+                            if ([[itemId objectForKey:@"kind"] isEqualToString:@"youtube#video"]) {
+                                NSString *videoId = [itemId objectForKey:@"videoId"];
+                                NSDictionary *snippet = [item objectForKey:@"snippet"];
+                                VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                                [self.youtubeSearchEntities addObject:videoModel];
+                                [self.videoModelsDict setObject:videoModel forKey:videoId];
+                            }
+                            //                        if it is a playlist
+                            else if ([[itemId objectForKey:@"kind"] isEqualToString:@"youtube#playlist"]) {
+                                NSString *playlistId = [itemId objectForKey:@"playlistId"];
+                                NSDictionary *snippet = [item objectForKey:@"snippet"];
+                                YoutubePlaylistModel *youtubePlaylist = [[YoutubePlaylistModel alloc] initWithSnippet:snippet andPlaylistId:playlistId];
+                                [self.youtubeSearchEntities addObject:youtubePlaylist];
+                                [self.youtubePlaylistsDict setObject:youtubePlaylist forKey:playlistId];
+                            }
+                        }
+                        NSString *resultsPerPage = [[responseDict objectForKey:@"pageInfo"] objectForKey:@"resultsPerPage"];
+                        
+                        NSRange subArrayRange = NSMakeRange(self.youtubeSearchEntities.count - resultsPerPage.integerValue, resultsPerPage.integerValue);
+                        [self makeSearchForVideoDurationsWithVideoModels:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
+                        [self makeSearchForPlaylistContentDetailsForPlaylists:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
+                    }
                 }
             }
-        }
-    }];
+        }];
+    }
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
+    }
 }
 
 - (void)makeSearchForVideoDurationsWithVideoModels:(NSArray<YoutubeEntityModel *> *)entities {
@@ -420,48 +466,58 @@ typedef enum {
 }
 
 - (void)makeSearchForMostPopularVideos {
-    self.lastSearchType = EnumLastSearchTypeSuggestions;
-    [self startAnimation];
-    [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithNextPageToken:self.nextPageToken andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Error = %@", error.localizedDescription);
-            [self stopAnimation];
-            
-        }
-        else {
-            NSError *serializationError;
-            NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
-            if (serializationError) {
-                NSLog(@"Error = %@", serializationError.localizedDescription);
+    if (self.reachability.isReachable) {
+        self.lastSearchType = EnumLastSearchTypeSuggestions;
+        [self startAnimation];
+        [YoutubeConnectionManager makeYoutubeRequestForMostPopularVideosWithNextPageToken:self.nextPageToken andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (error) {
+                NSLog(@"Error = %@", error.localizedDescription);
+                [self stopAnimation];
+                
             }
             else {
-                NSArray *items = [responseDict objectForKey:@"items"];
-                self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
-                for (NSDictionary *item in items) {
-                    NSString *videoId = [item objectForKey:@"id"];
-                    NSDictionary *snippet = [item objectForKey:@"snippet"];
-                    VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
-                    NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
-                    NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
-                    videoModel.videoDuration = duration;
-                    videoModel.videoViews = views;
-                    [self.youtubeSearchEntities addObject:videoModel];
-                    [self.videoModelsDict setObject:videoModel forKey:videoId];
+                NSError *serializationError;
+                NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
+                if (serializationError) {
+                    NSLog(@"Error = %@", serializationError.localizedDescription);
                 }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self stopAnimation];
-                    [self.tableView reloadData];
-                });
+                else {
+                    NSArray *items = [responseDict objectForKey:@"items"];
+                    self.nextPageToken = [responseDict objectForKey:@"nextPageToken"];
+                    for (NSDictionary *item in items) {
+                        NSString *videoId = [item objectForKey:@"id"];
+                        NSDictionary *snippet = [item objectForKey:@"snippet"];
+                        VideoModel *videoModel = [[VideoModel alloc] initWithSnippet:snippet andVideoId:videoId];
+                        NSString *duration = [[item objectForKey:@"contentDetails"] objectForKey:@"duration"];
+                        NSString *views = [[item objectForKey:@"statistics"] objectForKey:@"viewCount"];
+                        videoModel.videoDuration = duration;
+                        videoModel.videoViews = views;
+                        [self.youtubeSearchEntities addObject:videoModel];
+                        [self.videoModelsDict setObject:videoModel forKey:videoId];
+                    }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self stopAnimation];
+                        [self.tableView reloadData];
+                    });
+                }
             }
-        }
-    }];
+        }];
+    }
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
+    }
 }
 
 - (void)homeButtonPressed {
-    if (self.lastSearchType != EnumLastSearchTypeSuggestions) {
-        self.youtubeSearchEntities = [[NSMutableArray alloc] init];
-        self.nextPageToken = nil;
-        [self makeSearchForMostPopularVideos];
+    if (self.reachability.isReachable) {
+        if (self.lastSearchType != EnumLastSearchTypeSuggestions) {
+            self.youtubeSearchEntities = [[NSMutableArray alloc] init];
+            self.nextPageToken = nil;
+            [self makeSearchForMostPopularVideos];
+        }
+    }
+    else {
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
     }
 }
 
