@@ -41,6 +41,7 @@
     }];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(musicControllerPlayBtnTap:) name:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
     
 }
 
@@ -78,6 +79,7 @@
 - (void)configureMusicControllerView {
     [self.songTimeProgress addTarget:self action:@selector(sliderIsSliding) forControlEvents:UIControlEventValueChanged];
     [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpInside];
+    [self.songTimeProgress addTarget:self action:@selector(sliderEndedSliding) forControlEvents:UIControlEventTouchUpOutside];
     
     self.songTimeProgress.maximumValue = 100;
     self.songTimeProgress.value = 0.0f;
@@ -95,10 +97,7 @@
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
         [self.player replaceCurrentItemWithPlayerItem:item];
         NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
-    
-        [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0];
-        // setting duration not working.
-        
+       
         // Register as an observer of the player item's status property
         [item addObserver:self forKeyPath:@"status" options:options context:nil];
         [self updateMusicPlayerContent];
@@ -113,7 +112,7 @@
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
-
+    
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand addTarget:self action:@selector(nextBtnTap:)];
@@ -196,8 +195,6 @@
 
 }
 
-
-
 - (void)sliderIsSliding {
     
     self.isSliding = YES;
@@ -243,7 +240,7 @@
      ^(BOOL isFinished) {
          if (CMTIME_COMPARE_INLINE(seekTimeInProgress, ==, self.chaseTime)) {
              
-             [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
+             [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
              
              self.isSeekInProgress = NO;
              
@@ -271,7 +268,7 @@
             case AVPlayerItemStatusReadyToPlay:
                 // Ready to Play
                 self.player.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
-                [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
+                [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
                 [self setTime:CMTimeGetSeconds(self.player.currentTime) andDuration:CMTimeGetSeconds(self.player.currentItem.duration)];
                 break;
             case AVPlayerItemStatusFailed:
@@ -288,22 +285,21 @@
     
     [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     
-    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1.0];
-    
     [self.player play];
     
+    [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
 }
 
 - (void)pauseLoadedSong {
     
-    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0.0];
-    
     [self.player pause];
+    
+    [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
 }
 
 - (BOOL)isPlaying {
     
-    return self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying;
+    return self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying | self.player.timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate;
 }
 
 - (LocalSongModel *)nowPlaying {
@@ -336,13 +332,15 @@
     }
 }
 
-- (void)updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:(double)playbackRate {
+- (void)updateMPNowPlayingInfoCenterWithLoadedSongInfo {
     if ([MPNowPlayingInfoCenter class])  {
-        
-        if (playbackRate == 1) {
+        double playbackRate;
+        if ([self isPlaying]) {
+            playbackRate = 1;
             [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
         }
         else {
+            playbackRate = 0;
             [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
         }
         
@@ -366,6 +364,7 @@
         
     }
 }
+
 
 - (void)changedPlaybackPositionFromCommandCenter:(MPChangePlaybackPositionCommandEvent *)event {
     CMTime time = CMTimeMake((double)event.positionTime * 600, 600);

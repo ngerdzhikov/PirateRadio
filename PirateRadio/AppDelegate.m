@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
+#import "Constants.h"
 @import AVFoundation;
 
 @interface AppDelegate ()
@@ -19,6 +20,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [DBClientsManager setupWithAppKey:@"rp9dtda9u6je0kv"];
     NSError *error;
     NSURL *artworkDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     artworkDirectory = [artworkDirectory URLByAppendingPathComponent:@"artwork/"];
@@ -65,6 +67,22 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)theEvent {
+    if (theEvent.type == UIEventTypeRemoteControl)
+    {
+        switch(theEvent.subtype) {
+            case UIEventSubtypeRemoteControlTogglePlayPause:
+                NSLog(@"UIEventSubtypeRemoteControlTogglePlayPause");
+                [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
+                break;
+            default:
+                return;
+        }
+    }
+}
+
+#pragma mark - Dropbox integration
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
