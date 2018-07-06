@@ -20,6 +20,7 @@
 #define USER_DEFAULTS_KEY_PLAYLISTS @"UserDefaultsKeyPlaylists"
 #define USER_DEFAULTS_SEGUE_DONE @"UserDefaultsSegueDone"
 #define USER_DEFAULTS_UPLOAD_TO_DROPBOX @"UserDefaultsUploadToDropbox"
+#define USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR @"UserDefaultsUploadToDropboxViaCellular"
 
 #define BUTTON_TITLE_PLAY_STRING  @"c"
 #define BUTTON_TITLE_PAUSE_STRING @"d"

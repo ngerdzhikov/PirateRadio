@@ -9,6 +9,7 @@
 #import "ProfileViewController.h"
 #import "LoginViewController.h"
 #import "Constants.h"
+#import "UserPreferencesTableViewDelegate.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @interface ProfileViewController ()
@@ -16,7 +17,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *logOutButton;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UIButton *dropboxButton;
-@property (weak, nonatomic) IBOutlet UISwitch *dropboxSwitch;
+@property (weak, nonatomic) IBOutlet UITableView *preferencesTableView;
+@property (strong, nonatomic) UserPreferencesTableViewDelegate *tableViewDelegate;
 @property (strong, nonatomic) NSString *username;
 
 @end
@@ -25,6 +27,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.tableViewDelegate = [[UserPreferencesTableViewDelegate alloc] initWithTableView:self.preferencesTableView];
     
     BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:@"isLogged"];
     if (!isLogged) {
@@ -40,7 +43,11 @@
     else {
         [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
     }
-    [self.dropboxSwitch setOn:[NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]];
+    if (![self isLoggedInDropbox]) {
+//        [self.dropboxSwitch setEnabled:NO];
+        [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
+    }
+//    [self.dropboxSwitch setOn:[NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -68,6 +75,7 @@
     if ([self isLoggedInDropbox]) {
         [DBClientsManager unlinkAndResetClients];
         [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+        
     }
     else {
         [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
@@ -75,16 +83,17 @@
                                        controller:[[self class] topMostController]
                                           openURL:^(NSURL *url) {
                                               [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-                                                  
+                                                  if ([self isLoggedInDropbox]) {
+                                                      [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
+                                                  }
+                                                  else {
+                                                      [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+                                                  }
                                               }];
                                           }];
     }
     
 }
-- (IBAction)dropboxSwitchToggle:(UISwitch *)sender {
-    [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
-}
-
 
 - (BOOL)isLoggedInDropbox {
     return [DBClientsManager authorizedClient] != nil;
@@ -99,8 +108,5 @@
     
     return topController;
 }
-
-
-
 
 @end

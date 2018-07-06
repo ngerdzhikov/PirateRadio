@@ -414,47 +414,124 @@
                                     <action selector="dropboxButtonTap:" destination="bra-08-ahU" eventType="touchUpInside" id="JrR-Wi-bDF"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto upload to Dropbox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qqQ-Ge-DEg">
-                                <rect key="frame" x="27" y="248" width="181.66666666666666" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vkt-tc-VAe">
-                                <rect key="frame" x="231" y="243" width="51" height="31"/>
-                                <connections>
-                                    <action selector="dropboxSwitchToggle:" destination="bra-08-ahU" eventType="valueChanged" id="1NS-sw-cQB"/>
-                                </connections>
-                            </switch>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9dt-rU-yoV">
+                                <rect key="frame" x="0.0" y="239.66666666666666" width="375" height="489.33333333333337"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell1" id="2Ly-5H-9cD" customClass="UserPreferencesTableViewCell">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2Ly-5H-9cD" id="SST-If-4JC">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vkt-tc-VAe">
+                                                    <rect key="frame" x="296" y="6.3333333333333321" width="51" height="30.999999999999996"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto upload to Dropbox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qqQ-Ge-DEg">
+                                                    <rect key="frame" x="15" y="11" width="181.66666666666666" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Vkt-tc-VAe" firstAttribute="centerY" secondItem="SST-If-4JC" secondAttribute="centerY" id="5cK-3g-hQf"/>
+                                                <constraint firstItem="qqQ-Ge-DEg" firstAttribute="leading" secondItem="SST-If-4JC" secondAttribute="leading" constant="15" id="AOc-p2-3A9"/>
+                                                <constraint firstItem="Vkt-tc-VAe" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="qqQ-Ge-DEg" secondAttribute="trailing" constant="8" symbolic="YES" id="QYb-7F-eJn"/>
+                                                <constraint firstItem="qqQ-Ge-DEg" firstAttribute="centerY" secondItem="SST-If-4JC" secondAttribute="centerY" id="cjW-zB-sbI"/>
+                                                <constraint firstAttribute="trailing" secondItem="Vkt-tc-VAe" secondAttribute="trailing" constant="30" id="lQ0-WE-dCY"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="preferenceLabel" destination="qqQ-Ge-DEg" id="rjH-nb-OvS"/>
+                                            <outlet property="preferenceSwitch" destination="Vkt-tc-VAe" id="wMC-Jw-Wr5"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell2" id="ugE-Cm-Dna" customClass="UserPreferencesTableViewCell">
+                                        <rect key="frame" x="0.0" y="72" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ugE-Cm-Dna" id="tdS-Mn-Ms1">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zvE-uw-1ue">
+                                                    <rect key="frame" x="296" y="6.3333333333333321" width="51" height="30.999999999999996"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Upload with cellular" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VV9-W2-KyW">
+                                                    <rect key="frame" x="40.000000000000007" y="14" width="119.66666666666669" height="16"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="VV9-W2-KyW" firstAttribute="leading" secondItem="tdS-Mn-Ms1" secondAttribute="leading" constant="40" id="0tL-hE-vQF"/>
+                                                <constraint firstItem="zvE-uw-1ue" firstAttribute="centerY" secondItem="tdS-Mn-Ms1" secondAttribute="centerY" id="R0N-kQ-vfx"/>
+                                                <constraint firstItem="zvE-uw-1ue" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="VV9-W2-KyW" secondAttribute="trailing" constant="8" symbolic="YES" id="X3b-Mc-X65"/>
+                                                <constraint firstItem="VV9-W2-KyW" firstAttribute="centerY" secondItem="tdS-Mn-Ms1" secondAttribute="centerY" id="psc-sQ-S7i"/>
+                                                <constraint firstAttribute="trailing" secondItem="zvE-uw-1ue" secondAttribute="trailing" constant="30" id="yuc-ZT-zyf"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell3" id="B3Z-sr-2Ch" customClass="UserPreferencesTableViewCell">
+                                        <rect key="frame" x="0.0" y="116" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="B3Z-sr-2Ch" id="uUM-kx-weW">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j59-gy-ltJ">
+                                                    <rect key="frame" x="296" y="6.3333333333333321" width="51" height="30.999999999999996"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Placeholder cell" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OG9-Ra-mHi">
+                                                    <rect key="frame" x="14.999999999999993" y="11" width="121.33333333333331" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="j59-gy-ltJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="OG9-Ra-mHi" secondAttribute="trailing" constant="8" symbolic="YES" id="4Gp-u0-8mu"/>
+                                                <constraint firstItem="OG9-Ra-mHi" firstAttribute="leading" secondItem="uUM-kx-weW" secondAttribute="leading" constant="15" id="SXp-3G-cnA"/>
+                                                <constraint firstItem="OG9-Ra-mHi" firstAttribute="centerY" secondItem="uUM-kx-weW" secondAttribute="centerY" id="X8o-O3-9zT"/>
+                                                <constraint firstItem="j59-gy-ltJ" firstAttribute="centerY" secondItem="uUM-kx-weW" secondAttribute="centerY" id="mJk-h7-Pqa"/>
+                                                <constraint firstAttribute="trailing" secondItem="j59-gy-ltJ" secondAttribute="trailing" constant="30" id="wJX-DN-Q2Q"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="IYt-eo-pBD" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="50" id="1F8-et-ifD"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="n6O-yr-W9w" secondAttribute="trailing" constant="20" symbolic="YES" id="5sh-bL-hzU"/>
-                            <constraint firstItem="qqQ-Ge-DEg" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" constant="27" id="9aa-9l-isJ"/>
+                            <constraint firstItem="9dt-rU-yoV" firstAttribute="top" secondItem="IYt-eo-pBD" secondAttribute="bottom" constant="70" id="HX4-dT-8mL"/>
+                            <constraint firstItem="87i-sU-1aG" firstAttribute="bottom" secondItem="9dt-rU-yoV" secondAttribute="bottom" id="Kzp-WH-pSN"/>
+                            <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="9dt-rU-yoV" secondAttribute="trailing" id="LhG-OD-LBD"/>
                             <constraint firstItem="n6O-yr-W9w" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="NlE-cb-Xce"/>
-                            <constraint firstItem="qqQ-Ge-DEg" firstAttribute="top" secondItem="n6O-yr-W9w" secondAttribute="bottom" constant="130" id="WRq-cR-B4s"/>
                             <constraint firstItem="n6O-yr-W9w" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" constant="10" id="Wos-ks-sCs"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="yr3-RJ-EH4" secondAttribute="trailing" constant="10" id="cKD-7q-0M3"/>
+                            <constraint firstItem="9dt-rU-yoV" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="dIR-yH-DmU"/>
                             <constraint firstItem="IYt-eo-pBD" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="fVU-tw-oYV"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RJ3-qF-56m" secondAttribute="leading" constant="20" symbolic="YES" id="ghu-a2-7ex"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="l4L-D1-uIS"/>
-                            <constraint firstItem="Vkt-tc-VAe" firstAttribute="centerY" secondItem="qqQ-Ge-DEg" secondAttribute="centerY" id="qjW-Qw-VfP"/>
-                            <constraint firstItem="Vkt-tc-VAe" firstAttribute="leading" secondItem="qqQ-Ge-DEg" secondAttribute="trailing" constant="22.333333333333343" id="tse-Ur-0pm"/>
+                            <constraint firstItem="9dt-rU-yoV" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" id="uGc-HK-Q6C"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="87i-sU-1aG"/>
                     </view>
                     <navigationItem key="navigationItem" id="PxT-ZT-mHq"/>
                     <connections>
                         <outlet property="dropboxButton" destination="n6O-yr-W9w" id="gcY-2l-4ik"/>
-                        <outlet property="dropboxSwitch" destination="Vkt-tc-VAe" id="gbu-vq-Gnf"/>
                         <outlet property="logOutButton" destination="yr3-RJ-EH4" id="pt9-RU-WT1"/>
+                        <outlet property="preferencesTableView" destination="9dt-rU-yoV" id="5WT-oB-pu9"/>
                         <outlet property="usernameLabel" destination="IYt-eo-pBD" id="AE1-Yf-OHx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qxB-Sw-zDL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5838" y="2455"/>
+            <point key="canvasLocation" x="-5839.1999999999998" y="2454.6798029556653"/>
         </scene>
         <!--Youtube Player View Controller-->
         <scene sceneID="tne-QT-ifu">
