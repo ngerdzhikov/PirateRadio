@@ -14,6 +14,7 @@
 		06265A4820EF708700D64B77 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06265A4720EF708700D64B77 /* SystemConfiguration.framework */; };
 		06265A4B20EF7A3300D64B77 /* UserPreferencesTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06265A4A20EF7A3300D64B77 /* UserPreferencesTableViewCell.m */; };
 		06265A4E20EF7ADC00D64B77 /* UserPreferencesTableViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 06265A4D20EF7ADC00D64B77 /* UserPreferencesTableViewDelegate.m */; };
+		06265A5120F3460B00D64B77 /* AudioStreamNotificationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 06265A5020F3460B00D64B77 /* AudioStreamNotificationCenter.m */; };
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
@@ -72,6 +73,8 @@
 		06265A4A20EF7A3300D64B77 /* UserPreferencesTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesTableViewCell.m; sourceTree = "<group>"; };
 		06265A4C20EF7ADC00D64B77 /* UserPreferencesTableViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserPreferencesTableViewDelegate.h; sourceTree = "<group>"; };
 		06265A4D20EF7ADC00D64B77 /* UserPreferencesTableViewDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesTableViewDelegate.m; sourceTree = "<group>"; };
+		06265A4F20F3460B00D64B77 /* AudioStreamNotificationCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioStreamNotificationCenter.h; path = PirateRadio/Utilities/AudioStreamNotificationCenter.h; sourceTree = "<group>"; };
+		06265A5020F3460B00D64B77 /* AudioStreamNotificationCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AudioStreamNotificationCenter.m; path = PirateRadio/Utilities/AudioStreamNotificationCenter.m; sourceTree = "<group>"; };
 		062E7EA520A5C16B006F1221 /* YoutubeDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubeDownloadManager.h; sourceTree = "<group>"; };
 		062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubeDownloadManager.m; sourceTree = "<group>"; };
 		062E7EA820A5E911006F1221 /* DownloadModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadModel.h; sourceTree = "<group>"; };
@@ -271,6 +274,8 @@
 				0660029D20E500260000884E /* DataBase.m */,
 				067792F220EBB42800E0032E /* Toast.h */,
 				067792F320EBB42800E0032E /* Toast.m */,
+				06265A4F20F3460B00D64B77 /* AudioStreamNotificationCenter.h */,
+				06265A5020F3460B00D64B77 /* AudioStreamNotificationCenter.m */,
 			);
 			name = Utilities;
 			path = ..;
@@ -552,6 +557,7 @@
 				06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
 				0660029820E4CF6E0000884E /* FavouriteVideoTableViewCell.m in Sources */,
+				06265A5120F3460B00D64B77 /* AudioStreamNotificationCenter.m in Sources */,
 				062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */,
 				06B1B9CA20A974500019B0CC /* SavedMusicTableViewController.m in Sources */,
 				062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */,

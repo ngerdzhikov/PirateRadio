@@ -13,7 +13,7 @@
 @class LocalSongModel;
 @class CBAutoScrollLabel;
 
-@interface MusicPlayerViewController : UIViewController<MusicPlayerDelegate>
+@interface MusicPlayerViewController : UIViewController<MusicPlayerDelegate, AudioStreamerDelegate>
 
 @property (weak, nonatomic) IBOutlet CBAutoScrollLabel *songName;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;

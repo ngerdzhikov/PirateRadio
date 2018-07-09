@@ -49,6 +49,12 @@ typedef enum {
 
 @end
 
+@protocol AudioStreamerDelegate
+
+- (void)playPauseStream;
+
+@end
+
 
 
 #endif /* Protocols_h */

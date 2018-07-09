@@ -11,6 +11,8 @@
 #import "Constants.h"
 #import "CBAutoScrollLabel.h"
 #import "PirateAVPlayer.h"
+#import "AudioStreamNotificationCenter.h"
+
 @import MediaPlayer;
 @import AVFoundation;
 
@@ -41,7 +43,6 @@
     }];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(pauseLoadedSong) name:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(musicControllerPlayBtnTap:) name:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
     
 }
 
@@ -52,6 +53,7 @@
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
     [self updateCommandCenterRemoteControlTargets];
+    [AudioStreamNotificationCenter.defaultCenter addAudioStreamObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -123,7 +125,20 @@
 
 
 - (IBAction)musicControllerPlayBtnTap:(id)sender {
+    [self playPauseStream];
+}
+
+- (IBAction)previousBtnTap:(id)sender {
     
+    [self.songListDelegate didRequestPreviousForSong:self.player.currentSong];
+}
+
+- (IBAction)nextBtnTap:(id)sender {
+    
+    [self.songListDelegate didRequestNextForSong:self.player.currentSong];
+}
+
+- (void)playPauseStream {
     if (self.player.currentSong != nil) {
         if (self.isPlaying) {
             
@@ -140,16 +155,6 @@
             [self.songListDelegate didStartPlayingSong:self.player.currentSong];
         }
     }
-}
-
-- (IBAction)previousBtnTap:(id)sender {
-    
-    [self.songListDelegate didRequestPreviousForSong:self.player.currentSong];
-}
-
-- (IBAction)nextBtnTap:(id)sender {
-    
-    [self.songListDelegate didRequestNextForSong:self.player.currentSong];
 }
 
 - (void)itemDidEndPlaying:(NSNotification *)notification {

@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "YTPlayerView.h"
+#import "Protocols.h"
 
 @class VideoModel;
 @class DownloadButtonWebView;
 @class YoutubePlaylistModel;
 @class CBAutoScrollLabel;
 
-@interface YoutubePlayerViewController : UIViewController <YTPlayerViewDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface YoutubePlayerViewController : UIViewController <YTPlayerViewDelegate, UITableViewDelegate, UITableViewDataSource, AudioStreamerDelegate>
 
 @property (strong, nonatomic) VideoModel *currentVideoModel;
 @property (strong, nonatomic) YoutubePlaylistModel *youtubePlaylist;

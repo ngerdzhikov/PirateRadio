@@ -23,6 +23,7 @@
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "DataBase.h"
+#import "AudioStreamNotificationCenter.h"
 #import "Toast.h"
 
 @import MediaPlayer;
@@ -140,6 +141,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    [AudioStreamNotificationCenter.defaultCenter addAudioStreamObserver:self];
+    
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
@@ -175,6 +178,15 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
     NSLog(@"MEMORY WARNING");
+}
+
+- (void)playPauseStream {
+    if (self.youtubePlayer.playerState == kYTPlayerStatePlaying) {
+        [self.youtubePlayer pauseVideo];
+    }
+    else {
+        [self.youtubePlayer playVideo];
+    }
 }
 
 - (void)setYoutubePlayerForVideoModel:(VideoModel *)videoModel {
