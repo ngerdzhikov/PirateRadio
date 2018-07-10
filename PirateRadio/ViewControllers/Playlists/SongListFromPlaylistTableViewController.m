@@ -9,7 +9,6 @@
 #import "SongListFromPlaylistTableViewController.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "AllSongsTableViewController.h"
-#import "MusicPlayerViewController.h"
 #import "SavedMusicTableViewCell.h"
 #import "DataBase.h"
 #import "LocalSongModel.h"

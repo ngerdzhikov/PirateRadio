@@ -540,6 +540,7 @@ typedef enum {
 
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     [NSUserDefaults.standardUserDefaults setObject:self.searchHistory forKey:@"searchHistory"];
     [NSUserDefaults.standardUserDefaults synchronize];
 }

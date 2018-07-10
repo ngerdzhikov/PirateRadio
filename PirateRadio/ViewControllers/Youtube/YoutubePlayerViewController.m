@@ -484,7 +484,7 @@
         
         return cell;
     }
-    else return nil;
+    else return [[UITableViewCell alloc] init];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

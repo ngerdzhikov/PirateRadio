@@ -73,7 +73,6 @@
     {
         switch(theEvent.subtype) {
             case UIEventSubtypeRemoteControlTogglePlayPause:
-                NSLog(@"UIEventSubtypeRemoteControlTogglePlayPause");
                 [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
                 break;
             default:

@@ -57,7 +57,10 @@
         self.title = title;
         self.channelTitle = channel;
         self.publishedAt = publishedAt;
-        self.thumbnails = @{@"high" : thumbnailModel ?: nil};
+        if (thumbnailModel) {
+            self.thumbnails = @{@"high" : thumbnailModel};
+        }
+        
     }
     return self;
 }

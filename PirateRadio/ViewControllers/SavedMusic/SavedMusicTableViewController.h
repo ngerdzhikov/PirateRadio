@@ -11,7 +11,6 @@
 #import <AVKit/AVKit.h>
 #import "Protocols.h"
 
-@class MusicPlayerViewController;
 @class PlaylistModel;
 
 @interface SavedMusicTableViewController : UITableViewController<SongListDelegate, UISearchBarDelegate>
