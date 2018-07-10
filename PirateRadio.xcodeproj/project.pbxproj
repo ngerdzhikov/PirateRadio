@@ -28,6 +28,7 @@
 		0660029B20E4F8100000884E /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0660029A20E4F8100000884E /* LoginViewController.m */; };
 		0660029E20E500260000884E /* DataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0660029D20E500260000884E /* DataBase.m */; };
 		066463D120D1260F00E5551D /* MainTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 066463D020D1260F00E5551D /* MainTabBarController.m */; };
+		067792F420EBB42800E0032E /* Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 067792F320EBB42800E0032E /* Toast.m */; };
 		067792F720ECC8BA00E0032E /* DropBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 067792F620ECC8BA00E0032E /* DropBox.m */; };
 		067792FA20ECE93B00E0032E /* SelectedSongOptionsPopoverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 067792F920ECE93B00E0032E /* SelectedSongOptionsPopoverViewController.m */; };
 		067792FD20ED018200E0032E /* DropboxSongListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 067792FC20ED018200E0032E /* DropboxSongListTableViewController.m */; };
@@ -100,6 +101,8 @@
 		0660029D20E500260000884E /* DataBase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataBase.m; path = PirateRadio/Utilities/DataBase.m; sourceTree = "<group>"; };
 		066463CF20D1260F00E5551D /* MainTabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainTabBarController.h; sourceTree = "<group>"; };
 		066463D020D1260F00E5551D /* MainTabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainTabBarController.m; sourceTree = "<group>"; };
+		067792F220EBB42800E0032E /* Toast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Toast.h; path = PirateRadio/Utilities/Toast.h; sourceTree = "<group>"; };
+		067792F320EBB42800E0032E /* Toast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Toast.m; path = PirateRadio/Utilities/Toast.m; sourceTree = "<group>"; };
 		067792F520ECC8BA00E0032E /* DropBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DropBox.h; sourceTree = "<group>"; };
 		067792F620ECC8BA00E0032E /* DropBox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DropBox.m; sourceTree = "<group>"; };
 		067792F820ECE93B00E0032E /* SelectedSongOptionsPopoverViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectedSongOptionsPopoverViewController.h; sourceTree = "<group>"; };
@@ -269,6 +272,8 @@
 				06B53DF920C98A3800D3AD79 /* PirateAVPlayer.m */,
 				0660029C20E500260000884E /* DataBase.h */,
 				0660029D20E500260000884E /* DataBase.m */,
+				067792F220EBB42800E0032E /* Toast.h */,
+				067792F320EBB42800E0032E /* Toast.m */,
 				06265A4F20F3460B00D64B77 /* AudioStreamNotificationCenter.h */,
 				06265A5020F3460B00D64B77 /* AudioStreamNotificationCenter.m */,
 			);
@@ -565,6 +570,7 @@
 				0608885420C5883E00860DBC /* PlaylistModel.m in Sources */,
 				06265A4B20EF7A3300D64B77 /* UserPreferencesTableViewCell.m in Sources */,
 				067792F720ECC8BA00E0032E /* DropBox.m in Sources */,
+				067792F420EBB42800E0032E /* Toast.m in Sources */,
 				06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */,
 				063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */,
 			);

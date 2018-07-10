@@ -24,7 +24,7 @@
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "DataBase.h"
 #import "AudioStreamNotificationCenter.h"
-#import "UIView+Toast.h"
+#import "Toast.h"
 
 @import MediaPlayer;
 
@@ -802,7 +802,7 @@
     if (![username isEqualToString:@""]) {
         DataBase *db = [[DataBase alloc] init];
         [db addFavouriteVideo:self.currentVideoModel ForUsername:username];
-        [self.view makeToast:@"Video added to favourites!"];
+        [Toast displayStandardToastWithMessage:@"Video added to favourites!"];
     }
 }
 

@@ -91,10 +91,10 @@ typedef enum {
     if (self.reachability.isReachable) {
         self.tableView.allowsSelection = YES;
         self.lastSearchType = EnumLastSearchTypeNone;
-        [self.view makeToast:@"Connection established"];
+        [Toast displayToastWithMessage:@"Connection established." andDuration:3];
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
         self.tableView.allowsSelection = NO;
     }
 }
@@ -182,7 +182,7 @@ typedef enum {
         }
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:4];
     }
     
 }
@@ -275,7 +275,7 @@ typedef enum {
         }];
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
     }
 }
 
@@ -295,7 +295,7 @@ typedef enum {
         }
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
     }
     
     [self.searchSuggestionsTable dismissViewControllerAnimated:NO completion:nil];
@@ -359,7 +359,7 @@ typedef enum {
         }];
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
     }
 }
 
@@ -506,7 +506,7 @@ typedef enum {
         }];
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
     }
 }
 
@@ -519,7 +519,7 @@ typedef enum {
         }
     }
     else {
-        [self.view makeToast:@"No internet connection"];
+        [Toast displayToastWithMessage:@"No internet connection." andDuration:5];
     }
 }
 

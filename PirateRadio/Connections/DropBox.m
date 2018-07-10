@@ -12,7 +12,6 @@
 #import "Constants.h"
 #import "DataBase.h"
 #import "AVKit/AVKit.h"
-#import "UIView+Toast.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @implementation DropBox
@@ -29,11 +28,8 @@
     
     DBUserClient *client = [DBClientsManager authorizedClient];
     
-    UIWindow *window=[UIApplication sharedApplication].keyWindow;
-    
     if (!client) {
-        
-        [window.rootViewController.view makeToast:@"Login in dropbox to upload song"];
+        [Toast displayStandardToastWithMessage:@"Login in dropbox to upload song"];
     }
     else {
         [[client.filesRoutes uploadData:uploadPath
@@ -45,10 +41,10 @@
                                inputData:fileData]
           setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESUploadError * _Nullable routeError, DBRequestError * _Nullable networkError) {
               if (result) {
-                  [window.rootViewController.view makeToast:@"Song uploaded successfully"];
+                  [Toast displayStandardToastWithMessage:@"Song uploaded successfully"];
                   [[self class] uploadArtworkForLocalSong:song];
               } else {
-                  [window.rootViewController.view makeToast:@"Error uploading song"];
+                  [Toast displayStandardToastWithMessage:@"Error uploading song"];
               }
           }];
     }
@@ -91,10 +87,8 @@
     [[client.filesRoutes downloadUrl:downloadPath overwrite:YES destination:outputUrl]
       setResponseBlock:^(DBFILESFileMetadata *result, DBFILESDownloadError *routeError, DBRequestError *networkError,
                          NSURL *destination) {
-          UIWindow *window=[UIApplication sharedApplication].keyWindow;
-          
           if (result) {
-              [window.rootViewController.view makeToast:@"Download successful"];
+              [Toast displayStandardToastWithMessage:@"Download successful"];
               
               LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:outputUrl];
               AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
@@ -108,7 +102,7 @@
               
               [[self class] downloadArtworkForSongName:songName andLocalSongModel:song];
           } else {
-              [window.rootViewController.view makeToast:@"Download error"];
+              [Toast displayStandardToastWithMessage:@"Download error"];
               NSLog(@"%@\n%@\n", routeError, networkError);
           }
       }];
@@ -122,7 +116,8 @@
     NSString *downloadPath = [[[@"/PirateRadio/artworks/" stringByAppendingString:songName] substringToIndex:songName.length + 18] stringByAppendingString:@".jpg"];
     
     [[client.filesRoutes downloadUrl:downloadPath overwrite:YES destination:outputUrl] setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESDownloadError * _Nullable routeError, DBRequestError * _Nullable networkError, NSURL * _Nonnull destination) {
-    }];
+        NSLog(@"destination = %@", destination);
+    }];;
 }
 
 + (NSURL *)localURLWithTimeStampForSongName:(NSString *)songName {
