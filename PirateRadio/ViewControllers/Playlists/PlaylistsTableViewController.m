@@ -117,6 +117,14 @@
 
 }
 
+- (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath {
+    if (proposedDestinationIndexPath.row < 2) {
+        return sourceIndexPath;
+    }
+    else {
+        return proposedDestinationIndexPath;
+    }
+}
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row < 2) return NO;

@@ -52,7 +52,6 @@
     
     [self becomeFirstResponder];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    NSLog(@"%@", self);
     [self updateCommandCenterRemoteControlTargets];
     [AudioStreamNotificationCenter.defaultCenter addAudioStreamObserver:self];
 }
