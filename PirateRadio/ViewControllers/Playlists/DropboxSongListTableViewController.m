@@ -22,6 +22,27 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.songs = [[NSMutableArray alloc] init];
+    if (![self isLoggedInDropbox]) {
+        [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
+                                       controller:[[self class] topMostController]
+                                          openURL:^(NSURL *url) {
+                                              [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                                                  if ([self isLoggedInDropbox]) {
+                                                      
+                                                  }
+                                                  else {
+                                                      [self.navigationController popViewControllerAnimated:YES];
+                                                  }
+                                              }];
+                                          }];
+    }
+    
+    UIImage *image = [UIImage imageNamed:@"dropbox_background"];
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [image drawInRect:self.view.bounds blendMode:kCGBlendModeNormal alpha:0.27];
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    self.tableView.backgroundView = [[UIImageView alloc] initWithImage:image];
     
     [self loadContentsOfSongsDirectory];
 }
@@ -46,7 +67,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"dropboxCell" forIndexPath:indexPath];
     NSString *songName = self.songs[indexPath.row];
     cell.textLabel.text = [songName substringToIndex:songName.length - 4];
-    
+    cell.backgroundColor = [UIColor clearColor];
     return cell;
 }
 
@@ -133,48 +154,18 @@
      }];
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+- (BOOL)isLoggedInDropbox {
+    return [DBClientsManager authorizedClient] != nil;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
++ (UIViewController*)topMostController {
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+    
+    return topController;
 }
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
