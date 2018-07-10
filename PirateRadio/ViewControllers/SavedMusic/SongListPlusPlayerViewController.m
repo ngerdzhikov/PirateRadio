@@ -57,35 +57,37 @@
 }
 
 - (void)onMusicControllerPan:(UIPanGestureRecognizer *)recognizer {
-    CGFloat velocityY = (0.2*[recognizer velocityInView:self.view].y);
-    CGPoint translatedPoint = [recognizer translationInView:recognizer.view.superview];
-    CGFloat animationDuration = (ABS(velocityY)*.0002)+.2;
     
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:animationDuration];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-    CGPoint newCenter = CGPointMake(self.view.frame.size.width/2, recognizer.view.center.y + translatedPoint.y);
-    
-    if (recognizer.state == UIGestureRecognizerStateChanged) {
-        if (newCenter.y >= (self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2) && newCenter.y <= self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6) {
-            recognizer.view.center = newCenter;
-        }
-    }
-    if (recognizer.state == UIGestureRecognizerStateEnded) {
-        if (recognizer.view.center.y > self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 4) {
-            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6);
-        }
-        else {
-            recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2);
-        }
+    if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        CGPoint translatedPoint = [recognizer translationInView:recognizer.view.superview];
+        CGFloat animationDuration = 0.1;
         
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:animationDuration];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+        CGPoint newCenter = CGPointMake(self.view.frame.size.width/2, recognizer.view.center.y + translatedPoint.y);
+        if (recognizer.state == UIGestureRecognizerStateChanged) {
+            if (newCenter.y >= (self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2) && newCenter.y <= self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6) {
+                recognizer.view.center = newCenter;
+            }
+        }
+        if (recognizer.state == UIGestureRecognizerStateEnded) {
+            if (recognizer.view.center.y > self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 4) {
+                recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y + self.musicPlayerHeight / 6);
+            }
+            else {
+                recognizer.view.center = CGPointMake(recognizer.view.center.x, self.tabBarController.tabBar.frame.origin.y - self.musicPlayerHeight / 2);
+            }
+        }
+        CGRect newTableViewFrame = self.tableViewContainer.frame;
+        newTableViewFrame.size.height = recognizer.view.center.y - (self.musicPlayerHeight / 2);
+        self.tableViewContainer.frame = newTableViewFrame;
+        [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
+        
+        [UIView commitAnimations];
     }
-    CGRect newTableViewFrame = self.tableViewContainer.frame;
-    newTableViewFrame.size.height = recognizer.view.center.y - (self.musicPlayerHeight / 2);
-    self.tableViewContainer.frame = newTableViewFrame;
-    [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
     
-    [UIView commitAnimations];
+
 }
 
 +(instancetype)songListPlusPlayerViewControllerWithPlaylist:(PlaylistModel *)playlist {
