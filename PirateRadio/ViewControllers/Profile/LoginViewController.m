@@ -33,6 +33,11 @@
     // Do any additional setup after loading the view.
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self dismissSelf];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -97,10 +102,14 @@
 
 - (void)checkIfUserIsLogged {
     if (self.isLogged) {
-        [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
-            
-        }];
+        [self dismissSelf];
     }
+}
+
+- (void)dismissSelf {
+    ProfileViewController *profileVC = (ProfileViewController *)self.presentingViewController.childViewControllers.lastObject;
+    profileVC.dismissingPresentedViewController = YES;
+    [profileVC dismissViewControllerAnimated:YES completion:nil];
 }
 
 /*
