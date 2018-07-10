@@ -11,4 +11,5 @@ target 'PirateRadio' do
   pod 'DGActivityIndicatorView'
   pod "AutoScrollLabel"
   pod 'ObjectiveDropboxOfficial'
+  pod 'Toast', '~> 4.0.0'
 end

@@ -10,7 +10,7 @@
 #import "LocalSongModel.h"
 #import "DataBase.h"
 #import "DropBox.h"
-#import "Toast.h"
+#import "UIView+Toast.h"
 
 @interface SelectedSongOptionsPopoverViewController ()
 
@@ -34,11 +34,11 @@
     NSURL *videoURL = [db videoURLForLocalSongModel:self.song];
     
     if ([videoURL.absoluteString isEqualToString:@""]) {
-        [Toast displayStandardToastWithMessage:@"This song doesn't have a video url"];
+        [self.presentingViewController.view makeToast:@"This song doesn't have a video url"];
     }
     else {
         [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
-        [Toast displayStandardToastWithMessage:@"Video url copied!"];
+        [self.presentingViewController.view makeToast:@"Video url copied!"];
     }
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
@@ -47,7 +47,7 @@
     BOOL doesExist = [DropBox doesSongExists:self.song];
     
     if (doesExist) {
-        [Toast displayStandardToastWithMessage:@"File already exists in dropbox"];
+        [self.presentingViewController.view makeToast:@"File already exists in dropbox"];
     }
     else {
         [DropBox uploadLocalSong:self.song];

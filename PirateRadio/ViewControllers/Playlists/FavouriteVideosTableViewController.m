@@ -12,7 +12,7 @@
 #import "FavouriteVideoTableViewCell.h"
 #import "YoutubePlaylistModel.h"
 #import "YoutubePlayerViewController.h"
-#import "Toast.h"
+#import "UIView+Toast.h"
 #import "DataBase.h"
 
 @interface FavouriteVideosTableViewController ()
@@ -141,7 +141,8 @@
             
             [UIPasteboard generalPasteboard].string = videoURL.absoluteString;
             
-            [Toast displayStandardToastWithMessage:@"Video url copied!"];
+            UIWindow *window=[UIApplication sharedApplication].keyWindow;
+            [window.rootViewController.view makeToast:@"Video url copied!"];
         }
         
     }

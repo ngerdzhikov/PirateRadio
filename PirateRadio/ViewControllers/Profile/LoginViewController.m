@@ -10,7 +10,7 @@
 #import "CoreData/CoreData.h"
 #import "ProfileViewController.h"
 #import "DataBase.h"
-#import "Toast.h"
+#import "UIView+Toast.h"
 
 @interface LoginViewController ()
 
@@ -67,7 +67,8 @@
         [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
     }
     else {
-        [Toast displayToastWithMessage:messageToDisplay andDuration:2];
+        UIWindow *window=[UIApplication sharedApplication].keyWindow;
+        [window.rootViewController.view makeToast:messageToDisplay];
     }
 }
 
@@ -93,8 +94,10 @@
             }
         }
     }
-    if (!self.isLogged)
-        [Toast displayToastWithMessage:@"Invalid username or password" andDuration:2];
+    if (!self.isLogged) {
+        UIWindow *window=[UIApplication sharedApplication].keyWindow;
+        [window.rootViewController.view makeToast:@"Invalid username or password"];
+    }
 }
 
 - (void)checkIfUserIsLogged {
