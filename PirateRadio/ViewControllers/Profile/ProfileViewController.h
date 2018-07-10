@@ -10,6 +10,4 @@
 
 @interface ProfileViewController : UIViewController
 
-@property BOOL dismissingPresentedViewController;
-
 @end

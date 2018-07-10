@@ -21,7 +21,6 @@
 @property (strong, nonatomic) UserPreferencesTableViewDelegate *tableViewDelegate;
 @property (strong, nonatomic) NSString *username;
 
-
 @end
 
 @implementation ProfileViewController
@@ -29,24 +28,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tableViewDelegate = [[UserPreferencesTableViewDelegate alloc] initWithTableView:self.preferencesTableView];
-
+    
+    BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:@"isLogged"];
+    if (!isLogged) {
+        LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
+        [self presentViewController:loginVC animated:YES completion:^{
+            
+        }];
+    }    
     if ([self isLoggedInDropbox]) {
         [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
     }
     else {
         [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+    }
+    if (![self isLoggedInDropbox]) {
+//        [self.dropboxSwitch setEnabled:NO];
         [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
     }
-    
+//    [self.dropboxSwitch setOn:[NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
-    if (!isLogged && !self.dismissingPresentedViewController) {
-        [self presentLoginVC];
-    }
-    self.dismissingPresentedViewController = NO;
     self.username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
     self.usernameLabel.text = [NSString stringWithFormat:@"Hello %@!", self.username];
 }
@@ -59,7 +64,11 @@
 - (IBAction)logOutButtonTap:(id)sender {
     [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"isLogged"];
     [NSUserDefaults.standardUserDefaults setValue:@"" forKey:@"loggedUsername"];
-    [self presentLoginVC];
+    LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
+    [self presentViewController:loginVC animated:YES completion:^{
+
+    }];
 }
 
 - (IBAction)dropboxButtonTap:(id)sender {
@@ -98,12 +107,6 @@
     }
     
     return topController;
-}
-
-- (void)presentLoginVC {
-    LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
-    [self presentViewController:loginVC animated:YES completion:nil];
 }
 
 @end
