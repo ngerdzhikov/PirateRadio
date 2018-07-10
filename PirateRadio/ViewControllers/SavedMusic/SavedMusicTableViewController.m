@@ -8,7 +8,6 @@
 
 #import "SavedMusicTableViewController.h"
 #import "AllSongsTableViewController.h"
-#import "MusicPlayerViewController.h"
 #import "SavedMusicTableViewCell.h"
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
@@ -62,7 +61,7 @@
     if (self.songs.count == 0) {
         if (![self.view.subviews containsObject:self.noSongsImageView]) {
             self.noSongsImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"empty_chest_image"]];
-            self.noSongsImageView.frame = CGRectMake(self.tableView.frame.origin.x + self.tableView.frame.size.width / 4, self.tableView.frame.origin.y + self.tableView.frame.size.height / 4, self.view.frame.size.width / 2, self.view.frame.size.height / 2);
+            self.noSongsImageView.frame = CGRectMake(self.tableView.frame.origin.x + self.tableView.frame.size.width / 4, self.tableView.frame.origin.y + self.tableView.frame.size.height / 4, self.view.frame.size.width / 3.5, self.view.frame.size.height / 3.5);
             self.noSongsImageView.translatesAutoresizingMaskIntoConstraints = NO;
             self.noSongsImageView.alpha = 0;
             [self.view addSubview:self.noSongsImageView];
@@ -86,9 +85,9 @@
                                              toItem:self.view
                                           attribute:NSLayoutAttributeCenterY
                                          multiplier:1
-                                           constant:0]];
-            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.height / 2]];
-            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.width / 2]];
+                                           constant:-100]];
+            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.height / 3.5]];
+            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.width / 3.5]];
             
         }
     }
@@ -312,7 +311,10 @@
 - (void)didStartPlayingSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
-    [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
+    if (indexPath.row <= self.allSongs.count) {
+        [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
+    }
+
 }
 
 - (void)didRequestNextForSong:(LocalSongModel *)song {

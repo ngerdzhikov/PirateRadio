@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *elapsedTimeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLeftLabel;
 @property (strong, nonatomic) PirateAVPlayer *player;
+@property (strong, nonatomic) AVPlayerItem *currentItem;
 @property BOOL isSeekInProgress;
 @property CMTime chaseTime;
 @property BOOL isSliding;
@@ -51,7 +52,7 @@
     
     [self becomeFirstResponder];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    
+    NSLog(@"%@", self);
     [self updateCommandCenterRemoteControlTargets];
     [AudioStreamNotificationCenter.defaultCenter addAudioStreamObserver:self];
 }
@@ -61,6 +62,11 @@
     
     [self updateMusicPlayerContent];
     
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.currentItem removeObserver:self forKeyPath:@"status"];
 }
 
 - (BOOL)canBecomeFirstResponder {
@@ -95,13 +101,13 @@
         self.player.playerCurrentItemStatus = AVPlayerItemStatusUnknown;
         
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
-        AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
-        [self.player replaceCurrentItemWithPlayerItem:item];
+        self.currentItem = [AVPlayerItem playerItemWithAsset:asset];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:self.currentItem];
+        [self.player replaceCurrentItemWithPlayerItem:self.currentItem];
         NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
        
         // Register as an observer of the player item's status property
-        [item addObserver:self forKeyPath:@"status" options:options context:nil];
+        [self.currentItem addObserver:self forKeyPath:@"status" options:options context:nil];
         [self updateMusicPlayerContent];
         [self updateCommandCenterRemoteControlTargets];
     }
@@ -114,6 +120,7 @@
     [MPRemoteCommandCenter.sharedCommandCenter.nextTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.previousTrackCommand removeTarget:nil];
     [MPRemoteCommandCenter.sharedCommandCenter.changePlaybackPositionCommand removeTarget:nil];
+    
     
     [MPRemoteCommandCenter.sharedCommandCenter.playCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
     [MPRemoteCommandCenter.sharedCommandCenter.pauseCommand addTarget:self action:@selector(musicControllerPlayBtnTap:)];
@@ -166,8 +173,6 @@
     [self.songListDelegate didRequestNextForSong:self.player.currentSong];
     [self.player play];
     
-//     this is for testing
-//    [self startAudioSession];
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
 }
 
@@ -317,23 +322,6 @@
     if (!play) {
         
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
-    }
-}
-
-- (void)startAudioSession {
-    AVAudioSession *session = AVAudioSession.sharedInstance;
-    NSError *error;
-    [session setCategory:AVAudioSessionCategoryPlayback error:&error];
-    [session setMode:AVAudioSessionModeDefault error:nil];
-    
-    if (error) {
-        NSLog(@"Error = %@", error);
-    }
-    else {
-        [session setActive:YES error:&error];
-    }
-    if (error) {
-        NSLog(@"Error = %@", error);
     }
 }
 

@@ -30,11 +30,9 @@
 
 - (void)addAudioStreamObserver:(id<AudioStreamerDelegate>)observer {
     if (self.audioStream != observer) {
-        if (self.audioStream != nil) {
-            [NSNotificationCenter.defaultCenter removeObserver:self.audioStream name:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
-        }
+        [NSNotificationCenter.defaultCenter removeObserver:self.audioStream];
         self.audioStream = observer;
-        [NSNotificationCenter.defaultCenter addObserver:self.audioStream selector:@selector(playPauseStream) name:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
+        [NSNotificationCenter.defaultCenter addObserver:observer selector:@selector(playPauseStream) name:NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE object:nil];
     }
 }
 
