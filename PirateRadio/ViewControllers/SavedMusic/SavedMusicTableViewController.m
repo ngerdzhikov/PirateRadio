@@ -16,7 +16,6 @@
 #import "SelectedSongOptionsPopoverViewController.h"
 #import "DropboxSongListTableViewController.h"
 #import "DGActivityIndicatorView.h"
-#import "Toast.h"
 
 
 @interface SavedMusicTableViewController ()
@@ -69,25 +68,25 @@
             [UIView setAnimationDuration:1];
             self.noSongsImageView.alpha = 1.0;
             [UIView commitAnimations];
-            [self.view addConstraint:
+            [self.navigationController.view addConstraint:
              [NSLayoutConstraint constraintWithItem:self.noSongsImageView
                                           attribute:NSLayoutAttributeCenterX
                                           relatedBy:0
-                                             toItem:self.view
+                                             toItem:self.navigationController.view
                                           attribute:NSLayoutAttributeCenterX
                                          multiplier:1
                                            constant:0]];
             
-            [self.view addConstraint:
+            [self.navigationController.view addConstraint:
              [NSLayoutConstraint constraintWithItem:self.noSongsImageView
                                           attribute:NSLayoutAttributeCenterY
                                           relatedBy:0
-                                             toItem:self.view
+                                             toItem:self.navigationController.view
                                           attribute:NSLayoutAttributeCenterY
                                          multiplier:1
-                                           constant:-100]];
-            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.height / 3.5]];
-            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:self.view.frame.size.width / 3.5]];
+                                           constant:0]];
+            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:100]];
+            [self.noSongsImageView addConstraint:[NSLayoutConstraint constraintWithItem:self.noSongsImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:100]];
             
         }
     }
