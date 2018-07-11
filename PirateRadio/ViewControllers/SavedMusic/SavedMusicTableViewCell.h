@@ -13,7 +13,6 @@
 @interface SavedMusicTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *musicTitle;
 @property (weak, nonatomic) IBOutlet UILabel *songDurationLabel;
-@property (weak, nonatomic) IBOutlet UIView *progressPlaceHolderView;
 @property (strong, nonnull) DGActivityIndicatorView *playIndicator;
 
 @end

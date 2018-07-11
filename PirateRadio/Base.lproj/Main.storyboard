@@ -71,7 +71,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q42-oN-uOP">
-                                            <rect key="frame" x="16" y="211" width="41.666666666666657" height="20.333333333333343"/>
+                                            <rect key="frame" x="15.999999999999996" y="211" width="41.666666666666657" height="20.333333333333343"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
@@ -540,7 +540,7 @@
                                 <rect key="frame" x="0.0" y="239.66666666666666" width="375" height="489.33333333333337"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell1" id="2Ly-5H-9cD" customClass="UserPreferencesTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell1" id="2Ly-5H-9cD" customClass="UserPreferencesTableViewCell">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2Ly-5H-9cD" id="SST-If-4JC">
@@ -548,7 +548,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vkt-tc-VAe">
-                                                    <rect key="frame" x="208" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="296" y="6.6666666666666679" width="51" height="31.000000000000004"/>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto upload to Dropbox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qqQ-Ge-DEg">
                                                     <rect key="frame" x="15" y="11" width="181.66666666666666" height="21"/>
@@ -570,7 +570,7 @@
                                             <outlet property="preferenceSwitch" destination="Vkt-tc-VAe" id="wMC-Jw-Wr5"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell2" id="ugE-Cm-Dna" customClass="UserPreferencesTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell2" id="ugE-Cm-Dna" customClass="UserPreferencesTableViewCell">
                                         <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ugE-Cm-Dna" id="tdS-Mn-Ms1">
@@ -578,7 +578,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zvE-uw-1ue">
-                                                    <rect key="frame" x="208" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="296" y="6.6666666666666679" width="51" height="31.000000000000004"/>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Upload with cellular" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VV9-W2-KyW">
                                                     <rect key="frame" x="40.000000000000007" y="14" width="119.66666666666669" height="16"/>
@@ -595,8 +595,11 @@
                                                 <constraint firstAttribute="trailing" secondItem="zvE-uw-1ue" secondAttribute="trailing" constant="30" id="yuc-ZT-zyf"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="preferenceSwitch" destination="zvE-uw-1ue" id="yeL-eK-7k8"/>
+                                        </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell3" id="W95-kq-Gtm" customClass="UserPreferencesTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell3" id="W95-kq-Gtm" customClass="UserPreferencesTableViewCell">
                                         <rect key="frame" x="0.0" y="116" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="W95-kq-Gtm" id="gpB-k9-30Y">
@@ -604,7 +607,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m1K-4j-mVD">
-                                                    <rect key="frame" x="208" y="6.6666666666666679" width="51" height="31.000000000000004"/>
+                                                    <rect key="frame" x="296" y="6.6666666666666679" width="51" height="31.000000000000004"/>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dark theme" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WSO-bq-cTj">
                                                     <rect key="frame" x="15" y="12.666666666666666" width="89" height="19.333333333333336"/>
@@ -621,6 +624,9 @@
                                                 <constraint firstItem="WSO-bq-cTj" firstAttribute="centerY" secondItem="gpB-k9-30Y" secondAttribute="centerY" id="wNf-Tt-uuY"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="preferenceSwitch" destination="m1K-4j-mVD" id="mLS-eE-aCF"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -890,7 +896,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="musicTitle" destination="acs-pm-P3o" id="jxK-q9-8Hx"/>
-                                    <outlet property="progressPlaceHolderView" destination="E9M-2Z-aqg" id="sl8-uz-VJV"/>
+                                    <outlet property="playIndicatorView" destination="E9M-2Z-aqg" id="bmY-b2-5iH"/>
                                     <outlet property="songDurationLabel" destination="1Kd-UC-Pcq" id="guz-Nd-DjP"/>
                                 </connections>
                             </tableViewCell>
@@ -1142,7 +1148,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="musicTitle" destination="8wF-vp-iFZ" id="FC7-oq-PZ2"/>
-                                    <outlet property="progressPlaceHolderView" destination="JrU-wZ-j3u" id="d46-Lz-19z"/>
+                                    <outlet property="playIndicatorView" destination="JrU-wZ-j3u" id="dL5-Jy-5ic"/>
                                     <outlet property="songDurationLabel" destination="zeX-QF-CTk" id="P8T-MS-7mz"/>
                                 </connections>
                             </tableViewCell>
