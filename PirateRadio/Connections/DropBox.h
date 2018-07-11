@@ -13,7 +13,6 @@
 @interface DropBox : NSObject
 
 + (void)uploadLocalSong:(LocalSongModel *)song;
-+ (void)uploadArtworkForLocalSong:(LocalSongModel *)song;
 + (void)downloadSongWithName:(NSString *)songName;
 + (BOOL)doesSongExists:(LocalSongModel *)song;
 
