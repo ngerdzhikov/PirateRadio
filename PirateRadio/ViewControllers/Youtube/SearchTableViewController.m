@@ -110,10 +110,16 @@ typedef enum {
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) | ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)) {
+        return 185.0f;
+    }
     return 255.0f;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) | ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)) {
+        return 185.0f;
+    }
     return 255.0f;
 }
 
