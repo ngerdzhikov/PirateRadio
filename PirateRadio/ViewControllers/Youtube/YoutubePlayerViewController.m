@@ -798,7 +798,7 @@
 }
 
 - (void)addVideoToFavourites {
-    NSString *username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
+    NSString *username = [NSUserDefaults.standardUserDefaults valueForKey:USER_DEFAULTS_USERNAME];
     if (![username isEqualToString:@""]) {
         DataBase *db = [[DataBase alloc] init];
         [db addFavouriteVideo:self.currentVideoModel ForUsername:username];

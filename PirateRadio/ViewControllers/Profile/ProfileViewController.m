@@ -47,7 +47,7 @@
         [self presentLoginVC];
     }
     self.dismissingPresentedViewController = NO;
-    self.username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
+    self.username = [NSUserDefaults.standardUserDefaults valueForKey:USER_DEFAULTS_USERNAME];
     self.usernameLabel.text = [NSString stringWithFormat:@"Hello %@!", self.username];
 }
 
@@ -57,8 +57,8 @@
 }
 
 - (IBAction)logOutButtonTap:(id)sender {
-    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"isLogged"];
-    [NSUserDefaults.standardUserDefaults setValue:@"" forKey:@"loggedUsername"];
+    [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_IS_LOGGED];
+    [NSUserDefaults.standardUserDefaults setValue:@"" forKey:USER_DEFAULTS_USERNAME];
     [self presentLoginVC];
 }
 

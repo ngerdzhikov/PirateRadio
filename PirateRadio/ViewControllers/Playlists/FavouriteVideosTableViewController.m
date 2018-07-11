@@ -13,6 +13,7 @@
 #import "YoutubePlaylistModel.h"
 #import "YoutubePlayerViewController.h"
 #import "UIView+Toast.h"
+#import "Constants.h"
 #import "DataBase.h"
 
 @interface FavouriteVideosTableViewController ()
@@ -44,7 +45,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     DataBase *db = [[DataBase alloc] init];
-    self.username = [NSUserDefaults.standardUserDefaults valueForKey:@"loggedUsername"];
+    self.username = [NSUserDefaults.standardUserDefaults valueForKey:USER_DEFAULTS_USERNAME];
     self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUsername:self.username]];
     [self.tableView reloadData];
 }

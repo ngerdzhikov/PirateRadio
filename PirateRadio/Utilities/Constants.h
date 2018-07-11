@@ -21,6 +21,8 @@
 #define USER_DEFAULTS_SEGUE_DONE @"UserDefaultsSegueDone"
 #define USER_DEFAULTS_UPLOAD_TO_DROPBOX @"UserDefaultsUploadToDropbox"
 #define USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR @"UserDefaultsUploadToDropboxViaCellular"
-#define USER_DEFAULTS_IS_LOGGED @"isLogged"
+#define USER_DEFAULTS_IS_LOGGED @"UserDefaultsIsLogged"
+#define USER_DEFAULTS_USERNAME @"UserDefaultsUsername"
+#define USER_DEFAULTS_THEME @"UserDefaultsTheme"
 
 #endif /* Constants_h */

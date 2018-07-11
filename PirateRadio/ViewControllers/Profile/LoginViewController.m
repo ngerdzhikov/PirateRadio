@@ -10,6 +10,7 @@
 #import "CoreData/CoreData.h"
 #import "ProfileViewController.h"
 #import "DataBase.h"
+#import "Constants.h"
 #import "UIView+Toast.h"
 
 @interface LoginViewController ()
@@ -27,9 +28,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    self.isLogged = [NSUserDefaults.standardUserDefaults boolForKey:@"isLogged"];
     self.isLogged = false;
-    [self checkIfUserIsLogged];
     // Do any additional setup after loading the view.
 }
 
@@ -87,8 +86,8 @@
         if ([[userInfo valueForKey:@"username"] isEqualToString:username]) {
             if ([[userInfo valueForKey:@"password"] isEqualToString:password]) {
                 self.isLogged = YES;
-                [NSUserDefaults.standardUserDefaults setValue:username forKey:@"loggedUsername"];
-                [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"isLogged"];
+                [NSUserDefaults.standardUserDefaults setValue:username forKey:USER_DEFAULTS_USERNAME];
+                [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
                 [self checkIfUserIsLogged];
                 break;
             }
@@ -111,15 +110,5 @@
     profileVC.dismissingPresentedViewController = YES;
     [profileVC dismissViewControllerAnimated:YES completion:nil];
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
