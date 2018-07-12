@@ -15,5 +15,6 @@
 + (void)uploadLocalSong:(LocalSongModel *)song;
 + (void)downloadSongWithName:(NSString *)songName;
 + (BOOL)doesSongExists:(LocalSongModel *)song;
++ (void)shareableLinkForSongName:(NSString *)songName;
 
 @end

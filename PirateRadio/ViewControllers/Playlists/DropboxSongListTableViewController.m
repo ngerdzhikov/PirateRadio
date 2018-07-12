@@ -9,6 +9,7 @@
 #import "DropboxSongListTableViewController.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "SelectedDropboxCellPopoverViewController.h"
+#import "Constants.h"
 #import "DropBox.h"
 
 @interface DropboxSongListTableViewController ()
@@ -45,6 +46,8 @@
     self.tableView.backgroundView = [[UIImageView alloc] initWithImage:image];
     
     [self loadContentsOfSongsDirectory];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(songLinkCopied:) name:NOTIFICATION_COPY_DROPBOX_LINK_FINISHED object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -65,6 +68,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"dropboxCell" forIndexPath:indexPath];
+    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:cell.frame];
+    [cell.selectedBackgroundView setBackgroundColor:[UIColor colorWithRed:0.66 green:0.76 blue:0.87 alpha:0.5]];
+    cell.selectedBackgroundView.layer.cornerRadius = 10;
     NSString *songName = self.songs[indexPath.row];
     cell.textLabel.text = [songName substringToIndex:songName.length - 4];
     cell.backgroundColor = [UIColor clearColor];
@@ -166,6 +172,19 @@
     }
     
     return topController;
+}
+
+- (void)songLinkCopied:(NSNotification *)notification {
+    NSString *songName = [notification.userInfo objectForKey:@"songName"];
+    NSURL *copiedURL = [notification.userInfo objectForKey:@"url"];
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[songName, copiedURL] applicationActivities:nil];
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        activityVC.popoverPresentationController.sourceView = self.view;
+        activityVC.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width / 2, self.view.bounds.size.height / 4, 0, 0);
+    }
+    [self presentViewController:activityVC animated:YES completion:nil];
 }
 
 @end

@@ -21,9 +21,7 @@
     // For overriding on upload
     DBFILESWriteMode *mode = [[DBFILESWriteMode alloc] initWithOverwrite];
     
-    NSString *fileName = [[[song.artistName stringByAppendingString:@" - "] stringByAppendingString:song.songTitle] stringByAppendingString:@".mp3"];
-    
-    NSString *uploadPath = [@"/PirateRadio/songs/" stringByAppendingString:fileName];
+    NSString *uploadPath = [self.class dropboxPathForSongNameWithMp3Extension:song.properMusicTitle];
     
     NSData *fileData = [NSData dataWithContentsOfURL:song.localSongURL];
     
@@ -92,7 +90,7 @@
     
     DBUserClient *client = [DBClientsManager authorizedClient];
     
-    NSString *downloadPath = [@"/PirateRadio/songs/" stringByAppendingString:songName];
+    NSString *downloadPath = [self.class dropboxPathForSongName:songName];
     
     [[client.filesRoutes downloadUrl:downloadPath overwrite:YES destination:outputUrl]
       setResponseBlock:^(DBFILESFileMetadata *result, DBFILESDownloadError *routeError, DBRequestError *networkError,
@@ -149,8 +147,7 @@
 + (BOOL)doesSongExists:(LocalSongModel *)song {
     __block BOOL exists = NO;
     
-    NSString *fileName = [[[song.artistName stringByAppendingString:@" - "] stringByAppendingString:song.songTitle] stringByAppendingString:@".mp3"];
-    NSString *filePath = [@"/PirateRadio/songs/" stringByAppendingString:fileName];
+    NSString *filePath = [self.class dropboxPathForSongNameWithMp3Extension:song.properMusicTitle];
     
     DBUserClient *client = [DBClientsManager authorizedClient];
     
@@ -164,6 +161,44 @@
     
     while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW)) { [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]]; }
     return exists;
+}
+
++ (void)shareableLinkForSongName:(NSString *)songName {
+    __block NSURL *shareableLink;
+    
+    DBUserClient *client = [DBClientsManager authorizedClient];
+    __block NSArray *url;
+    [[client.sharingRoutes createSharedLinkWithSettings:[self.class dropboxPathForSongName:songName]] setResponseBlock:^(DBSHARINGSharedLinkMetadata * _Nullable result, DBSHARINGCreateSharedLinkWithSettingsError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+        url = [result valueForKey:@"url"];
+        if (!url) {
+            [[client.sharingRoutes listSharedLinks:[self.class dropboxPathForSongName:songName] cursor:nil directOnly:nil] setResponseBlock:^(DBSHARINGSharedLinkMetadata * _Nullable result, DBSHARINGSharedLinkError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+                url = [[result valueForKey:@"links"] valueForKey:@"url"];
+                UIPasteboard.generalPasteboard.string = url.firstObject;
+                shareableLink = [NSURL URLWithString:url.firstObject];
+                [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_COPY_DROPBOX_LINK_FINISHED object:nil userInfo:@{@"songName" : songName, @"url" : shareableLink}];
+            }];
+        }
+        else {
+            NSString *firstResultURL = (NSString *)url;
+            UIPasteboard.generalPasteboard.string = firstResultURL;
+            shareableLink = [NSURL URLWithString:firstResultURL];
+            [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_COPY_DROPBOX_LINK_FINISHED object:nil userInfo:@{@"songName" : songName, @"url" : shareableLink}];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIWindow *window=[UIApplication sharedApplication].keyWindow;
+            [window.rootViewController.view makeToast:@"Link copied"];
+        });
+        
+    }];
+}
+
++ (NSString *)dropboxPathForSongNameWithMp3Extension:(NSString *)songName {
+    return [[@"/PirateRadio/songs/" stringByAppendingString:songName] stringByAppendingString:@".mp3"];
+}
+
++ (NSString *)dropboxPathForSongName:(NSString *)songName {
+    return [@"/PirateRadio/songs/" stringByAppendingString:songName];
 }
 
 @end
