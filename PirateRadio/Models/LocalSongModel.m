@@ -88,6 +88,14 @@
     return keywords;
 }
 
+- (NSString *)properMusicTitle {
+    NSString *songTitle = [[self.artistName stringByAppendingString:@" - "] stringByAppendingString:self.songTitle];
+    if ([self.artistName isEqualToString:@"Unknown artist"]) {
+        songTitle = self.songTitle;
+    }
+    
+    return songTitle;
+}
 
 - (BOOL)isEqual:(id)object {
     if (self == object) {
