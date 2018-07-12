@@ -47,6 +47,12 @@
     
     [self displayEmptyListImageIfNeeded];
     
+//    if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_THEME]) {
+//        self.tableView.backgroundColor = [UIColor blackColor];
+//    }
+//    else {
+//        self.tableView.backgroundColor = [UIColor clearColor];
+//    }
     
     [self.tableView reloadData];
 }
@@ -105,22 +111,17 @@
     return self.songs.count;
 }
 
--(NSString *)properMusicTitleForSong:(LocalSongModel *)song {
-    
-    NSString *songTitle = [[song.artistName stringByAppendingString:@" - "] stringByAppendingString:song.songTitle];
-    if ([song.artistName isEqualToString:@"Unknown artist"]) {
-        songTitle = song.songTitle;
-    }
-
-    return songTitle;
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     SavedMusicTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
-    
+//    if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_THEME]) {
+//        cell.backgroundColor = [UIColor clearColor];
+//        cell.musicTitle.textColor = [UIColor whiteColor];
+//        cell.songDurationLabel.textColor = [UIColor whiteColor];
+//        cell.playIndicator.tintColor = [UIColor whiteColor];
+//    }
     LocalSongModel *song = self.songs[indexPath.row];
-    cell.musicTitle.text = [self properMusicTitleForSong:song];
+    cell.musicTitle.text = [song properMusicTitle];
     cell.songDurationLabel.text = [self extractSongDurationFromNumber:song.duration];
     if ([song isEqual:self.musicPlayerDelegate.nowPlaying]) {
         if (self.musicPlayerDelegate.isPlaying) {
@@ -138,7 +139,6 @@
     
     return cell;
 }
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 50.0f;
@@ -373,7 +373,7 @@
         self.filteredSongs = [self.allSongs filteredArrayUsingPredicate:
                                [NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
             
-            return ([[self properMusicTitleForSong:evaluatedObject].lowercaseString containsString:searchText.lowercaseString] ||
+            return ([evaluatedObject.properMusicTitle.lowercaseString containsString:searchText.lowercaseString] ||
                     [evaluatedObject.songTitle.lowercaseString containsString:searchText.lowercaseString] ||
                     [evaluatedObject.artistName.lowercaseString containsString:searchText.lowercaseString]);
         }]];
@@ -424,7 +424,7 @@
             SelectedSongOptionsPopoverViewController *selectedSongVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SelectedSongOptionsPopover"];
             selectedSongVC.song = song;
             selectedSongVC.modalPresentationStyle = UIModalPresentationPopover;
-            selectedSongVC.preferredContentSize = CGSizeMake(150, 75);
+            selectedSongVC.preferredContentSize = CGSizeMake(150, 110);
             UIPopoverPresentationController *popOverController = selectedSongVC.popoverPresentationController;
             popOverController.delegate = selectedSongVC;
             popOverController.sourceView = selectedCell;

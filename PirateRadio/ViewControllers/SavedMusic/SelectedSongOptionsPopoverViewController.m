@@ -10,7 +10,7 @@
 #import "LocalSongModel.h"
 #import "DataBase.h"
 #import "DropBox.h"
-#import "UIView+Toast.h"
+#import "Toast.h"
 
 @interface SelectedSongOptionsPopoverViewController ()
 
@@ -59,14 +59,32 @@
     return UIModalPresentationNone;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (IBAction)shareSongButtonTap:(id)sender {
+    NSURL *url = [NSURL fileURLWithPath:[[NSTemporaryDirectory() stringByAppendingString:self.song.properMusicTitle] stringByAppendingString:@".mp3"]];
+    
+    NSData *data = [NSData dataWithContentsOfURL:self.song.localSongURL];
+    
+    [data writeToURL:url atomically:NO];
+    
+    NSArray *activityItems = @[url];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    activityVC.excludedActivityTypes = @[];
+    [activityVC setCompletionWithItemsHandler:^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
+        NSError *errorBlock;
+        if([[NSFileManager defaultManager] removeItemAtURL:url error:&errorBlock] == NO) {
+            NSLog(@"error deleting file %@",activityError);
+            return;
+        }
+    }];
+    UITabBarController *presentingVC = (UITabBarController *)self.presentingViewController;
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            activityVC.popoverPresentationController.sourceView = presentingVC.tabBar;
+            activityVC.popoverPresentationController.sourceRect = CGRectMake(presentingVC.view.bounds.size.width / 2, presentingVC.view.bounds.size.height / 4, 0, 0);
+        }
+        [presentingVC presentViewController:activityVC animated:YES completion:nil];
+        
+    }];
 }
-*/
 
 @end
