@@ -30,6 +30,7 @@
         case 0:
             cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell1" forIndexPath:indexPath];
             break;
+            
         case 1:
             cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell2" forIndexPath:indexPath];
             if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
@@ -41,11 +42,13 @@
                 cell.userInteractionEnabled = NO;
             }
             break;
+            
         case 2:
             cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell3" forIndexPath:indexPath];
             break;
+            
         default:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell3" forIndexPath:indexPath];
+            cell = [[UserPreferencesTableViewCell alloc] init];
             break;
     }
     return cell;

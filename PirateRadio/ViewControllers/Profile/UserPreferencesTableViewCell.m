@@ -35,6 +35,10 @@
         [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR];
         [NSUserDefaults.standardUserDefaults synchronize];
     }
+    else if ([self.reuseIdentifier isEqualToString:@"userPreferencesCell3"]) {
+        [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:USER_DEFAULTS_THEME];
+        [NSUserDefaults.standardUserDefaults synchronize];
+    }
     
 }
 
@@ -45,6 +49,9 @@
     }
     else if ([self.reuseIdentifier isEqualToString:@"userPreferencesCell2"]) {
         isOn = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR];
+    }
+    else if ([self.reuseIdentifier isEqualToString:@"userPreferencesCell3"]) {
+        isOn = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_THEME];
     }
     [self.preferenceSwitch setOn:isOn]; 
 }

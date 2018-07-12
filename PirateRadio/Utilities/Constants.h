@@ -16,6 +16,7 @@
 #define NOTIFICATION_REMOVED_SONG_FROM_FILES @"NotificationRemovedSongFromFiles"
 #define NOTIFICATION_DID_START_DOWNLOADING @"NotificationDidStartDownloading"
 #define NOTIFICATION_REMOTE_EVENT_PLAY_PAUSE_TOGGLE @"NotificationRemoteEventPlayPauseToggle"
+#define NOTIFICATION_COPY_DROPBOX_LINK_FINISHED @"NotificationCopyDropboxLinkFinished"
 
 #define USER_DEFAULTS_KEY_PLAYLISTS @"UserDefaultsKeyPlaylists"
 #define USER_DEFAULTS_SEGUE_DONE @"UserDefaultsSegueDone"

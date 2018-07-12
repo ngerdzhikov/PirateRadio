@@ -58,7 +58,7 @@
 
 - (void)onMusicControllerPan:(UIPanGestureRecognizer *)recognizer {
     
-    if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation) | ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)) {
+    if (self.isPortrait | ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)) {
         CGPoint translatedPoint = [recognizer translationInView:recognizer.view.superview];
         CGFloat animationDuration = 0.1;
         
@@ -150,6 +150,8 @@
     return songs;
 }
 
-
+- (BOOL)isPortrait {
+    return CGRectGetWidth(self.view.bounds) < CGRectGetHeight(self.view.bounds);
+}
 
 @end
