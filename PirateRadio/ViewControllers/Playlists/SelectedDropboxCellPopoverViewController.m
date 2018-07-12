@@ -7,17 +7,19 @@
 //
 
 #import "SelectedDropboxCellPopoverViewController.h"
+#import "Reachability.h"
+#import "Toast.h"
 #import "DropBox.h"
 
 @interface SelectedDropboxCellPopoverViewController ()
-
+@property (strong, nonatomic) Reachability *reachability;
 @end
 
 @implementation SelectedDropboxCellPopoverViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.reachability = Reachability.reachabilityForInternetConnection;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -26,11 +28,22 @@
 }
 
 - (IBAction)copyMp3LinkButtonTap:(id)sender {
-    
+    if (self.reachability.isReachable) {
+       [DropBox shareableLinkForSongName:self.songName];
+    }
+    else {
+        [self.presentingViewController.view makeToast:@"No internet connection"];
+    }
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)downloadButtonTap:(id)sender {
-    [DropBox downloadSongWithName:self.songName];
+    if (self.reachability.isReachable) {
+        [DropBox downloadSongWithName:self.songName];
+    }
+    else {
+        [self.presentingViewController.view makeToast:@"No internet connection"];
+    }
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
