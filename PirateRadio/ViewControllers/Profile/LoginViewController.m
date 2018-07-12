@@ -18,7 +18,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *userNameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
-@property (weak, nonatomic) IBOutlet UIButton *registerButton;
+@property (weak, nonatomic) IBOutlet UILabel *signUpLabel;
+@property (weak, nonatomic) IBOutlet UIView *smallerContainerView;
 
 @property BOOL isLogged;
 
@@ -28,6 +29,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.signUpLabel.userInteractionEnabled = YES;
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(signUpLabelTap)];
+    [self.signUpLabel addGestureRecognizer:tapGesture];
     self.isLogged = false;
     // Do any additional setup after loading the view.
 }
@@ -42,33 +46,86 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)registerButtonTap:(id)sender {
-    BOOL shouldContinue = YES;
-    NSString *messageToDisplay;
-    if ([self.userNameTextField.text isEqualToString:@""] && shouldContinue) {
-        messageToDisplay = @"Please enter a username.";
-        shouldContinue = NO;
-    }
-    if ([self.passwordTextField.text isEqualToString:@""] && shouldContinue) {
-        messageToDisplay = @"Please enter a password.";
-        shouldContinue = NO;
-    }
-    if (self.userNameTextField.text.length < 4 && shouldContinue) {
-        messageToDisplay = @"Please enter longer username.";
-        shouldContinue = NO;
-    }
-    if (self.userNameTextField.text.length < 4 && shouldContinue) {
-        messageToDisplay = @"Please enter longer password.";
-        shouldContinue = NO;
-    }
-    if (shouldContinue) {
-        DataBase *db = [[DataBase alloc] init];
-        [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
-    }
-    else {
-        UIWindow *window=[UIApplication sharedApplication].keyWindow;
-        [window.rootViewController.view makeToast:messageToDisplay];
-    }
+- (void)signUpLabelTap {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Register" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.borderStyle = UITextBorderStyleRoundedRect;
+        textField.placeholder = @"Username";
+        textField.text = self.userNameTextField.text;
+        textField.textAlignment = NSTextAlignmentCenter;
+    }];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.borderStyle = UITextBorderStyleRoundedRect;
+        textField.placeholder = @"Password";
+        textField.text = self.passwordTextField.text;
+        textField.secureTextEntry = YES;
+        textField.textAlignment = NSTextAlignmentCenter;
+    }];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.borderStyle = UITextBorderStyleRoundedRect;
+        textField.placeholder = @"Confirm password";
+        textField.secureTextEntry = YES;
+        textField.textAlignment = NSTextAlignmentCenter;
+    }];
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm password" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.userNameTextField.text = alertController.textFields.firstObject.text;
+        if ([alertController.textFields[1].text isEqualToString:alertController.textFields.lastObject.text]) {
+            self.passwordTextField.text = alertController.textFields.lastObject.text;
+            BOOL shouldContinue = YES;
+            NSString *messageToDisplay;
+            if ([self.userNameTextField.text isEqualToString:@""] && shouldContinue) {
+                messageToDisplay = @"Please enter a username.";
+                shouldContinue = NO;
+            }
+            else if ([self.passwordTextField.text isEqualToString:@""] && shouldContinue) {
+                messageToDisplay = @"Please enter a password.";
+                shouldContinue = NO;
+            }
+            else if (self.userNameTextField.text.length < 4 && shouldContinue) {
+                messageToDisplay = @"Please enter longer username.";
+                shouldContinue = NO;
+            }
+            else if (self.userNameTextField.text.length < 4 && shouldContinue) {
+                messageToDisplay = @"Please enter longer password.";
+                shouldContinue = NO;
+            }
+            else {
+                DataBase *db = [[DataBase alloc] init];
+                if ([db doesUserExists:self.userNameTextField.text]) {
+                    shouldContinue = NO;
+                    messageToDisplay = @"User with this username already exists";
+                }
+                else {
+                    [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
+                    self.isLogged = YES;
+                    [NSUserDefaults.standardUserDefaults setValue:self.userNameTextField.text forKey:USER_DEFAULTS_USERNAME];
+                    [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
+                    [self checkIfUserIsLogged];
+                }
+            }
+            if (!shouldContinue) {
+                [self.view makeToast:messageToDisplay];
+            }
+        }
+        else {
+            [self.view makeToast:@"Please confirm password"];
+        }
+
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertController addAction:confirmAction];
+    [alertController addAction:cancelAction];
+    [self presentViewController:alertController animated:YES completion:^{
+        for (UITextField *textField in alertController.textFields) {
+            textField.superview.backgroundColor = [UIColor clearColor];
+            textField.backgroundColor = [UIColor clearColor];
+        }
+    }];
 }
 
 - (IBAction)loginButtonTap:(id)sender {
