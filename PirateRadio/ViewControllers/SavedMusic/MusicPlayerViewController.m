@@ -20,7 +20,6 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *elapsedTimeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLeftLabel;
-@property (strong, nonatomic) PirateAVPlayer *player;
 @property (strong, nonatomic) AVPlayerItem *currentItem;
 @property BOOL isSeekInProgress;
 @property CMTime chaseTime;
@@ -34,12 +33,10 @@
     
     [super viewDidLoad];
     
-    self.player = PirateAVPlayer.sharedPlayer;
-    
     [self configureMusicControllerView];
     
     __weak MusicPlayerViewController *weakSelf = self;
-    [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
+    [PirateAVPlayer.sharedPlayer addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0 / 60.0, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
         [weakSelf updateProgressBar];
     }];
     
@@ -76,8 +73,8 @@
 }
 
 - (void)updateProgressBar {
-    double duration = CMTimeGetSeconds(self.player.currentItem.duration);
-    double time = CMTimeGetSeconds(self.player.currentTime);
+    double duration = CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentItem.duration);
+    double time = CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentTime);
     if (!self.isSliding) {
         
         self.songTimeProgress.value = (time / duration) * 100;
@@ -98,14 +95,14 @@
 
 - (void)prepareSong:(LocalSongModel *)song {
     
-    if (![self.player.currentSong.localSongURL isEqual:song.localSongURL]) {
-        self.player.currentSong = song;
-        self.player.playerCurrentItemStatus = AVPlayerItemStatusUnknown;
+    if (![PirateAVPlayer.sharedPlayer.currentSong.localSongURL isEqual:song.localSongURL]) {
+        PirateAVPlayer.sharedPlayer.currentSong = song;
+        PirateAVPlayer.sharedPlayer.playerCurrentItemStatus = AVPlayerItemStatusUnknown;
         
         AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
         self.currentItem = [AVPlayerItem playerItemWithAsset:asset];
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(itemDidEndPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:self.currentItem];
-        [self.player replaceCurrentItemWithPlayerItem:self.currentItem];
+        [PirateAVPlayer.sharedPlayer replaceCurrentItemWithPlayerItem:self.currentItem];
         NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew;
        
         // Register as an observer of the player item's status property
@@ -139,29 +136,29 @@
 
 - (IBAction)previousBtnTap:(id)sender {
     
-    [self.songListDelegate didRequestPreviousForSong:self.player.currentSong];
+    [self.songListDelegate didRequestPreviousForSong:PirateAVPlayer.sharedPlayer.currentSong];
 }
 
 - (IBAction)nextBtnTap:(id)sender {
     
-    [self.songListDelegate didRequestNextForSong:self.player.currentSong];
+    [self.songListDelegate didRequestNextForSong:PirateAVPlayer.sharedPlayer.currentSong];
 }
 
 - (void)playPauseStream {
-    if (self.player.currentSong != nil) {
+    if (PirateAVPlayer.sharedPlayer.currentSong != nil) {
         if (self.isPlaying) {
             
             [self pauseLoadedSong];
             [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
             
-            [self.songListDelegate didPauseSong:self.player.currentSong];
+            [self.songListDelegate didPauseSong:PirateAVPlayer.sharedPlayer.currentSong];
         }
         else {
             
             [self playLoadedSong];
             [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
             
-            [self.songListDelegate didStartPlayingSong:self.player.currentSong];
+            [self.songListDelegate didStartPlayingSong:PirateAVPlayer.sharedPlayer.currentSong];
         }
     }
 }
@@ -170,32 +167,32 @@
     
     
 //        I will hate myself for doing this....
-    [self.player play];
+    [PirateAVPlayer.sharedPlayer play];
     //    it's ok for now
-    [self.songListDelegate didRequestNextForSong:self.player.currentSong];
-    [self.player play];
+    [self.songListDelegate didRequestNextForSong:PirateAVPlayer.sharedPlayer.currentSong];
+    [PirateAVPlayer.sharedPlayer play];
     
     [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePlaying];
 }
 
 - (void)updateMusicPlayerContent {
     
-    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
+    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:PirateAVPlayer.sharedPlayer.currentSong.localArtworkURL]];
     if (!image) {
         self.songImage.image = [UIImage imageNamed:@"unknown_artist"];
     }
     else {
         self.songImage.image = image;
     }
-    self.songName.text = self.player.currentSong.songTitle;
+    self.songName.text = PirateAVPlayer.sharedPlayer.currentSong.songTitle;
     
-    if (self.player.currentSong && self.isPlaying) {
+    if (PirateAVPlayer.sharedPlayer.currentSong && self.isPlaying) {
         [self.playButton setImage:[UIImage imageNamed:@"pause_button_icon"] forState:UIControlStateNormal];
     }
     else {
         [self.playButton setImage:[UIImage imageNamed:@"play_button_icon"] forState:UIControlStateNormal];
 //                tell the songList that song is paused;
-        [self.songListDelegate didPauseSong:self.player.currentSong];
+        [self.songListDelegate didPauseSong:PirateAVPlayer.sharedPlayer.currentSong];
     }
     
     UIGraphicsBeginImageContext(self.view.frame.size);
@@ -214,14 +211,14 @@
 
 -(void) sliderEndedSliding {
     
-    [self stopPlayingAndSeekSmoothlyToTime:CMTimeMake((self.songTimeProgress.value * CMTimeGetSeconds(self.player.currentItem.duration) / 100) * 600, 600)];
+    [self stopPlayingAndSeekSmoothlyToTime:CMTimeMake((self.songTimeProgress.value * CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentItem.duration) / 100) * 600, 600)];
     self.isSliding = NO;
 }
 
 
 - (void)stopPlayingAndSeekSmoothlyToTime:(CMTime)newChaseTime {
     
-    [self.player pause];
+    [PirateAVPlayer.sharedPlayer pause];
 
     if (CMTIME_COMPARE_INLINE(newChaseTime, !=, self.chaseTime)) {
         
@@ -235,10 +232,10 @@
 
 - (void)trySeekToChaseTime {
     
-    if (self.player.playerCurrentItemStatus == AVPlayerItemStatusUnknown) {
+    if (PirateAVPlayer.sharedPlayer.playerCurrentItemStatus == AVPlayerItemStatusUnknown) {
         // wait until item becomes ready (KVO player.currentItem.status)
     }
-    else if (self.player.playerCurrentItemStatus == AVPlayerItemStatusReadyToPlay) {
+    else if (PirateAVPlayer.sharedPlayer.playerCurrentItemStatus == AVPlayerItemStatusReadyToPlay) {
         [self actuallySeekToTime];
     }
 }
@@ -247,7 +244,7 @@
     
     self.isSeekInProgress = YES;
     CMTime seekTimeInProgress = self.chaseTime;
-    [self.player seekToTime:seekTimeInProgress toleranceBefore:kCMTimeZero
+    [PirateAVPlayer.sharedPlayer seekToTime:seekTimeInProgress toleranceBefore:kCMTimeZero
              toleranceAfter:kCMTimeZero completionHandler:
      ^(BOOL isFinished) {
          if (CMTIME_COMPARE_INLINE(seekTimeInProgress, ==, self.chaseTime)) {
@@ -257,7 +254,7 @@
              self.isSeekInProgress = NO;
              
              if ([self.playButton.currentImage isEqual:[UIImage imageNamed:@"pause_button_icon"]]) {
-                 [self.player play];
+                 [PirateAVPlayer.sharedPlayer play];
              }
          }
          else{
@@ -279,9 +276,9 @@
         switch (status) {
             case AVPlayerItemStatusReadyToPlay:
                 // Ready to Play
-                self.player.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
+                PirateAVPlayer.sharedPlayer.playerCurrentItemStatus = AVPlayerStatusReadyToPlay;
                 [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
-                [self setTime:CMTimeGetSeconds(self.player.currentTime) andDuration:CMTimeGetSeconds(self.player.currentItem.duration)];
+                [self setTime:CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentTime) andDuration:CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentItem.duration)];
                 break;
             case AVPlayerItemStatusFailed:
                 // Failed. Examine AVPlayerItem.error
@@ -297,25 +294,25 @@
     
     [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     
-    [self.player play];
+    [PirateAVPlayer.sharedPlayer play];
     
     [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
 }
 
 - (void)pauseLoadedSong {
     
-    [self.player pause];
+    [PirateAVPlayer.sharedPlayer pause];
     
     [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
 }
 
 - (BOOL)isPlaying {
     
-    return self.player.timeControlStatus == AVPlayerTimeControlStatusPlaying | self.player.timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate;
+    return PirateAVPlayer.sharedPlayer.timeControlStatus == AVPlayerTimeControlStatusPlaying | PirateAVPlayer.sharedPlayer.timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate;
 }
 
 - (LocalSongModel *)nowPlaying {
-    return self.player.currentSong;
+    return PirateAVPlayer.sharedPlayer.currentSong;
 }
 
 - (void)setPlayerPlayPauseButtonState:(BOOL)play {
@@ -339,17 +336,17 @@
             [MPNowPlayingInfoCenter.defaultCenter setPlaybackState:MPNowPlayingPlaybackStatePaused];
         }
         
-        NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentTime)];
-        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(self.player.currentItem.duration)];
+        NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentTime)];
+        NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentItem.duration)];
         MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
-            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:self.player.currentSong.localArtworkURL]];
+            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:PirateAVPlayer.sharedPlayer.currentSong.localArtworkURL]];
             if (!image) {
                 image = [UIImage imageNamed:@"unknown_artist"];
             }
             return image;
         }];
-        NSDictionary *info = @{ MPMediaItemPropertyArtist: self.player.currentSong.artistName,
-                                MPMediaItemPropertyTitle: self.player.currentSong.songTitle,
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: PirateAVPlayer.sharedPlayer.currentSong.artistName,
+                                MPMediaItemPropertyTitle: PirateAVPlayer.sharedPlayer.currentSong.songTitle,
                                 MPMediaItemPropertyPlaybackDuration: duration,
                                 MPMediaItemPropertyArtwork: artwork,
                                 MPNowPlayingInfoPropertyPlaybackRate: [NSNumber numberWithDouble:playbackRate],
