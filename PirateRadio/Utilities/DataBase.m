@@ -51,6 +51,10 @@
     
 }
 
+- (BOOL)doesUserExists:(NSString *)username {
+    return [self userObjectForUsername:username] != nil;
+}
+
 - (NSManagedObject *)userObjectForUsername:(NSString *)username {
     NSArray *results = self.users;
     for (NSManagedObject *obj in results) {
