@@ -20,7 +20,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [DBClientsManager setupWithAppKey:@"rp9dtda9u6je0kv"];
+    [DBClientsManager setupWithAppKey:DROPBOX_KEY];
     NSError *error;
     NSURL *artworkDirectory = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
     artworkDirectory = [artworkDirectory URLByAppendingPathComponent:@"artwork/"];
