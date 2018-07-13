@@ -13,6 +13,7 @@
 #import "ThumbnailModel.h"
 #import "LocalSongModel.h"
 #import "AVKit/AVKit.h"
+#import "UserModel.h"
 #import "AppDelegate.h"
 #import "PlaylistModel.h"
 
@@ -65,6 +66,32 @@
         }
     }
     return nil;
+}
+
+- (UserModel *)userModelForUsername:(NSString *)username {
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"User"];
+    NSError *error = nil;
+    [request setPredicate:[NSPredicate predicateWithFormat:@"username = %@", username]];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    NSManagedObject *userEntity = results.firstObject;
+    if (userEntity) {
+        NSString *username = [userEntity valueForKey:@"username"];
+        NSString *password = [userEntity valueForKey:@"password"];
+        NSURL *url = [userEntity valueForKey:@"profileImage"];
+        UserModel *userModel = [[UserModel alloc] initWithUsername:username password:password andProfileImageURL:url];
+        return userModel;
+    }
+    else return nil;
+}
+
+- (void)updateUserProfileImageURL:(NSURL *)newURL forUserModel:(UserModel *)user {
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"User"];
+    NSError *error = nil;
+    [request setPredicate:[NSPredicate predicateWithFormat:@"username = %@", user.username]];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    NSManagedObject *userEntity = results.firstObject;
+    [userEntity setValue:newURL forKey:@"profileImage"];
+    [self.context save:&error];
 }
 
 - (void)addFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username {

@@ -565,7 +565,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello username!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IYt-eo-pBD">
-                                <rect key="frame" x="96.666666666666686" y="138" width="182" height="31.666666666666657"/>
+                                <rect key="frame" x="96.666666666666686" y="128" width="182" height="31.666666666666657"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -578,7 +578,7 @@
                                 </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="9dt-rU-yoV">
-                                <rect key="frame" x="0.0" y="239.66666666666666" width="375" height="489.33333333333337"/>
+                                <rect key="frame" x="0.0" y="289.66666666666674" width="375" height="439.33333333333326"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell1" id="2Ly-5H-9cD" customClass="UserPreferencesTableViewCell">
@@ -669,14 +669,71 @@
                                             <outlet property="preferenceSwitch" destination="m1K-4j-mVD" id="mLS-eE-aCF"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell4" id="Bbw-Vh-TOs" customClass="UserPreferencesTableViewCell">
+                                        <rect key="frame" x="0.0" y="160" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Bbw-Vh-TOs" id="Cqm-gZ-oBD">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Change profile picture" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4y0-hl-kKl">
+                                                    <rect key="frame" x="15" y="11.333333333333336" width="170" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9UE-GT-dvl">
+                                                    <rect key="frame" x="299" y="7" width="48" height="30"/>
+                                                    <state key="normal" title="Gallery"/>
+                                                    <connections>
+                                                        <action selector="galleryButtonTap:" destination="Bbw-Vh-TOs" eventType="touchUpInside" id="zmB-1g-Jqy"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="9UE-GT-dvl" secondAttribute="trailing" constant="28" id="WnX-fH-O5x"/>
+                                                <constraint firstItem="9UE-GT-dvl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="4y0-hl-kKl" secondAttribute="trailing" constant="114" id="oLk-Dg-piL"/>
+                                                <constraint firstItem="9UE-GT-dvl" firstAttribute="centerY" secondItem="Cqm-gZ-oBD" secondAttribute="centerY" id="uLo-hH-gwZ"/>
+                                                <constraint firstItem="4y0-hl-kKl" firstAttribute="centerY" secondItem="Cqm-gZ-oBD" secondAttribute="centerY" id="vmo-25-RjH"/>
+                                                <constraint firstItem="4y0-hl-kKl" firstAttribute="leading" secondItem="Cqm-gZ-oBD" secondAttribute="leading" constant="15" id="yuu-qj-Np8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="galleryButton" destination="9UE-GT-dvl" id="VBf-S1-k9O"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7qJ-hN-4vt">
+                                <rect key="frame" x="137" y="169.66666666666666" width="100" height="99.999999999999972"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="B9i-Ml-znu"/>
+                                    <constraint firstAttribute="width" secondItem="7qJ-hN-4vt" secondAttribute="height" multiplier="1:1" id="WsS-fj-Owv"/>
+                                    <constraint firstAttribute="height" constant="150" id="ode-Dk-UQX"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="B9i-Ml-znu"/>
+                                        <exclude reference="ode-Dk-UQX"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="B9i-Ml-znu"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <mask key="constraints">
+                                        <include reference="ode-Dk-UQX"/>
+                                    </mask>
+                                </variation>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="IYt-eo-pBD" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="50" id="1F8-et-ifD"/>
+                            <constraint firstItem="IYt-eo-pBD" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" constant="40" id="1F8-et-ifD"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="n6O-yr-W9w" secondAttribute="trailing" constant="20" symbolic="YES" id="5sh-bL-hzU"/>
-                            <constraint firstItem="9dt-rU-yoV" firstAttribute="top" secondItem="IYt-eo-pBD" secondAttribute="bottom" constant="70" id="HX4-dT-8mL"/>
+                            <constraint firstItem="7qJ-hN-4vt" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="BoT-RA-JUS"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="bottom" secondItem="9dt-rU-yoV" secondAttribute="bottom" id="Kzp-WH-pSN"/>
                             <constraint firstItem="87i-sU-1aG" firstAttribute="trailing" secondItem="9dt-rU-yoV" secondAttribute="trailing" id="LhG-OD-LBD"/>
                             <constraint firstItem="n6O-yr-W9w" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="NlE-cb-Xce"/>
@@ -685,6 +742,8 @@
                             <constraint firstItem="9dt-rU-yoV" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="dIR-yH-DmU"/>
                             <constraint firstItem="IYt-eo-pBD" firstAttribute="centerX" secondItem="87i-sU-1aG" secondAttribute="centerX" id="fVU-tw-oYV"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RJ3-qF-56m" secondAttribute="leading" constant="20" symbolic="YES" id="ghu-a2-7ex"/>
+                            <constraint firstItem="7qJ-hN-4vt" firstAttribute="top" secondItem="IYt-eo-pBD" secondAttribute="bottom" constant="10" id="gpd-zv-BRL"/>
+                            <constraint firstItem="9dt-rU-yoV" firstAttribute="top" secondItem="7qJ-hN-4vt" secondAttribute="bottom" constant="20" id="gra-qb-4sY"/>
                             <constraint firstItem="yr3-RJ-EH4" firstAttribute="top" secondItem="87i-sU-1aG" secondAttribute="top" id="l4L-D1-uIS"/>
                             <constraint firstItem="9dt-rU-yoV" firstAttribute="leading" secondItem="87i-sU-1aG" secondAttribute="leading" id="uGc-HK-Q6C"/>
                         </constraints>
@@ -695,6 +754,7 @@
                         <outlet property="dropboxButton" destination="n6O-yr-W9w" id="gcY-2l-4ik"/>
                         <outlet property="logOutButton" destination="yr3-RJ-EH4" id="pt9-RU-WT1"/>
                         <outlet property="preferencesTableView" destination="9dt-rU-yoV" id="5WT-oB-pu9"/>
+                        <outlet property="userImageView" destination="7qJ-hN-4vt" id="t0d-nr-Avk"/>
                         <outlet property="usernameLabel" destination="IYt-eo-pBD" id="AE1-Yf-OHx"/>
                     </connections>
                 </viewController>

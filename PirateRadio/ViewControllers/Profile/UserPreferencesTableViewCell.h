@@ -11,5 +11,6 @@
 @interface UserPreferencesTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *preferenceLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *preferenceSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *galleryButton;
 
 @end

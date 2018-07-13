@@ -11,6 +11,7 @@
 #import "ProfileViewController.h"
 #import "DataBase.h"
 #import "Constants.h"
+#import "UserModel.h"
 #import "UIView+Toast.h"
 
 @interface LoginViewController ()
@@ -38,7 +39,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self dismissSelf];
+    if (!self.isLogged)
+        [self dismissSelf];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -48,8 +50,6 @@
 
 - (void)signUpLabelTap {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Register" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    
-    
     
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.borderStyle = UITextBorderStyleRoundedRect;
@@ -101,8 +101,9 @@
                 else {
                     [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
                     self.isLogged = YES;
-                    [NSUserDefaults.standardUserDefaults setValue:self.userNameTextField.text forKey:USER_DEFAULTS_USERNAME];
                     [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
+                    UserModel *user = [[UserModel alloc] initWithUsername:self.userNameTextField.text password:self.passwordTextField.text andProfileImageURL:nil];
+                    [NSUserDefaults.standardUserDefaults setObject:user.username forKey:USER_DEFAULTS_LOGGED_USERNAME];
                     [self checkIfUserIsLogged];
                 }
             }
@@ -136,20 +137,16 @@
 
 - (void)authenticateUsername:(NSString *)username andPassword:(NSString *)password {
     DataBase *db = [[DataBase alloc] init];
-    NSArray *users = db.users;
-    for (NSManagedObject *user in users) {
-        NSArray *keys = [[[user entity] attributesByName] allKeys];
-        NSDictionary *userInfo = [user dictionaryWithValuesForKeys:keys];
-        if ([[userInfo valueForKey:@"username"] isEqualToString:username]) {
-            if ([[userInfo valueForKey:@"password"] isEqualToString:password]) {
-                self.isLogged = YES;
-                [NSUserDefaults.standardUserDefaults setValue:username forKey:USER_DEFAULTS_USERNAME];
-                [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
-                [self checkIfUserIsLogged];
-                break;
-            }
+    UserModel *userModel = [db userModelForUsername:username];
+    if (userModel) {
+        if ([userModel.password isEqualToString:password]) {
+            self.isLogged = YES;
+            [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
+            [NSUserDefaults.standardUserDefaults setObject:userModel.username forKey:USER_DEFAULTS_LOGGED_USERNAME];
+            [self checkIfUserIsLogged];
         }
     }
+    
     if (!self.isLogged) {
         UIWindow *window=[UIApplication sharedApplication].keyWindow;
         [window.rootViewController.view makeToast:@"Invalid username or password"];
@@ -167,5 +164,6 @@
     profileVC.dismissingPresentedViewController = YES;
     [profileVC dismissViewControllerAnimated:YES completion:nil];
 }
+
 
 @end

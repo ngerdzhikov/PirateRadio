@@ -25,6 +25,7 @@
 #import "DataBase.h"
 #import "AudioStreamNotificationCenter.h"
 #import "UIView+Toast.h"
+#import "UserModel.h"
 
 @import MediaPlayer;
 
@@ -798,8 +799,8 @@
 }
 
 - (void)addVideoToFavourites {
-    NSString *username = [NSUserDefaults.standardUserDefaults valueForKey:USER_DEFAULTS_USERNAME];
-    if (![username isEqualToString:@""]) {
+    NSString *username = [NSUserDefaults.standardUserDefaults objectForKey:USER_DEFAULTS_LOGGED_USERNAME];
+    if (username) {
         DataBase *db = [[DataBase alloc] init];
         [db addFavouriteVideo:self.currentVideoModel ForUsername:username];
         [self.view makeToast:@"Video added to favourites!"];

@@ -11,6 +11,7 @@
 @class VideoModel;
 @class LocalSongModel;
 @class PlaylistModel;
+@class UserModel;
 
 @interface DataBase : NSObject
 
@@ -18,6 +19,8 @@
 - (NSArray *)users;
 - (void)addUser:(NSString *)username forPassword:(NSString *)password;
 - (BOOL)doesUserExists:(NSString *)username;
+- (UserModel *)userModelForUsername:(NSString *)username;
+- (void)updateUserProfileImageURL:(NSURL *)newURL forUserModel:(UserModel *)user;
 /* videos */
 - (void)addFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username;
 - (void)deleteFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username;

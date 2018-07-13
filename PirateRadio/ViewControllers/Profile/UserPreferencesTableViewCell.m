@@ -39,7 +39,6 @@
         [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:USER_DEFAULTS_THEME];
         [NSUserDefaults.standardUserDefaults synchronize];
     }
-    
 }
 
 - (void)setSwitchStateForUserPreferences {
@@ -55,5 +54,10 @@
     }
     [self.preferenceSwitch setOn:isOn]; 
 }
+
+- (IBAction)galleryButtonTap:(id)sender {
+    [NSNotificationCenter.defaultCenter postNotificationName:@"galleryButtonTap" object:nil];
+}
+
 
 @end

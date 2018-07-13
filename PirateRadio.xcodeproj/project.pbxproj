@@ -18,6 +18,7 @@
 		062E7EA720A5C16B006F1221 /* YoutubeDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA620A5C16B006F1221 /* YoutubeDownloadManager.m */; };
 		062E7EAA20A5E911006F1221 /* DownloadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EA920A5E911006F1221 /* DownloadModel.m */; };
 		062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */; };
+		063248D520F8936200D18ACE /* UserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 063248D420F8936200D18ACE /* UserModel.m */; };
 		0634628520D7A1040044EF85 /* YoutubePlaylistModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0634628420D7A1040044EF85 /* YoutubePlaylistModel.m */; };
 		0634628820D7F3070044EF85 /* YoutubeEntityModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0634628720D7F3070044EF85 /* YoutubeEntityModel.m */; };
 		063EDF3920B43DFD00630747 /* SearchSuggestionsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */; };
@@ -80,6 +81,8 @@
 		062E7EA920A5E911006F1221 /* DownloadModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadModel.m; sourceTree = "<group>"; };
 		062E7EAF20A5F4B1006F1221 /* DownloadButtonWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadButtonWebView.h; sourceTree = "<group>"; };
 		062E7EB020A5F4B1006F1221 /* DownloadButtonWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadButtonWebView.m; sourceTree = "<group>"; };
+		063248D320F8936200D18ACE /* UserModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserModel.h; sourceTree = "<group>"; };
+		063248D420F8936200D18ACE /* UserModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserModel.m; sourceTree = "<group>"; };
 		0634628320D7A1040044EF85 /* YoutubePlaylistModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubePlaylistModel.h; sourceTree = "<group>"; };
 		0634628420D7A1040044EF85 /* YoutubePlaylistModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YoutubePlaylistModel.m; sourceTree = "<group>"; };
 		0634628620D7F3070044EF85 /* YoutubeEntityModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YoutubeEntityModel.h; sourceTree = "<group>"; };
@@ -324,6 +327,8 @@
 				0634628420D7A1040044EF85 /* YoutubePlaylistModel.m */,
 				0634628620D7F3070044EF85 /* YoutubeEntityModel.h */,
 				0634628720D7F3070044EF85 /* YoutubeEntityModel.m */,
+				063248D320F8936200D18ACE /* UserModel.h */,
+				063248D420F8936200D18ACE /* UserModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -538,6 +543,7 @@
 				06265A4E20EF7ADC00D64B77 /* UserPreferencesTableViewDelegate.m in Sources */,
 				06FC537720A335D4003238BF /* main.m in Sources */,
 				0634628820D7F3070044EF85 /* YoutubeEntityModel.m in Sources */,
+				063248D520F8936200D18ACE /* UserModel.m in Sources */,
 				0608885120C587A600860DBC /* PlaylistsTableViewController.m in Sources */,
 				06265A3D20EE4EBD00D64B77 /* FavouriteVideosTableViewController.m in Sources */,
 				062E7EB120A5F4B1006F1221 /* DownloadButtonWebView.m in Sources */,

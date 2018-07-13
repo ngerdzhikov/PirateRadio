@@ -16,7 +16,7 @@
 @property (strong, nonatomic) NSString *name;
 
 
--(instancetype)initWithName:(NSString *)name;
--(void)addSong:(LocalSongModel *)song;
+- (instancetype)initWithName:(NSString *)name;
+- (void)addSong:(LocalSongModel *)song;
 
 @end

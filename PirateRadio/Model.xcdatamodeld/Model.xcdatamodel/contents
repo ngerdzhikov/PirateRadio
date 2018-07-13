@@ -15,6 +15,7 @@
     </entity>
     <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="profileImage" optional="YES" attributeType="URI" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="favouriteVideos" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="YoutubeVideoModel" inverseName="users" inverseEntity="YoutubeVideoModel" syncable="YES"/>
     </entity>
@@ -31,7 +32,7 @@
     <elements>
         <element name="LocalSong" positionX="-153" positionY="156" width="128" height="150"/>
         <element name="Playlist" positionX="61" positionY="114" width="128" height="75"/>
-        <element name="User" positionX="45" positionY="-45" width="128" height="90"/>
+        <element name="User" positionX="45" positionY="-45" width="128" height="105"/>
         <element name="YoutubeVideoModel" positionX="-270" positionY="-39" width="128" height="165"/>
     </elements>
 </model>

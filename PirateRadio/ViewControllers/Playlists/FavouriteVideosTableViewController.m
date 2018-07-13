@@ -14,12 +14,13 @@
 #import "YoutubePlayerViewController.h"
 #import "UIView+Toast.h"
 #import "Constants.h"
+#import "UserModel.h"
 #import "DataBase.h"
 
 @interface FavouriteVideosTableViewController ()
 
 @property (strong, nonatomic) NSArray<VideoModel *> *favouriteVideos;
-@property (strong, nonatomic) NSString *username;
+@property (strong, nonatomic) UserModel *userModel;
 
 @end
 
@@ -45,8 +46,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     DataBase *db = [[DataBase alloc] init];
-    self.username = [NSUserDefaults.standardUserDefaults valueForKey:USER_DEFAULTS_USERNAME];
-    self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUsername:self.username]];
+    self.userModel = [db userModelForUsername:[NSUserDefaults.standardUserDefaults objectForKey:USER_DEFAULTS_LOGGED_USERNAME]];
+    self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUsername:self.userModel.username]];
     [self.tableView reloadData];
 }
 
@@ -114,7 +115,7 @@
         self.favouriteVideos = [NSArray arrayWithArray:mutableCopy];
         
         DataBase *db = [[DataBase alloc] init];
-        [db deleteFavouriteVideo:video ForUsername:self.username];
+        [db deleteFavouriteVideo:video ForUsername:self.userModel.username];
         
         [tableView reloadData];
     }

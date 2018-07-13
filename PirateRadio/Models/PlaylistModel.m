@@ -10,7 +10,7 @@
 
 @implementation PlaylistModel
 
--initWithName:(NSString *)name {
+- (instancetype)initWithName:(NSString *)name {
     self = [super init];
     if (self) {
         self.name = name;
@@ -19,10 +19,9 @@
     return self;
 }
 
--(void)addSong:(LocalSongModel *)song {
+- (void)addSong:(LocalSongModel *)song {
     [self.songs addObject:song];
 }
-
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
     
