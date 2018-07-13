@@ -34,6 +34,9 @@
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(signUpLabelTap)];
     [self.signUpLabel addGestureRecognizer:tapGesture];
     self.isLogged = false;
+    
+    self.userNameTextField.delegate = self;
+    self.passwordTextField.delegate = self;
     // Do any additional setup after loading the view.
 }
 
@@ -169,5 +172,16 @@
     [profileVC dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.userNameTextField) {
+        [self.passwordTextField becomeFirstResponder];
+    }
+    else {
+        [self loginButtonTap:nil];
+        [textField resignFirstResponder];
+    }
+    
+    return YES;
+}
 
 @end
