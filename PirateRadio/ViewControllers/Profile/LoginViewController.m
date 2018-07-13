@@ -48,6 +48,10 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewDidLayoutSubviews {
+    self.smallerContainerView.layer.cornerRadius = 15;
+}
+
 - (void)signUpLabelTap {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Register" message:nil preferredStyle:UIAlertControllerStyleAlert];
     
