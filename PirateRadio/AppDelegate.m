@@ -9,6 +9,13 @@
 #import "AppDelegate.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "Constants.h"
+#import "LocalSongModel.h"
+#import "DataBase.h"
+#import "Reachability.h"
+#import "AVKit/AVKit.h"
+#import "DropBox.h"
+#import "ArtworkDownload.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 @import AVFoundation;
 
 @interface AppDelegate ()
@@ -49,7 +56,7 @@
 
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    NSLog(@"Entered background");
+    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_APP_ENTERED_BACKGROUND object:nil];
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
@@ -86,31 +93,76 @@
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
-    if (authResult != nil) {
-        if ([authResult isSuccess]) {
-            NSLog(@"Success! User is logged into Dropbox.");
-            DBUserClient *client = [DBClientsManager authorizedClient];
-            [[client.filesRoutes createFolderV2:@"/PirateRadio/songs"]
-             setResponseBlock:^(DBFILESFolderMetadata *result, DBFILESCreateFolderError *routeError, DBRequestError *networkError) {
-                 if (result) {
-                     NSLog(@"%@\n", result);
-                 } else {
-                     NSLog(@"Directory already exists or there is an error.\n");
-                 }
-             }];
-            [[client.filesRoutes createFolderV2:@"/PirateRadio/artworks"]
-             setResponseBlock:^(DBFILESFolderMetadata *result, DBFILESCreateFolderError *routeError, DBRequestError *networkError) {
-                 if (result) {
-                     NSLog(@"%@\n", result);
-                 } else {
-                     NSLog(@"Directory already exists or there is an error\n");
-                 }
-             }];
-        } else if ([authResult isCancel]) {
-            NSLog(@"Authorization flow was manually canceled by user!");
-        } else if ([authResult isError]) {
-            NSLog(@"Error: %@", authResult);
+    
+    if ([url.pathExtension isEqualToString:@"mp3"]) {
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"HH:mm:ss";
+        NSString *fileName = [url.lastPathComponent.stringByDeletingPathExtension stringByAppendingString:[formatter stringFromDate:[NSDate date]]];
+        fileName = [fileName stringByAppendingPathExtension:@"mp3"];
+        NSURL *fileURL = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+        fileURL = [[fileURL URLByAppendingPathComponent:@"songs"] URLByAppendingPathComponent:fileName];
+        NSError *error;
+        
+        [NSFileManager.defaultManager moveItemAtURL:url toURL:fileURL error:&error];
+        if (error) {
+            NSLog(@"error = %@", error.localizedDescription);
+        }
+        else {
+            LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:fileURL];
+            AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
+            NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
+            song.duration = duration;
+            [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModel:song];
+            
+            NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:@[song] forKeys:@[@"song"]];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:userInfo];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                DataBase *db = [[DataBase alloc] init];
+                [db addNewSong:song withURL:nil];
+            });
+            Reachability *reachability = [Reachability reachabilityForInternetConnection];
+            if (reachability.isReachable && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
+                if (![DropBox doesSongExists:song]) {
+                    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+                    if (reachability.isReachableViaWiFi) {
+                        [DropBox uploadLocalSong:song];
+                    }
+                    else if (reachability.isReachableViaWWAN && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR]) {
+                        [DropBox uploadLocalSong:song];
+                    }
+                }
+            }
+        }
+    }
+    else {
+        DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
+        if (authResult != nil) {
+            if ([authResult isSuccess]) {
+                NSLog(@"Success! User is logged into Dropbox.");
+                DBUserClient *client = [DBClientsManager authorizedClient];
+                [[client.filesRoutes createFolderV2:@"/PirateRadio/songs"]
+                 setResponseBlock:^(DBFILESFolderMetadata *result, DBFILESCreateFolderError *routeError, DBRequestError *networkError) {
+                     if (result) {
+                         NSLog(@"%@\n", result);
+                     } else {
+                         NSLog(@"Directory already exists or there is an error.\n");
+                     }
+                 }];
+                [[client.filesRoutes createFolderV2:@"/PirateRadio/artworks"]
+                 setResponseBlock:^(DBFILESFolderMetadata *result, DBFILESCreateFolderError *routeError, DBRequestError *networkError) {
+                     if (result) {
+                         NSLog(@"%@\n", result);
+                     } else {
+                         NSLog(@"Directory already exists or there is an error\n");
+                     }
+                 }];
+            } else if ([authResult isCancel]) {
+                NSLog(@"Authorization flow was manually canceled by user!");
+            } else if ([authResult isError]) {
+                NSLog(@"Error: %@", authResult);
+            }
         }
     }
     return NO;
