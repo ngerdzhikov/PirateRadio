@@ -11,6 +11,7 @@
 #import "DataBase.h"
 #import "Constants.h"
 #import "UserModel.h"
+#import "Toast.h"
 #import "UserPreferencesTableViewDelegate.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
@@ -32,12 +33,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tableViewDelegate = [[UserPreferencesTableViewDelegate alloc] initWithTableView:self.preferencesTableView];
+    self.tableViewDelegate.profileDelegate = self;
     
-    UILongPressGestureRecognizer *imageLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(presentGalleryImagePicker:)];
+    UILongPressGestureRecognizer *imageLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(changeProfilePicture)];
     [self.userImageView addGestureRecognizer:imageLongPressRecognizer];
     self.userImageView.userInteractionEnabled = YES;
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(presentGalleryImagePicker:) name:NOTIFICATION_GALLERY_BUTTON_TAP object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(changeNameButtonTap:) name:NOTIFICATION_CHANGE_NAME_BUTTON_TAP object:nil];
 
     BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
     if (isLogged) {
@@ -123,7 +123,7 @@
     [self presentViewController:loginVC animated:YES completion:nil];
 }
 
-- (void)presentGalleryImagePicker:(NSNotification *)notification {
+- (void)changeProfilePicture {
     UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
     imgPicker.allowsEditing = YES;
     imgPicker.delegate = self;
@@ -148,8 +148,8 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)changeNameButtonTap:(NSNotification *)notification {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change name" message:@"New username" preferredStyle:UIAlertControllerStyleAlert];
+- (void)changeName {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change username" message:@"" preferredStyle:UIAlertControllerStyleAlert];
     [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
         textField.placeholder = @"New username";
     }];
@@ -159,6 +159,49 @@
             [db changeUsername:alertController.textFields.firstObject.text forUserModel:self.userModel];
             self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
             [self updateUIForUserModel:self.userModel];
+            [self.view makeToast:@"Username changed!"];
+        }
+        else {
+            [self.view makeToast:@"New username too short!"];
+        }
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertController addAction:confirmAction];
+    [alertController addAction:cancelAction];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)changePassword {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change password" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Old password";
+        textField.secureTextEntry = YES;
+    }];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"New password";
+        textField.secureTextEntry = YES;
+    }];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Confirm new password";
+        textField.secureTextEntry = YES;
+    }];
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if ([alertController.textFields.firstObject.text isEqualToString:self.userModel.password]) {
+            if (alertController.textFields[1].text.length > 3 && [alertController.textFields[1].text isEqualToString:alertController.textFields[2].text]) {
+                DataBase *db = [[DataBase alloc] init];
+                [db changePassword:alertController.textFields.lastObject.text forUserModel:self.userModel];
+                self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+                [self updateUIForUserModel:self.userModel];
+                [self.view makeToast:@"Password changed!"];
+            }
+            else {
+                [self.view makeToast:@"New password too short!"];
+            }
+        }
+        else {
+            [self.view makeToast:@"Wrong old password!"];
         }
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {

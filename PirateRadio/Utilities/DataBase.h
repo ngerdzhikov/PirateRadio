@@ -18,6 +18,7 @@
 /* users */
 - (UserModel *)newUserWithUsername:(NSString *)username andPassword:(NSString *)password;
 - (void)changeUsername:(NSString *)newUsername forUserModel:(UserModel *)userModel;
+- (void)changePassword:(NSString *)password forUserModel:(UserModel *)userModel;
 - (BOOL)doesUserWithUsernameExists:(NSString *)username;
 - (UserModel *)userModelForUsername:(NSString *)username;
 - (UserModel *)userModelForUserID:(NSURL *)userID;

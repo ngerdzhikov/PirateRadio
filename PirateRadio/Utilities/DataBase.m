@@ -55,6 +55,13 @@
     [self.context save:nil];
 }
 
+- (void)changePassword:(NSString *)password forUserModel:(UserModel *)userModel {
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:userModel.objectID];
+    NSManagedObject *userEntity = [self.context objectWithID:managedObjectID];
+    [userEntity setValue:password forKey:@"password"];
+    [self.context save:nil];
+}
+
 - (BOOL)doesUserWithUsernameExists:(NSString *)username {
     return [self userObjectForUsername:username] != nil;
 }
@@ -100,11 +107,9 @@
 }
 
 - (void)updateUserProfileImageURL:(NSURL *)newURL forUserModel:(UserModel *)user {
-    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"User"];
-    NSError *error = nil;
-    [request setPredicate:[NSPredicate predicateWithFormat:@"username = %@", user.username]];
-    NSArray *results = [self.context executeFetchRequest:request error:&error];
-    NSManagedObject *userEntity = results.firstObject;
+    NSError *error;
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:user.objectID];
+    NSManagedObject *userEntity = [self.context objectWithID:managedObjectID];
     [userEntity setValue:newURL forKey:@"profileImage"];
     [self.context save:&error];
 }

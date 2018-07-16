@@ -26,39 +26,19 @@
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     UserPreferencesTableViewCell *cell;
-    switch (indexPath.row) {
-        case 0:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell1" forIndexPath:indexPath];
-            break;
-            
-        case 1:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell2" forIndexPath:indexPath];
-            if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
-                cell.contentView.alpha = 1;
-                cell.userInteractionEnabled = YES;
-            }
-            else {
-                cell.contentView.alpha = 0.33;
-                cell.userInteractionEnabled = NO;
-            }
-            break;
-            
-        case 2:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell3" forIndexPath:indexPath];
-            break;
-            
-        case 3:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell4" forIndexPath:indexPath];
-            break;
-            
-        case 4:
-            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell5" forIndexPath:indexPath];
-            break;
-            
-        default:
-            cell = [[UserPreferencesTableViewCell alloc] init];
-            break;
+    NSString *cellIdentifier = [@"userPreferencesCell" stringByAppendingString:[NSString stringWithFormat:@"%ld",(indexPath.row+1)]];
+    cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    if (indexPath.row == 1) {
+        if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
+            cell.contentView.alpha = 1;
+            cell.userInteractionEnabled = YES;
+        }
+        else {
+            cell.contentView.alpha = 0.33;
+            cell.userInteractionEnabled = NO;
+        }
     }
+    cell.profileDelegate = self.profileDelegate;
     return cell;
 }
 
@@ -67,7 +47,7 @@
 }
 
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    return 6;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

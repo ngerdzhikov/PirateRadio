@@ -720,7 +720,6 @@
                                                     <state key="normal" title="Change"/>
                                                     <connections>
                                                         <action selector="changeNameButtonTap:" destination="JDz-MX-CfA" eventType="touchUpInside" id="pKU-wC-25W"/>
-                                                        <action selector="galleryButtonTap:" destination="JDz-MX-CfA" eventType="touchUpInside" id="ZJ7-Be-5WR"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -734,6 +733,39 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="galleryButton" destination="Dzp-hz-Svf" id="1RB-a5-2Se"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell6" id="a6Z-rT-aDP" customClass="UserPreferencesTableViewCell">
+                                        <rect key="frame" x="0.0" y="248" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="a6Z-rT-aDP" id="3AN-sA-d3M">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Change password" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XGu-Oi-VIi">
+                                                    <rect key="frame" x="15" y="11.666666666666664" width="138" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gRi-xc-BeO">
+                                                    <rect key="frame" x="333" y="7" width="53" height="30"/>
+                                                    <state key="normal" title="Change"/>
+                                                    <connections>
+                                                        <action selector="changePasswordButtonTap:" destination="a6Z-rT-aDP" eventType="touchUpInside" id="fpw-xN-Ien"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="gRi-xc-BeO" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="XGu-Oi-VIi" secondAttribute="trailing" constant="114" id="1jj-le-LRX"/>
+                                                <constraint firstAttribute="trailing" secondItem="gRi-xc-BeO" secondAttribute="trailing" constant="28" id="c5X-YW-mxZ"/>
+                                                <constraint firstItem="gRi-xc-BeO" firstAttribute="centerY" secondItem="3AN-sA-d3M" secondAttribute="centerY" id="qcB-AE-Tj0"/>
+                                                <constraint firstItem="XGu-Oi-VIi" firstAttribute="leading" secondItem="3AN-sA-d3M" secondAttribute="leading" constant="15" id="tCB-Lj-Nn3"/>
+                                                <constraint firstItem="XGu-Oi-VIi" firstAttribute="centerY" secondItem="3AN-sA-d3M" secondAttribute="centerY" id="tEu-bV-a9y"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="galleryButton" destination="gRi-xc-BeO" id="wcl-gy-tyX"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -901,9 +933,6 @@
                                                     <exclude reference="cTC-zM-2GZ"/>
                                                     <exclude reference="eoF-gU-LbF"/>
                                                     <exclude reference="k40-Gx-zL5"/>
-                                                    <exclude reference="ISX-zg-BHd"/>
-                                                    <exclude reference="Xrv-9t-fvK"/>
-                                                    <exclude reference="psF-me-Xn5"/>
                                                     <exclude reference="1P6-60-6B1"/>
                                                     <exclude reference="2Y6-g4-RT3"/>
                                                     <exclude reference="5cI-hq-jNv"/>
@@ -915,6 +944,9 @@
                                                     <exclude reference="Veb-Oo-N1D"/>
                                                     <exclude reference="lA1-rX-6Zz"/>
                                                     <exclude reference="pLX-MJ-xiE"/>
+                                                    <exclude reference="ISX-zg-BHd"/>
+                                                    <exclude reference="Xrv-9t-fvK"/>
+                                                    <exclude reference="psF-me-Xn5"/>
                                                     <exclude reference="30R-7h-iuJ"/>
                                                     <exclude reference="3pi-Lw-qoi"/>
                                                     <exclude reference="S6l-m1-KAe"/>
@@ -953,14 +985,14 @@
                                                 <mask key="constraints">
                                                     <include reference="cTC-zM-2GZ"/>
                                                     <include reference="k40-Gx-zL5"/>
-                                                    <include reference="ISX-zg-BHd"/>
-                                                    <include reference="Xrv-9t-fvK"/>
-                                                    <include reference="psF-me-Xn5"/>
                                                     <include reference="2Y6-g4-RT3"/>
                                                     <include reference="DNK-SI-ixI"/>
                                                     <include reference="aiP-JL-ZBN"/>
                                                     <include reference="lA1-rX-6Zz"/>
                                                     <include reference="pLX-MJ-xiE"/>
+                                                    <include reference="ISX-zg-BHd"/>
+                                                    <include reference="Xrv-9t-fvK"/>
+                                                    <include reference="psF-me-Xn5"/>
                                                     <include reference="3pi-Lw-qoi"/>
                                                     <include reference="S6l-m1-KAe"/>
                                                     <include reference="tZG-aE-SOA"/>

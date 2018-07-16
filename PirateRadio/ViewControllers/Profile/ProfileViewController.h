@@ -11,6 +11,6 @@
 
 @class UserModel;
 
-@interface ProfileViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, ProfileLoginPresenterDelegate>
+@interface ProfileViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, ProfileLoginPresenterDelegate, ProfileUserPreferencesDelegate>
 
 @end

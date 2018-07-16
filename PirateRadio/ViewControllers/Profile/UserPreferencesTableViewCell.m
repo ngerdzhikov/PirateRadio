@@ -56,11 +56,15 @@
 }
 
 - (IBAction)galleryButtonTap:(id)sender {
-    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_GALLERY_BUTTON_TAP object:nil];
+    [self.profileDelegate changeProfilePicture];
 }
 
 - (IBAction)changeNameButtonTap:(id)sender {
-    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_CHANGE_NAME_BUTTON_TAP object:nil];
+    [self.profileDelegate changeName];
+}
+
+- (IBAction)changePasswordButtonTap:(id)sender {
+    [self.profileDelegate changePassword];
 }
 
 

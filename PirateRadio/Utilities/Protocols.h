@@ -57,8 +57,9 @@ typedef enum {
 
 @protocol ProfileUserPreferencesDelegate
 
+- (void)changeProfilePicture;
 - (void)changeName;
-- (void)imageGalleryPicker;
+- (void)changePassword;
 
 @end
 
