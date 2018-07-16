@@ -55,6 +55,13 @@ typedef enum {
 
 @end
 
+@protocol ProfileUserPreferencesDelegate
+
+- (void)changeName;
+- (void)imageGalleryPicker;
+
+@end
+
 @protocol ProfileLoginPresenterDelegate
 
 - (void)loggedSuccessfulyWithUserModel:(UserModel *)userModel;

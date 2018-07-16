@@ -34,36 +34,38 @@
     return self;
 }
 
-- (NSArray *)users {
-    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"User"];
-    NSError *error = nil;
-    NSArray *results = [self.context executeFetchRequest:request error:&error];
-    
-    return results;
-}
-
-- (void)addUser:(NSString *)username forPassword:(NSString *)password {
+- (UserModel *)newUserWithUsername:(NSString *)username andPassword:(NSString *)password {
     NSManagedObject *transaction = [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:self.context];
     [transaction setValue:username forKey:@"username"];
     [transaction setValue:password forKey:@"password"];
     
     NSError *err;
     [self.context save:&err];
-    
+    if (!err) {
+        UserModel *userModel = [[UserModel alloc] initWithObjectID:transaction.objectID.URIRepresentation username:username password:password andProfileImageURL:nil];
+        return userModel;
+    }
+    return nil;
 }
 
-- (BOOL)doesUserExists:(NSString *)username {
+- (void)changeUsername:(NSString *)newUsername forUserModel:(UserModel *)userModel {
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:userModel.objectID];
+    NSManagedObject *userEntity = [self.context objectWithID:managedObjectID];
+    [userEntity setValue:newUsername forKey:@"username"];
+    [self.context save:nil];
+}
+
+- (BOOL)doesUserWithUsernameExists:(NSString *)username {
     return [self userObjectForUsername:username] != nil;
 }
 
 - (NSManagedObject *)userObjectForUsername:(NSString *)username {
-    NSArray *results = self.users;
-    for (NSManagedObject *obj in results) {
-        NSArray *keys = [[[obj entity] attributesByName] allKeys];
-        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
-        if ([[dictionary valueForKey:@"username"] isEqualToString:username]) {
-            return obj;
-        }
+    NSFetchRequest *request = [[NSFetchRequest alloc]initWithEntityName:@"User"];
+    NSError *error = nil;
+    [request setPredicate:[NSPredicate predicateWithFormat:@"username = %@", username]];
+    NSArray *results = [self.context executeFetchRequest:request error:&error];
+    if (results) {
+        return results.firstObject;
     }
     return nil;
 }
@@ -78,10 +80,23 @@
         NSString *username = [userEntity valueForKey:@"username"];
         NSString *password = [userEntity valueForKey:@"password"];
         NSURL *url = [userEntity valueForKey:@"profileImage"];
-        UserModel *userModel = [[UserModel alloc] initWithUsername:username password:password andProfileImageURL:url];
+        UserModel *userModel = [[UserModel alloc] initWithObjectID:userEntity.objectID.URIRepresentation username:username password:password andProfileImageURL:url];
         return userModel;
     }
-    else return nil;
+    return nil;
+}
+
+- (UserModel *)userModelForUserID:(NSURL *)userID {
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:userID];
+    NSManagedObject *userEntity = [self.context objectWithID:managedObjectID];
+    NSString *username = [userEntity valueForKey:@"username"];
+    NSString *password = [userEntity valueForKey:@"password"];
+    NSURL *profileImage = [userEntity valueForKey:@"profileImage"];
+    UserModel *userModel = [[UserModel alloc] initWithObjectID:userID username:username password:password andProfileImageURL:profileImage];
+    if (userModel)
+        return userModel;
+    else
+        return nil;
 }
 
 - (void)updateUserProfileImageURL:(NSURL *)newURL forUserModel:(UserModel *)user {
@@ -94,10 +109,11 @@
     [self.context save:&error];
 }
 
-- (void)addFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username {
+- (void)addFavouriteVideo:(VideoModel *)video forUserID:(NSURL *)userID {
     NSError *err;
     
-    NSManagedObject *user = [self userObjectForUsername:username];
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:userID];
+    NSManagedObject *user = [self.context objectWithID:managedObjectID];
     NSMutableOrderedSet *favVideos = [user mutableOrderedSetValueForKey:@"favouriteVideos"];
     
     NSFetchRequest *checkIfVideoExistsRequest = [[NSFetchRequest alloc] initWithEntityName:@"YoutubeVideoModel"];
@@ -129,10 +145,10 @@
     [self.context save:&err];
 }
 
-- (void)deleteFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username {
+- (void)deleteFavouriteVideo:(VideoModel *)video ForUserModel:(UserModel *)userModel {
     NSError *err;
-    NSManagedObject *user = [self userObjectForUsername:username];
-    NSMutableOrderedSet *favVideos = [user mutableOrderedSetValueForKey:@"favouriteVideos"];
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:userModel.objectID];
+    NSManagedObject *user = [self.context objectWithID:managedObjectID];    NSMutableOrderedSet *favVideos = [user mutableOrderedSetValueForKey:@"favouriteVideos"];
     NSFetchRequest *checkIfExistsRequest = [[NSFetchRequest alloc] initWithEntityName:@"YoutubeVideoModel"];
     [checkIfExistsRequest setPredicate:[NSPredicate predicateWithFormat:@"videoId = %@", video.entityId]];
     NSArray *resultFromCheck = [self.context executeFetchRequest:checkIfExistsRequest error:&err];
@@ -147,8 +163,9 @@
     
 }
 
-- (NSArray *)favouriteVideosForUsername:(NSString *)username {
-    NSManagedObject *user = [self userObjectForUsername:username];
+- (NSArray *)favouriteVideosForUserModel:(UserModel *)userModel {
+    NSManagedObjectID *managedObjectID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:userModel.objectID];
+    NSManagedObject *user = [self.context objectWithID:managedObjectID];
     NSOrderedSet *videosSet = [user valueForKey:@"favouriteVideos"];
     NSArray *allVideos = videosSet.array;
     NSMutableArray<VideoModel *> *videos = [[NSMutableArray alloc] init];

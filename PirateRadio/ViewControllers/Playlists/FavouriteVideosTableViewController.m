@@ -46,8 +46,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     DataBase *db = [[DataBase alloc] init];
-    self.userModel = [db userModelForUsername:[NSUserDefaults.standardUserDefaults objectForKey:USER_DEFAULTS_LOGGED_USERNAME]];
-    self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUsername:self.userModel.username]];
+    self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+    self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUserModel:self.userModel]];
     [self.tableView reloadData];
 }
 
@@ -115,7 +115,7 @@
         self.favouriteVideos = [NSArray arrayWithArray:mutableCopy];
         
         DataBase *db = [[DataBase alloc] init];
-        [db deleteFavouriteVideo:video ForUsername:self.userModel.username];
+        [db deleteFavouriteVideo:video ForUserModel:self.userModel];
         
         [tableView reloadData];
     }

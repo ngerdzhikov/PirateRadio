@@ -97,16 +97,15 @@
             }
             else {
                 DataBase *db = [[DataBase alloc] init];
-                if ([db doesUserExists:self.userNameTextField.text]) {
+                if ([db doesUserWithUsernameExists:self.userNameTextField.text]) {
                     shouldContinue = NO;
                     messageToDisplay = @"User with this username already exists";
                 }
                 else {
-                    [db addUser:self.userNameTextField.text forPassword:self.passwordTextField.text];
+                    UserModel *user = [db newUserWithUsername:self.userNameTextField.text andPassword:self.passwordTextField.text];
                     self.isLogged = YES;
                     [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
-                    UserModel *user = [[UserModel alloc] initWithUsername:self.userNameTextField.text password:self.passwordTextField.text andProfileImageURL:nil];
-                    [NSUserDefaults.standardUserDefaults setObject:user.username forKey:USER_DEFAULTS_LOGGED_USERNAME];
+                    [NSUserDefaults.standardUserDefaults setURL:user.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
                     [self.profileDelegate loggedSuccessfulyWithUserModel:user];
                 }
             }

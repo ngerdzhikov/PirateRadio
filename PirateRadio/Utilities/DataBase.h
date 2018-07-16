@@ -16,15 +16,16 @@
 @interface DataBase : NSObject
 
 /* users */
-- (NSArray *)users;
-- (void)addUser:(NSString *)username forPassword:(NSString *)password;
-- (BOOL)doesUserExists:(NSString *)username;
+- (UserModel *)newUserWithUsername:(NSString *)username andPassword:(NSString *)password;
+- (void)changeUsername:(NSString *)newUsername forUserModel:(UserModel *)userModel;
+- (BOOL)doesUserWithUsernameExists:(NSString *)username;
 - (UserModel *)userModelForUsername:(NSString *)username;
+- (UserModel *)userModelForUserID:(NSURL *)userID;
 - (void)updateUserProfileImageURL:(NSURL *)newURL forUserModel:(UserModel *)user;
 /* videos */
-- (void)addFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username;
-- (void)deleteFavouriteVideo:(VideoModel *)video ForUsername:(NSString *)username;
-- (NSArray *)favouriteVideosForUsername:(NSString *)username;
+- (void)addFavouriteVideo:(VideoModel *)video forUserID:(NSURL *)userID;
+- (void)deleteFavouriteVideo:(VideoModel *)video ForUserModel:(UserModel *)userModel;
+- (NSArray *)favouriteVideosForUserModel:(UserModel *)userModel;
 /* songs */
 - (void)addNewSong:(LocalSongModel *)song withURL:(NSURL *)url;
 - (NSArray *)allSongs;

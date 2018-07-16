@@ -14,8 +14,9 @@
 @property (strong, nonatomic, readonly) NSString *username;
 @property (strong, nonatomic, readonly) NSString *password;
 @property (strong, nonatomic, readonly) NSURL *profileImageURL;
+@property (strong, nonatomic, readonly) NSURL *objectID;
 
-- (instancetype)initWithUsername:(NSString *)username password:(NSString *)password andProfileImageURL:(NSURL *)url;
+- (instancetype)initWithObjectID:(NSURL *)objectID username:(NSString *)username password:(NSString *)password andProfileImageURL:(NSURL *)url;
 - (UIImage *)profileImage;
 
 @end

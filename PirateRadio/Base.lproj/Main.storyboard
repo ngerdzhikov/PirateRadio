@@ -702,6 +702,40 @@
                                             <outlet property="galleryButton" destination="9UE-GT-dvl" id="VBf-S1-k9O"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userPreferencesCell5" id="JDz-MX-CfA" customClass="UserPreferencesTableViewCell">
+                                        <rect key="frame" x="0.0" y="204" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JDz-MX-CfA" id="lKL-no-Y3M">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Change username" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9NF-WU-NLH">
+                                                    <rect key="frame" x="15" y="11.666666666666664" width="140" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dzp-hz-Svf">
+                                                    <rect key="frame" x="333" y="7" width="53" height="30"/>
+                                                    <state key="normal" title="Change"/>
+                                                    <connections>
+                                                        <action selector="changeNameButtonTap:" destination="JDz-MX-CfA" eventType="touchUpInside" id="pKU-wC-25W"/>
+                                                        <action selector="galleryButtonTap:" destination="JDz-MX-CfA" eventType="touchUpInside" id="ZJ7-Be-5WR"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="9NF-WU-NLH" firstAttribute="centerY" secondItem="lKL-no-Y3M" secondAttribute="centerY" id="V6P-Ei-Bmz"/>
+                                                <constraint firstAttribute="trailing" secondItem="Dzp-hz-Svf" secondAttribute="trailing" constant="28" id="Vfc-zD-ciq"/>
+                                                <constraint firstItem="Dzp-hz-Svf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9NF-WU-NLH" secondAttribute="trailing" constant="114" id="jET-pb-LFd"/>
+                                                <constraint firstItem="Dzp-hz-Svf" firstAttribute="centerY" secondItem="lKL-no-Y3M" secondAttribute="centerY" id="mav-zE-mn2"/>
+                                                <constraint firstItem="9NF-WU-NLH" firstAttribute="leading" secondItem="lKL-no-Y3M" secondAttribute="leading" constant="15" id="ovu-Qw-gNs"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="galleryButton" destination="Dzp-hz-Svf" id="1RB-a5-2Se"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                             </tableView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7qJ-hN-4vt">

@@ -795,11 +795,14 @@
 }
 
 - (void)addVideoToFavourites {
-    NSString *username = [NSUserDefaults.standardUserDefaults objectForKey:USER_DEFAULTS_LOGGED_USERNAME];
-    if (username) {
+    NSURL *userID = [NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID];
+    if (userID) {
         DataBase *db = [[DataBase alloc] init];
-        [db addFavouriteVideo:self.currentVideoModel ForUsername:username];
+        [db addFavouriteVideo:self.currentVideoModel forUserID:userID];
         [self.view makeToast:@"Video added to favourites!"];
+    }
+    else {
+        [self.view makeToast:@"You are not logged!"];
     }
 }
 

@@ -33,18 +33,19 @@
     [super viewDidLoad];
     self.tableViewDelegate = [[UserPreferencesTableViewDelegate alloc] initWithTableView:self.preferencesTableView];
     
-    if ([self isLoggedInDropbox]) {
-        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
-    }
-    else {
-        [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
-        [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
-    }
     UILongPressGestureRecognizer *imageLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(presentGalleryImagePicker:)];
     [self.userImageView addGestureRecognizer:imageLongPressRecognizer];
     self.userImageView.userInteractionEnabled = YES;
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(presentGalleryImagePicker:) name:NOTIFICATION_GALLERY_BUTTON_TAP object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(changeNameButtonTap:) name:NOTIFICATION_CHANGE_NAME_BUTTON_TAP object:nil];
+
+    BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
+    if (isLogged) {
+        DataBase *db = [[DataBase alloc] init];
+        self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+        [self updateUIForUserModel:self.userModel];
+        
+    }
 }
 
 - (void)viewDidLayoutSubviews {
@@ -56,21 +57,19 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    
     BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
-    if (!isLogged && !self.dismissingPresentedViewController) {
+    if (!isLogged && !self.presentedViewController) {
         [self presentLoginVC];
     }
-    else {
-        NSString *username = [NSUserDefaults.standardUserDefaults objectForKey:USER_DEFAULTS_LOGGED_USERNAME];
-        DataBase *db = [[DataBase alloc] init];
-        self.userModel = [db userModelForUsername:username];
-        
+    
+    if ([self isLoggedInDropbox]) {
+        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
     }
-    self.dismissingPresentedViewController = NO;
-    self.usernameLabel.text = [NSString stringWithFormat:@"Hello %@!", self.userModel.username];
-    self.userImageView.image = self.userModel.profileImage;
-    if (!self.userImageView.image) {
-        self.userImageView.image = [UIImage imageNamed:@"default_user_icon"];
+    else {
+        [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+        [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
     }
 }
 
@@ -91,17 +90,11 @@
         
     }
     else {
-        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
         [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
                                        controller:[[self class] topMostController]
                                           openURL:^(NSURL *url) {
                                               [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-                                                  if ([self isLoggedInDropbox]) {
-                                                      [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
-                                                  }
-                                                  else {
-                                                      [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
-                                                  }
+                                                  
                                               }];
                                           }];
     }
@@ -143,7 +136,7 @@
     NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
     if (imageData) {
         NSURL *fileURL = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-        fileURL = [[[fileURL URLByAppendingPathComponent:@"profile images"] URLByAppendingPathComponent:self.userModel.username] URLByAppendingPathExtension:@"jpeg"];
+        fileURL = [[[fileURL URLByAppendingPathComponent:@"profile images"] URLByAppendingPathComponent:self.userModel.objectID.lastPathComponent] URLByAppendingPathExtension:@"jpeg"];
         
         [imageData writeToURL:fileURL atomically:NO];
     }
@@ -155,6 +148,26 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)changeNameButtonTap:(NSNotification *)notification {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change name" message:@"New username" preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"New username";
+    }];
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (alertController.textFields.firstObject.text.length > 3) {
+            DataBase *db = [[DataBase alloc] init];
+            [db changeUsername:alertController.textFields.firstObject.text forUserModel:self.userModel];
+            self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+            [self updateUIForUserModel:self.userModel];
+        }
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertController addAction:confirmAction];
+    [alertController addAction:cancelAction];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
 
 - (void)loggedSuccessfulyWithUserModel:(UserModel *)userModel {
     self.userModel = userModel;
