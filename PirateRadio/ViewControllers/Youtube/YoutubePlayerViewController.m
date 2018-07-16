@@ -97,7 +97,7 @@
     else
         self.navigationItem.rightBarButtonItems = @[nextVideoButton, addToFavourites];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationWillResignActiveNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:NOTIFICATION_APP_ENTERED_BACKGROUND object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopDownloadingAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
@@ -291,6 +291,7 @@
         
         [self.youtubePlayer playVideo];
     }
+    NSLog(@"Entered background ");
 }
 
 - (void)autoPlaySwitchTap:(id)sender {

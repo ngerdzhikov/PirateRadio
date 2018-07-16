@@ -15,6 +15,10 @@ typedef enum {
     EnumCellMediaPlaybackStatePaused
 } EnumCellMediaPlaybackState;
 
+
+@class UserModel;
+@class LocalSongModel;
+
 @protocol SearchSuggestionsDelegate
 
 @property (strong, nonatomic) NSMutableArray<NSString *> *searchSuggestions;
@@ -23,10 +27,6 @@ typedef enum {
 - (void)makeSearchWithString:(NSString *)string;
 
 @end
-
-
-
-@class LocalSongModel;
 
 @protocol SongListDelegate
 
