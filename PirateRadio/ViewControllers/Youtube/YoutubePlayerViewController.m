@@ -72,7 +72,7 @@
     
     self.suggestedVideosTableView.delegate = self;
     self.suggestedVideosTableView.dataSource = self;
-    
+
     if (self.youtubePlaylist.playlistItems.count <= 1) {
         [self setYoutubePlayerForVideoModel:self.currentVideoModel];
         [self makeSearchForSuggestedVideosForVideoId:self.currentVideoModel.entityId];
@@ -97,7 +97,7 @@
     else
         self.navigationItem.rightBarButtonItems = @[nextVideoButton, addToFavourites];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationWillResignActiveNotification object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopDownloadingAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
@@ -177,8 +177,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-    NSLog(@"MEMORY WARNING");
 }
 
 - (void)playPauseStream {
@@ -270,8 +268,6 @@
 }
 
 - (void)playerView:(YTPlayerView *)playerView didChangeToState:(YTPlayerState)state {
-    if (state == kYTPlayerStatePaused){}
-    if (state == kYTPlayerStatePlaying){}
     if (self.view.window) {
         if (state == kYTPlayerStatePlaying) {
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_YOUTUBE_VIDEO_STARTED_PLAYING object:nil];
@@ -287,9 +283,6 @@
             
         }
     }
-    else {
-    }
- 
 }
 
 - (void)didEnterBackground:(NSNotification *)notification {
@@ -430,6 +423,9 @@
             return 0.0f;
         }
         return 50.0f;
+    }
+    if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) | ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)) {
+        return 185.0f;
     }
     return 255.0f;
 }
