@@ -43,7 +43,8 @@
     UILongPressGestureRecognizer *imageLongPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(presentGalleryImagePicker:)];
     [self.userImageView addGestureRecognizer:imageLongPressRecognizer];
     self.userImageView.userInteractionEnabled = YES;
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(presentGalleryImagePicker:) name:@"galleryButtonTap" object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(presentGalleryImagePicker:) name:NOTIFICATION_GALLERY_BUTTON_TAP object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(changeNameButtonTap:) name:NOTIFICATION_CHANGE_NAME_BUTTON_TAP object:nil];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -123,7 +124,9 @@
 
 - (void)presentLoginVC {
     LoginViewController *loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    [loginVC setModalPresentationStyle:UIModalPresentationCurrentContext];
+    loginVC.profileDelegate = self;
+    self.definesPresentationContext = YES;
+    [loginVC setModalPresentationStyle:UIModalPresentationOverCurrentContext];
     [self presentViewController:loginVC animated:YES completion:nil];
 }
 
@@ -150,6 +153,21 @@
     DataBase *db = [[DataBase alloc] init];
     [db updateUserProfileImageURL:imageURL forUserModel:self.userModel];
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+- (void)loggedSuccessfulyWithUserModel:(UserModel *)userModel {
+    self.userModel = userModel;
+    [self updateUIForUserModel:userModel];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)updateUIForUserModel:(UserModel *)user {
+    self.usernameLabel.text = [NSString stringWithFormat:@"Hello %@!", user.username];
+    self.userImageView.image = user.profileImage;
+    if (!self.userImageView.image) {
+        self.userImageView.image = [UIImage imageNamed:@"default_user_icon"];
+    }
 }
 
 @end

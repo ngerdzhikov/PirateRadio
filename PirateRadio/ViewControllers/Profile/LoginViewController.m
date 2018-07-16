@@ -37,18 +37,14 @@
     
     self.userNameTextField.delegate = self;
     self.passwordTextField.delegate = self;
-    // Do any additional setup after loading the view.
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    if (!self.isLogged)
-        [self dismissSelf];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)viewDidLayoutSubviews {
@@ -111,7 +107,7 @@
                     [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
                     UserModel *user = [[UserModel alloc] initWithUsername:self.userNameTextField.text password:self.passwordTextField.text andProfileImageURL:nil];
                     [NSUserDefaults.standardUserDefaults setObject:user.username forKey:USER_DEFAULTS_LOGGED_USERNAME];
-                    [self checkIfUserIsLogged];
+                    [self.profileDelegate loggedSuccessfulyWithUserModel:user];
                 }
             }
             if (!shouldContinue) {
@@ -149,8 +145,8 @@
         if ([userModel.password isEqualToString:password]) {
             self.isLogged = YES;
             [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
-            [NSUserDefaults.standardUserDefaults setObject:userModel.username forKey:USER_DEFAULTS_LOGGED_USERNAME];
-            [self checkIfUserIsLogged];
+            [NSUserDefaults.standardUserDefaults setURL:userModel.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
+            [self.profileDelegate loggedSuccessfulyWithUserModel:userModel];
         }
     }
     
@@ -158,18 +154,6 @@
         UIWindow *window=[UIApplication sharedApplication].keyWindow;
         [window.rootViewController.view makeToast:@"Invalid username or password"];
     }
-}
-
-- (void)checkIfUserIsLogged {
-    if (self.isLogged) {
-        [self dismissSelf];
-    }
-}
-
-- (void)dismissSelf {
-    ProfileViewController *profileVC = (ProfileViewController *)self.presentingViewController.childViewControllers.lastObject;
-    profileVC.dismissingPresentedViewController = YES;
-    [profileVC dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

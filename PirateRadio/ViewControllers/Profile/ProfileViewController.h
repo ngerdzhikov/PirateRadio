@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Protocols.h"
 
 @class UserModel;
 
-@interface ProfileViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
-
-@property BOOL dismissingPresentedViewController;
+@interface ProfileViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate, ProfileLoginPresenterDelegate>
 
 @end

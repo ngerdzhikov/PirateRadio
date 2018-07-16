@@ -55,6 +55,12 @@ typedef enum {
 
 @end
 
+@protocol ProfileLoginPresenterDelegate
+
+- (void)loggedSuccessfulyWithUserModel:(UserModel *)userModel;
+
+@end
+
 
 
 #endif /* Protocols_h */

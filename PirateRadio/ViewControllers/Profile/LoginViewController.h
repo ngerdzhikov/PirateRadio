@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Protocols.h"
 
 @interface LoginViewController : UIViewController <UITextFieldDelegate>
+
+@property (strong, nonatomic) id<ProfileLoginPresenterDelegate> profileDelegate;
 
 @end

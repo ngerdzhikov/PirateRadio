@@ -51,6 +51,10 @@
             cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell4" forIndexPath:indexPath];
             break;
             
+        case 4:
+            cell = [tableView dequeueReusableCellWithIdentifier:@"userPreferencesCell5" forIndexPath:indexPath];
+            break;
+            
         default:
             cell = [[UserPreferencesTableViewCell alloc] init];
             break;
@@ -63,7 +67,7 @@
 }
 
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    return 5;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

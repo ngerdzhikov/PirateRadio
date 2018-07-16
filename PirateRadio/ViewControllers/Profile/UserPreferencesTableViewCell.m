@@ -56,7 +56,11 @@
 }
 
 - (IBAction)galleryButtonTap:(id)sender {
-    [NSNotificationCenter.defaultCenter postNotificationName:@"galleryButtonTap" object:nil];
+    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_GALLERY_BUTTON_TAP object:nil];
+}
+
+- (IBAction)changeNameButtonTap:(id)sender {
+    [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_CHANGE_NAME_BUTTON_TAP object:nil];
 }
 
 
