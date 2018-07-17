@@ -17,7 +17,7 @@
 @interface PlaylistsTableViewController ()
 
 @property (strong, nonatomic) SongListPlusPlayerViewController * songListPlusPlayerVC;
-@property BOOL showDropboxPlaylist;
+@property BOOL showLoggedUserPlaylists;
 
 @end
 
@@ -47,12 +47,12 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    self.showDropboxPlaylist = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
+    self.showLoggedUserPlaylists = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
     
     self.playlists = [[NSMutableArray alloc] init];
-    PlaylistModel *favouriteVideosPlaylist = [[PlaylistModel alloc] initWithName:@"Favourite Videos"];
-    [self.playlists addObject:favouriteVideosPlaylist];
-    if (self.showDropboxPlaylist) {
+    if (self.showLoggedUserPlaylists) {
+        PlaylistModel *favouriteVideosPlaylist = [[PlaylistModel alloc] initWithName:@"Favourite Videos"];
+        [self.playlists addObject:favouriteVideosPlaylist];
         PlaylistModel *dropboxFiles = [[PlaylistModel alloc] initWithName:@"Dropbox"];
         [self.playlists addObject:dropboxFiles];
     }
@@ -88,10 +88,10 @@
     else {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
-    if (indexPath.row == 0) {
+    if (indexPath.row == 0 && self.self.showLoggedUserPlaylists) {
         cell.imageView.image = [UIImage imageNamed:@"video_icon"];
     }
-    else if (indexPath.row == 1 && self.showDropboxPlaylist) {
+    else if (indexPath.row == 1 && self.self.showLoggedUserPlaylists) {
         cell.imageView.image = [UIImage imageNamed:@"dropbox_icon"];
     }
     else {
@@ -104,11 +104,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PlaylistModel *playlist = self.playlists[indexPath.row];
     
-    if (indexPath.row == 0) {
+    if (indexPath.row == 0 && self.self.showLoggedUserPlaylists) {
         FavouriteVideosTableViewController *favouriteVideosTVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"FavouriteVideosTableViewController"];
         [self.navigationController pushViewController:favouriteVideosTVC animated:YES];
     }
-    else if (indexPath.row == 1 && self.showDropboxPlaylist) {
+    else if (indexPath.row == 1 && self.self.showLoggedUserPlaylists) {
         DropboxSongListTableViewController *dropboxSongListVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"DropboxSongList"];
         [self.navigationController pushViewController:dropboxSongListVC animated:YES];
     }
@@ -131,7 +131,7 @@
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ((indexPath.row > 1 && self.showDropboxPlaylist) | (indexPath.row > 0 && !self.showDropboxPlaylist)) return YES;
+    if ((indexPath.row > 1 && self.self.showLoggedUserPlaylists) | (indexPath.row >= 0 && !self.self.showLoggedUserPlaylists)) return YES;
     return NO;
 }
 
@@ -191,7 +191,7 @@
         
         CGPoint touchPoint = [recognizer locationInView:self.tableView];
         NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchPoint];
-        if ((indexPath.row > 1 && self.showDropboxPlaylist) | (indexPath.row > 0 && !self.showDropboxPlaylist)) {
+        if ((indexPath.row > 1 && self.showLoggedUserPlaylists) | (indexPath.row >= 0 && !self.showLoggedUserPlaylists)) {
             PlaylistModel *playlist = self.playlists[indexPath.row];
             
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Rename playlist" message:nil preferredStyle:UIAlertControllerStyleAlert];
