@@ -249,13 +249,11 @@
      ^(BOOL isFinished) {
          if (CMTIME_COMPARE_INLINE(seekTimeInProgress, ==, self.chaseTime)) {
              
-             [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
-             
              self.isSeekInProgress = NO;
-             
              if ([self.playButton.currentImage isEqual:[UIImage imageNamed:@"pause_button_icon"]]) {
                  [PirateAVPlayer.sharedPlayer play];
              }
+             [self updateMPNowPlayingInfoCenterWithLoadedSongInfo];
          }
          else{
              [self trySeekToChaseTime];
