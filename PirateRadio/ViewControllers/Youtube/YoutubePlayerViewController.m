@@ -172,6 +172,7 @@
     [self stopAnimation];
     [NSNotificationCenter.defaultCenter removeObserver:self];
     [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:0];
+    [self.youtubePlayer pauseVideo];
     
 }
 
