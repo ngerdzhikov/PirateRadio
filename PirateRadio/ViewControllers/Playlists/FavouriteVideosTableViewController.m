@@ -45,10 +45,15 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    DataBase *db = [[DataBase alloc] init];
-    self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
-    self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUserModel:self.userModel]];
-    [self.tableView reloadData];
+    if (![NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED]) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    else {
+        DataBase *db = [[DataBase alloc] init];
+        self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+        self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUserModel:self.userModel]];
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark - Table view data source
