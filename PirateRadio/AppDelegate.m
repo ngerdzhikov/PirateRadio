@@ -106,7 +106,7 @@
         
         [NSFileManager.defaultManager moveItemAtURL:url toURL:fileURL error:&error];
         if (error) {
-            NSLog(@"error = %@", error.localizedDescription);
+            NSLog(@"error = %@", error);
         }
         else {
             LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:fileURL];
@@ -163,6 +163,7 @@
             } else if ([authResult isError]) {
                 NSLog(@"Error: %@", authResult);
             }
+            [NSNotificationCenter.defaultCenter postNotificationName:@"dropboxAuthorization" object:nil];
         }
     }
     return NO;

@@ -22,8 +22,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *signUpLabel;
 @property (weak, nonatomic) IBOutlet UIView *smallerContainerView;
 
-@property BOOL isLogged;
-
 @end
 
 @implementation LoginViewController
@@ -33,7 +31,6 @@
     self.signUpLabel.userInteractionEnabled = YES;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(signUpLabelTap)];
     [self.signUpLabel addGestureRecognizer:tapGesture];
-    self.isLogged = false;
     
     self.userNameTextField.delegate = self;
     self.passwordTextField.delegate = self;
@@ -103,7 +100,6 @@
                 }
                 else {
                     UserModel *user = [db newUserWithUsername:self.userNameTextField.text andPassword:self.passwordTextField.text];
-                    self.isLogged = YES;
                     [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
                     [NSUserDefaults.standardUserDefaults setURL:user.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
                     [self.profileDelegate loggedSuccessfulyWithUserModel:user];
@@ -140,18 +136,13 @@
 - (void)authenticateUsername:(NSString *)username andPassword:(NSString *)password {
     DataBase *db = [[DataBase alloc] init];
     UserModel *userModel = [db userModelForUsername:username];
-    if (userModel) {
-        if ([userModel.password isEqualToString:password]) {
-            self.isLogged = YES;
-            [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
-            [NSUserDefaults.standardUserDefaults setURL:userModel.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
-            [self.profileDelegate loggedSuccessfulyWithUserModel:userModel];
-        }
+    if ([userModel.password isEqualToString:password]) {
+        [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
+        [NSUserDefaults.standardUserDefaults setURL:userModel.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
+        [self.profileDelegate loggedSuccessfulyWithUserModel:userModel];
     }
-    
-    if (!self.isLogged) {
-        UIWindow *window=[UIApplication sharedApplication].keyWindow;
-        [window.rootViewController.view makeToast:@"Invalid username or password"];
+    else {
+        [self.view makeToast:@"Invalid username or password"];
     }
 }
 

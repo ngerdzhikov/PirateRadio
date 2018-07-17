@@ -44,8 +44,9 @@
         DataBase *db = [[DataBase alloc] init];
         self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
         [self updateUIForUserModel:self.userModel];
-        
     }
+    
+    [self setDropboxButtonDependingOnAuthorization];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -58,18 +59,9 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    
     BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
     if (!isLogged && !self.presentedViewController) {
         [self presentLoginVC];
-    }
-    
-    if ([self isLoggedInDropbox]) {
-        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
-    }
-    else {
-        [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
-        [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
     }
 }
 
@@ -87,32 +79,32 @@
     if ([self isLoggedInDropbox]) {
         [DBClientsManager unlinkAndResetClients];
         [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
-        
     }
     else {
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setDropboxButtonDependingOnAuthorization) name:@"dropboxAuthorization" object:nil];
         [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
-                                       controller:[[self class] topMostController]
+                                       controller:self
                                           openURL:^(NSURL *url) {
                                               [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
                                                   
                                               }];
                                           }];
     }
-    
+}
+
+- (void)setDropboxButtonDependingOnAuthorization {
+    if ([self isLoggedInDropbox]) {
+        [self.dropboxButton setTitle:@"Dropbox Sign out" forState:UIControlStateNormal];
+    }
+    else {
+        [self.dropboxButton setTitle:@"Dropbox Sign in" forState:UIControlStateNormal];
+        [NSUserDefaults.standardUserDefaults setBool:NO forKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX];
+    }
+    [NSNotificationCenter.defaultCenter removeObserver:self name:@"dropboxAuthorization" object:nil];
 }
 
 - (BOOL)isLoggedInDropbox {
     return [DBClientsManager authorizedClient] != nil;
-}
-
-+ (UIViewController*)topMostController {
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    
-    while (topController.presentedViewController) {
-        topController = topController.presentedViewController;
-    }
-    
-    return topController;
 }
 
 - (void)presentLoginVC {
@@ -189,15 +181,25 @@
     }];
     UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if ([alertController.textFields.firstObject.text isEqualToString:self.userModel.password]) {
-            if (alertController.textFields[1].text.length > 3 && [alertController.textFields[1].text isEqualToString:alertController.textFields[2].text]) {
-                DataBase *db = [[DataBase alloc] init];
-                [db changePassword:alertController.textFields.lastObject.text forUserModel:self.userModel];
-                self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
-                [self updateUIForUserModel:self.userModel];
-                [self.view makeToast:@"Password changed!"];
+            if (![alertController.textFields.firstObject.text isEqualToString:alertController.textFields[1].text] && ![alertController.textFields.firstObject.text isEqualToString:alertController.textFields.lastObject.text]) {
+                if ([alertController.textFields[1].text isEqualToString:alertController.textFields[2].text]) {
+                    if (alertController.textFields[1].text.length > 3) {
+                        DataBase *db = [[DataBase alloc] init];
+                        [db changePassword:alertController.textFields.lastObject.text forUserModel:self.userModel];
+                        self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+                        [self updateUIForUserModel:self.userModel];
+                        [self.view makeToast:@"Password changed!"];
+                    }
+                    else {
+                        [self.view makeToast:@"New password too short!"];
+                    }
+                }
+                else {
+                    [self.view makeToast:@"Please confirm password!"];
+                }
             }
             else {
-                [self.view makeToast:@"New password too short!"];
+                [self.view makeToast:@"New password is the same as old password!"];
             }
         }
         else {
