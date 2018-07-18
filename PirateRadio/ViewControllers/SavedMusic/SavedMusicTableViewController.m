@@ -20,7 +20,6 @@
 
 @interface SavedMusicTableViewController ()
 
-@property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
 @property (strong, nonatomic) UIImageView *noSongsImageView;
 
 @end
@@ -114,12 +113,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     SavedMusicTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"savedMusicCell" forIndexPath:indexPath];
-//    if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_THEME]) {
-//        cell.backgroundColor = [UIColor clearColor];
-//        cell.musicTitle.textColor = [UIColor whiteColor];
-//        cell.songDurationLabel.textColor = [UIColor whiteColor];
-//        cell.playIndicator.tintColor = [UIColor whiteColor];
-//    }
     LocalSongModel *song = self.songs[indexPath.row];
     cell.musicTitle.text = [song properMusicTitle];
     cell.songDurationLabel.text = [self extractSongDurationFromNumber:song.duration];
@@ -168,9 +161,11 @@
 //            remove from dataSource
             [self.allSongs removeObjectAtIndex:indexPath.row];
             
-//            remove from DB
-            DataBase *db = [[DataBase alloc] init];
-            [db deleteDBSongforLocalSong:song];
+//            remove from Realm
+            [RLMRealm.defaultRealm transactionWithBlock:^{
+                [RLMRealm.defaultRealm deleteObject:song];
+            }];
+            
             
 //            post notification that song is deleted and pass it
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
@@ -184,6 +179,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     [self didSelectSongFromCellForIndexPath:indexPath];
 }
 
@@ -356,10 +352,12 @@
 }
 
 - (void)didRecieveNewSong:(NSNotification *)notification {
-    LocalSongModel *newSong = [notification.userInfo objectForKey:@"song"];
-    [self.allSongs addObject:newSong];
+    NSString *songName = [notification.userInfo objectForKey:@"song"];
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        LocalSongModel *newSong = [LocalSongModel objectForPrimaryKey:songName];
+        [self.allSongs addObject:newSong];
+        
         NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
         [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
     });

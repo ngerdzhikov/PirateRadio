@@ -10,7 +10,7 @@
 
 @interface LocalSongModel ()
 
-@property (strong, nonatomic) NSURL *localSongURL;
+@property (strong, nonatomic) NSString *songUniqueName;
 @property (strong, nonatomic) NSString *artistName;
 @property (strong, nonatomic) NSString *songTitle;
 
@@ -22,12 +22,21 @@
 -(instancetype) initWithLocalSongURL:(NSURL *)songURL {
     self = [super init];
     if (self) {
-        self.localSongURL = songURL;
+        self.songUniqueName = songURL.lastPathComponent;
         [self extractArtistNameAndSongTitleFromSongURL:songURL];
     }
     return self;
 }
 
+-(NSURL *)localSongURL {
+    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
+    return [sourcePath URLByAppendingPathComponent:self.songUniqueName];
+}
+
+- (NSURL *)videoURL {
+    return [[NSURL URLWithString:@"https://www.youtube.com/watch?v="] URLByAppendingPathComponent:self.videoId isDirectory:NO];
+}
 
 -(NSString *)extractedSongTitleFromString:(NSString *)title {
     NSString *modifiedTitle = title;
@@ -64,12 +73,10 @@
 }
 
 -(NSURL *)localArtworkURL {
-    
-    NSString *urlString = self.localSongURL.absoluteString;
-    NSString *artworkURLString = [[urlString stringByReplacingOccurrencesOfString:@"/songs/" withString:@"/artwork/"] stringByReplacingOccurrencesOfString:@".mp3" withString:@".jpg"];
-    NSURL *artworkURL = [NSURL URLWithString:artworkURLString];
-    
-    return artworkURL;
+    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
+    sourcePath = [sourcePath URLByAppendingPathComponent:@"artwork"];
+    NSString *artworkName = [[self.songUniqueName substringToIndex:self.songUniqueName.length - 4] stringByAppendingString:@".jpg"];
+    return [sourcePath URLByAppendingPathComponent:artworkName];
 }
 
 -(NSArray<NSString *> *)keywordsFromTitle {
@@ -112,28 +119,12 @@
     
 }
 
-- (void)encodeWithCoder:(NSCoder *)encoder {
-    NSString *fileName = self.localSongURL.lastPathComponent;
-    [encoder encodeObject:fileName forKey:@"localSongURL"];
-    [encoder encodeObject:self.artistName forKey:@"artistName"];
-    [encoder encodeObject:self.songTitle forKey:@"songTitle"];
-    [encoder encodeObject:self.videoURL forKey:@"videoURL"];
-    [encoder encodeObject:self.duration forKey:@"duration"];
++ (NSArray<NSString *> *)ignoredProperties {
+    return @[@"localSongURL"];
 }
 
-- (id)initWithCoder:(NSCoder *)decoder {
-    
-    if((self = [super init])) {
-        NSString *fileName = [decoder decodeObjectForKey:@"localSongURL"];
-        NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-        sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
-        self.localSongURL = [sourcePath URLByAppendingPathComponent:fileName isDirectory:NO];
-        self.artistName = [decoder decodeObjectForKey:@"artistName"];
-        self.songTitle = [decoder decodeObjectForKey:@"songTitle"];
-        self.videoURL = [decoder decodeObjectForKey:@"videoURL"];
-        self.duration = [decoder decodeObjectForKey:@"duration"];
-    }
-    return self;
++ (NSString *)primaryKey {
+    return @"songUniqueName";
 }
 
 @end

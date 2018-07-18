@@ -11,6 +11,7 @@
 #import "ArtworkDownload.h"
 #import "LocalSongModel.h"
 #import "Constants.h"
+#import "VideoModel.h"
 #import "DataBase.h"
 #import "Reachability.h"
 #import "AVKit/AVKit.h"
@@ -69,21 +70,28 @@
         NSLog(@"error = %@", error.localizedDescription);
     }
     else {
+        
         LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
-        song.videoURL = download.videoURL;
+        song.videoId = download.video.entityId;
         AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
         NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
         song.duration = duration;
-        [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModel:song];
+        
+        [RLMRealm.defaultRealm beginWriteTransaction];
+//        [RLMRealm.defaultRealm transactionWithBlock:^{
+            [RLMRealm.defaultRealm addObject:song];
+//        }];
+        
+        [RLMRealm.defaultRealm commitWriteTransaction]; 
+        
+        [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModelWithUniqueName:song.songUniqueName];
         [self.downloads removeObjectForKey:[NSNumber numberWithUnsignedInteger:downloadTask.taskIdentifier]];
         
-        NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:@[song, download] forKeys:@[@"song", @"download"]];
+        NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:@[song.songUniqueName, download] forKeys:@[@"song", @"download"]];
         
         [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:userInfo];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            DataBase *db = [[DataBase alloc] init];
-            [db addNewSong:song withURL:download.videoURL];
-        });
+        
+        
         Reachability *reachability = [Reachability reachabilityForInternetConnection];
         if (reachability.isReachable && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
             if (![DropBox doesSongExists:song]) {
@@ -96,9 +104,9 @@
                 }
             }
         }
+        
     }
     [self.youtubeSession resetWithCompletionHandler:^{
-        
     }];
 }
 

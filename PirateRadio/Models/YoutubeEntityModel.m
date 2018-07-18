@@ -14,7 +14,7 @@
 
 @property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSString *entityId;
-@property (strong, nonatomic) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
+@property (strong, nonatomic) ThumbnailModel *thumbnail;
 @property (strong, nonatomic) NSString *entityDescription;
 @property (strong, nonatomic) NSString *kind;
 @property (strong, nonatomic) NSString *channelTitle;
@@ -35,13 +35,8 @@
         self.entityDescription = [snippet objectForKey:@"description"];
         self.publishedAt = [snippet objectForKey:@"publishedAt"];
         NSDictionary<NSString *, id> *thumbnailsDict = [snippet objectForKey:@"thumbnails"];
-        NSMutableDictionary<NSString *,ThumbnailModel *> *temp = [[NSMutableDictionary alloc] init];
-        for (NSString *quality in thumbnailsDict.allKeys) {
-            NSDictionary *thumbDict = [thumbnailsDict objectForKey:quality];
-            ThumbnailModel *thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:thumbDict];
-            [temp setObject:thumbnail forKey:quality];
-        }
-        self.thumbnails = temp.copy;
+        NSDictionary *thumbDict = [thumbnailsDict objectForKey:thumbnailsDict.allKeys.lastObject];
+        self.thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:thumbDict];
         UIImage *thumb = [UIImage imageWithData:[NSData dataWithContentsOfURL:[self.thumbnails objectForKey:@"high"].url]];
         [ImageCacher.sharedInstance cacheImage:thumb forSearchResultId:entityId];
         self.channelTitle = [snippet objectForKey:@"channelTitle"];
@@ -58,11 +53,16 @@
         self.channelTitle = channel;
         self.publishedAt = publishedAt;
         if (thumbnailModel) {
-            self.thumbnails = @{@"high" : thumbnailModel};
+            self.thumbnail = thumbnailModel;
         }
         
     }
     return self;
+}
+
+- (NSDictionary<NSString *, ThumbnailModel *> *)thumbnails {
+//    returning a dictionary with only 1 element for high resolution
+    return [NSDictionary dictionaryWithObject:self.thumbnail forKey:@"high"];
 }
 
 @end

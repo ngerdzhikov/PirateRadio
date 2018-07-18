@@ -129,21 +129,9 @@
 
 - (NSMutableArray<LocalSongModel *> *)songsFromDisk {
     
-    DataBase *db = [[DataBase alloc] init];
-    
     NSMutableArray<LocalSongModel *> * songs = [[NSMutableArray alloc] init];
-    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-    sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
-    
-    NSArray *allSongs = db.allSongs;
-    for (NSManagedObject *obj in allSongs) {
-        NSArray *keys = [[[obj entity] attributesByName] allKeys];
-        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
-        NSString *songLastPathComponent = [dictionary valueForKey:@"identityName"];
-        NSURL *localURL = [sourcePath URLByAppendingPathComponent:songLastPathComponent];
-        LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
-        song.videoURL = [dictionary valueForKey:@"videoURL"];
-        song.duration = [dictionary valueForKey:@"duration"];
+    RLMResults *results = [LocalSongModel allObjects];
+    for (LocalSongModel *song in results) {
         [songs addObject:song];
     }
     

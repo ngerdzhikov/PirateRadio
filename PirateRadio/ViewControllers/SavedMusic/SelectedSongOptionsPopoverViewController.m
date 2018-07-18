@@ -28,10 +28,8 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)copyVideoLinkButtonTap:(id)sender {
-    DataBase *db = [[DataBase alloc] init];
-    
-    NSURL *videoURL = [db videoURLForLocalSongModel:self.song];
+- (IBAction)copyVideoLinkButtonTap:(id)sender {    
+    NSURL *videoURL = self.song.videoURL;
     
     if ([videoURL.absoluteString isEqualToString:@""]) {
         [self.presentingViewController.view makeToast:@"This song doesn't have a video url"];
@@ -51,6 +49,7 @@
     }
     else {
         [DropBox uploadLocalSong:self.song];
+        [DropBox uploadArtworkForLocalSong:self.song];
     }
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }

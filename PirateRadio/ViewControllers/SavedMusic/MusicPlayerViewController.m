@@ -336,8 +336,8 @@
         
         NSNumber *elapsedTime = [NSNumber numberWithDouble:CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentTime)];
         NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(PirateAVPlayer.sharedPlayer.currentItem.duration)];
+        __block UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:PirateAVPlayer.sharedPlayer.currentSong.localArtworkURL]];
         MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
-            UIImage *image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:PirateAVPlayer.sharedPlayer.currentSong.localArtworkURL]];
             if (!image) {
                 image = [UIImage imageNamed:@"unknown_artist"];
             }

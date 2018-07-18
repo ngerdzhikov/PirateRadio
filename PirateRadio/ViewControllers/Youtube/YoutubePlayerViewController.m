@@ -58,6 +58,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:NOTIFICATION_APP_ENTERED_BACKGROUND object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopDownloadingAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
     [self reloadView];
 }
 
@@ -94,13 +98,9 @@
         UIBarButtonItem *previousVideoButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRewind target:self action:@selector(playPreviousVideo)];
         self.navigationItem.rightBarButtonItems = @[nextVideoButton, previousVideoButton, addToFavourites];
     }
-    else
+    else {
         self.navigationItem.rightBarButtonItems = @[nextVideoButton, addToFavourites];
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didEnterBackground:) name:NOTIFICATION_APP_ENTERED_BACKGROUND object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self.youtubePlayer selector:@selector(pauseVideo) name:NOTIFICATION_AVPLAYER_STARTED_PLAYING object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didStartDownloading:) name:NOTIFICATION_DID_START_DOWNLOADING object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(stopDownloadingAnimation:) name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
+    }
     
     self.isSegueDone = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_SEGUE_DONE];
     
@@ -688,6 +688,7 @@
     }
     self.videoDescription.frame = cell.contentView.frame;
     self.expandTextViewButton.frame = CGRectMake(self.videoDescription.frame.size.width - 20, self.videoDescription.frame.size.height - 20, 20, 20);
+    [self.videoDescription setContentOffset:CGPointZero animated:YES];
 }
 
 - (void)addDownloadButtonInCell:(UITableViewCell *)cell {
@@ -723,16 +724,14 @@
         
         NSNumber *elapsedTime = [NSNumber numberWithFloat:self.youtubePlayer.currentTime];
         NSNumber *duration = [NSNumber numberWithDouble:self.youtubePlayer.duration];
+        __block UIImage *image;
+        image = [ImageCacher.sharedInstance imageForSearchResultId:self.currentVideoModel.entityId];
+        
+        if (!image) {
+            ThumbnailModel *thumbnail = [self.currentVideoModel.thumbnails objectForKey:@"high"];
+            image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:thumbnail.url]];
+        }
         MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(50, 50) requestHandler:^UIImage * _Nonnull(CGSize size) {
-            
-            UIImage *image;
-            image = [ImageCacher.sharedInstance imageForSearchResultId:self.currentVideoModel.entityId];
-
-            if (!image) {
-                ThumbnailModel *thumbnail = [self.currentVideoModel.thumbnails objectForKey:@"high"];
-                image = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:thumbnail.url]];
-            }
-
             return image;
         }];
         NSDictionary *info = @{ MPMediaItemPropertyArtist: self.currentVideoModel.channelTitle,
@@ -797,10 +796,12 @@
 }
 
 - (void)addVideoToFavourites {
-    NSURL *userID = [NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID];
-    if (userID) {
-        DataBase *db = [[DataBase alloc] init];
-        [db addFavouriteVideo:self.currentVideoModel forUserID:userID];
+    NSInteger userID = [NSUserDefaults.standardUserDefaults integerForKey:USER_DEFAULT_LOGGED_USER_ID];
+    UserModel *currentLoggedUser = [UserModel objectsWhere:@"userID = %ld",userID].firstObject;
+    if (currentLoggedUser) {
+        [RLMRealm.defaultRealm transactionWithBlock:^{
+            [currentLoggedUser.favouriteYoutubeEntities addObject:self.currentVideoModel];
+        }];
         [self.view makeToast:@"Video added to favourites!"];
     }
     else {

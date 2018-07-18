@@ -42,4 +42,8 @@
     return self;
 }
 
++ (NSArray<NSString *> *)ignoredProperties {
+    return @[@"playlistItems"];
+}
+
 @end

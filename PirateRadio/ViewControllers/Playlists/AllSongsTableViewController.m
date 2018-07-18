@@ -28,7 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.allSongs = [[NSMutableArray alloc] init];
-    [self loadSongsFromCoreData];
+    [self loadSongsFromRealm];
     self.selectedSongs = [[NSMutableArray alloc] init];
     self.navigationItem.title = @"Songs to add";
     
@@ -49,23 +49,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)loadSongsFromCoreData {
-    
-    DataBase *db = [[DataBase alloc] init];
-    
-    NSURL *sourcePath = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-    sourcePath = [sourcePath URLByAppendingPathComponent:@"songs"];
-    
-    
-    NSArray *allSongs = db.allSongs;
-    for (NSManagedObject *obj in allSongs) {
-        NSArray *keys = [[[obj entity] attributesByName] allKeys];
-        NSDictionary *dictionary = [obj dictionaryWithValuesForKeys:keys];
-        NSString *songLastPathComponent = [dictionary valueForKey:@"identityName"];
-        NSURL *localURL = [sourcePath URLByAppendingPathComponent:songLastPathComponent];
-        LocalSongModel *song = [[LocalSongModel alloc] initWithLocalSongURL:localURL];
-        song.videoURL = [dictionary valueForKey:@"videoURL"];
-        song.duration = [dictionary valueForKey:@"duration"];
+- (void)loadSongsFromRealm {
+    RLMResults *songsResult = [LocalSongModel allObjects];
+    for (LocalSongModel *song in songsResult) {
         if (![self.playlist.songs containsObject:song]) {
             [self.allSongs addObject:song];
         }
@@ -75,11 +61,10 @@
 }
 
 - (void)commitSelected {
-    [self.playlist.songs addObjectsFromArray:self.selectedSongs];
-//    get playlists
-    DataBase *db = [[DataBase alloc] init];
-    [db updateArrayOfSongsForPlaylist:self.playlist];
-    
+    [RLMRealm.defaultRealm beginWriteTransaction];
+    [self.playlist.realmSongs addObjects:self.selectedSongs];
+    [RLMRealm.defaultRealm commitWriteTransaction];
+
     [self.navigationController popViewControllerAnimated:YES];
 }
 

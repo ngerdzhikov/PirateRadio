@@ -18,6 +18,7 @@
 #import "YoutubePlaylistModel.h"
 #import "Toast.h"
 #import "Reachability.h"
+#import <YLImageView.h>
 
 typedef enum {
     EnumLastSearchTypeWithKeywords,
@@ -75,7 +76,6 @@ typedef enum {
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
     [self.reachability startNotifier];
-    
 }
 
 
@@ -290,6 +290,7 @@ typedef enum {
 - (void)makeSearchWithString:(NSString *)string {
     if (self.reachability.isReachable) {
         if (![string isEqualToString:@""]) {
+            [self.tableView scrollRectToVisible:CGRectZero animated:YES];
             [self startAnimation];
             [ImageCacher.sharedInstance clearCache];
             self.nextPageToken = nil;

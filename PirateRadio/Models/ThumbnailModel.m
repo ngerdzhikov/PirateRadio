@@ -10,7 +10,7 @@
 
 @interface ThumbnailModel ()
 
-@property (strong, nonatomic) NSURL *url;
+@property (strong, nonatomic) NSString *urlString;
 @property (assign) NSUInteger width;
 @property (assign) NSUInteger height;
 
@@ -21,7 +21,7 @@
 - (instancetype)initWithJSONDictionary:(NSDictionary<NSString *, id> *)jsonDict {
     self = [super init];
     if (self) {
-        self.url = [NSURL URLWithString:[jsonDict objectForKey:@"url"]];
+        self.urlString = [jsonDict objectForKey:@"url"];
         self.width = ((NSNumber *)[jsonDict objectForKey:@"width"]).unsignedIntegerValue;
         self.height = ((NSNumber *)[jsonDict objectForKey:@"height"]).unsignedIntegerValue;
     }
@@ -31,11 +31,19 @@
 - (instancetype)initWithURL:(NSURL *)url width:(NSNumber *)width height:(NSNumber *)height {
     self = [super init];
     if (self) {
-        self.url = url;
+        self.urlString = url.absoluteString;
         self.width = width.integerValue;
         self.height = height.integerValue;
     }
     return self;
+}
+
+- (NSURL *)url {
+    return [NSURL URLWithString:self.urlString];
+}
+
++ (NSArray<NSString *> *)ignoredProperties {
+    return @[@"width", @"height"];
 }
 
 @end

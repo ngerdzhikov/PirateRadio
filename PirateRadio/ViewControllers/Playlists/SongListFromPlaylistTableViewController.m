@@ -26,6 +26,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(onSongDelete:) name:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -46,8 +47,6 @@
     [self.navigationController pushViewController:allSongsTVC animated:YES];
 }
 
-
-
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
@@ -55,10 +54,11 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
-        [self.playlist.songs removeObjectAtIndex:indexPath.row];
+        [RLMRealm.defaultRealm beginWriteTransaction];
+        [self.playlist.realmSongs removeObjectAtIndex:indexPath.row];
+        [RLMRealm.defaultRealm commitWriteTransaction];
         
-        DataBase *db = [[DataBase alloc] init];
-        [db updateArrayOfSongsForPlaylist:self.playlist];
+        [self.allSongs removeObjectAtIndex:indexPath.row];
         
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         [super displayEmptyListImageIfNeeded];
@@ -84,8 +84,11 @@
         }
         self.allSongs = [NSMutableArray arrayWithArray:rearrangedSongs];
     }
-    self.playlist.songs = self.allSongs;
-
+    
+    [RLMRealm.defaultRealm beginWriteTransaction];
+    [self.playlist.realmSongs removeAllObjects];
+    [self.playlist.realmSongs addObjects:self.allSongs];
+    [RLMRealm.defaultRealm commitWriteTransaction];
 
     
     [self.tableView reloadData];
@@ -96,25 +99,19 @@
     return YES;
 }
 
-- (void)didRecieveNewSong:(NSNotification *)notification {
-// override with nothing because it's in the playlist
-    return;
-}
-
 - (void)onSongDelete:(NSNotification *)notification {
-    LocalSongModel *song = [notification.userInfo objectForKey:@"song"];
-    
-    if ([self.playlist.songs containsObject:song]) {
-        
-        [self.playlist.songs removeObject:song];
-        
-        DataBase *db = [[DataBase alloc] init];
-        [db updateArrayOfSongsForPlaylist:self.playlist];
-        
-        [super displayEmptyListImageIfNeeded];
-        
-        [self.tableView reloadData];
-    }
+//    LocalSongModel *song = [notification.userInfo objectForKey:@"song"];
+//
+//    if ([self.playlist.songs containsObject:song]) {
+//
+//        [self.playlist.realmSongs removeObjectAtIndex:[self.playlist.realmSongs indexOfObject:song]];
+//
+//        [super displayEmptyListImageIfNeeded];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.tableView reloadData];
+//    });
+//
+//    }
 }
 
 - (void)editSongs:(id)sender {
@@ -126,12 +123,17 @@
                 [editButton setTitle:@"Done"];
             }
             else {
-                DataBase *db = [[DataBase alloc] init];
-                [db updateArrayOfSongsForPlaylist:self.playlist];
                 [editButton setTitle:@"Edit"];
             }
         }
     }
+}
+
+-(NSArray<LocalSongModel *> *)songs {
+    if (self.isFiltering) {
+        return self.filteredSongs;
+    }
+    return self.playlist.songs;
 }
 
 @end

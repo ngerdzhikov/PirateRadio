@@ -7,16 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Realm.h"
 
 @class LocalSongModel;
 
-@interface PlaylistModel : NSObject
+RLM_ARRAY_TYPE(LocalSongModel)
 
-@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *songs;
+@interface PlaylistModel : RLMObject
+
+@property (strong, nonatomic) RLMArray<LocalSongModel *><LocalSongModel> *realmSongs;
 @property (strong, nonatomic) NSString *name;
 
 
 - (instancetype)initWithName:(NSString *)name;
 - (void)addSong:(LocalSongModel *)song;
+- (NSMutableArray<LocalSongModel *> *)songs;
 
 @end

@@ -41,8 +41,8 @@
 
     BOOL isLogged = [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_IS_LOGGED];
     if (isLogged) {
-        DataBase *db = [[DataBase alloc] init];
-        self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+        NSInteger userID = [NSUserDefaults.standardUserDefaults integerForKey:USER_DEFAULT_LOGGED_USER_ID];
+        self.userModel = [UserModel objectsWhere:@"userID = %ld", userID].firstObject;
         [self updateUIForUserModel:self.userModel];
     }
     
@@ -128,15 +128,13 @@
     NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
     if (imageData) {
         NSURL *fileURL = [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask][0];
-        fileURL = [[[fileURL URLByAppendingPathComponent:@"profile images"] URLByAppendingPathComponent:self.userModel.objectID.lastPathComponent] URLByAppendingPathExtension:@"jpeg"];
+        fileURL = [[[fileURL URLByAppendingPathComponent:@"profile images"] URLByAppendingPathComponent:self.userModel.userID.stringValue] URLByAppendingPathExtension:@"jpeg"];
         
         [imageData writeToURL:fileURL atomically:NO];
     }
     
     
     self.userImageView.image = [UIImage imageWithData:imageData];
-    DataBase *db = [[DataBase alloc] init];
-    [db updateUserProfileImageURL:imageURL forUserModel:self.userModel];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -147,9 +145,9 @@
     }];
     UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (alertController.textFields.firstObject.text.length > 3) {
-            DataBase *db = [[DataBase alloc] init];
-            [db changeUsername:alertController.textFields.firstObject.text forUserModel:self.userModel];
-            self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+            [RLMRealm.defaultRealm transactionWithBlock:^{
+                self.userModel.username = alertController.textFields.firstObject.text;
+            }];
             [self updateUIForUserModel:self.userModel];
             [self.view makeToast:@"Username changed!"];
         }
@@ -184,9 +182,9 @@
             if (![alertController.textFields.firstObject.text isEqualToString:alertController.textFields[1].text] && ![alertController.textFields.firstObject.text isEqualToString:alertController.textFields.lastObject.text]) {
                 if ([alertController.textFields[1].text isEqualToString:alertController.textFields[2].text]) {
                     if (alertController.textFields[1].text.length > 3) {
-                        DataBase *db = [[DataBase alloc] init];
-                        [db changePassword:alertController.textFields.lastObject.text forUserModel:self.userModel];
-                        self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
+                        [RLMRealm.defaultRealm transactionWithBlock:^{
+                            self.userModel.password = alertController.textFields.lastObject.text;
+                        }];
                         [self updateUIForUserModel:self.userModel];
                         [self.view makeToast:@"Password changed!"];
                     }

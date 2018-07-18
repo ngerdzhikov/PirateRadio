@@ -13,6 +13,6 @@
 @interface ArtworkDownload : NSObject<NSURLSessionDownloadDelegate>
 
 + (instancetype)sharedInstance;
-- (void)downloadArtworkForLocalSongModel:(LocalSongModel *)localSong;
+- (void)downloadArtworkForLocalSongModelWithUniqueName:(NSString *)localSongUniqueName;
 
 @end

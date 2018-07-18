@@ -7,14 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Realm.h"
 
 @class ThumbnailModel;
 
-@interface YoutubeEntityModel : NSObject
+RLM_ARRAY_TYPE(ThumbnailModel)
+
+@interface YoutubeEntityModel : RLMObject
 
 @property (strong, nonatomic, readonly) NSString *title;
 @property (strong, nonatomic, readonly) NSString *entityId;
-@property (strong, nonatomic, readonly) NSDictionary<NSString *,ThumbnailModel *> *thumbnails;
+@property (strong, nonatomic, readonly) ThumbnailModel *thumbnail;
 @property (strong, nonatomic, readonly) NSString *kind;
 @property (strong, nonatomic, readonly) NSString *channelTitle;
 @property (strong, nonatomic, readonly) NSString *publishedAt;
@@ -22,5 +25,6 @@
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet entityId:(NSString *)entityId andKind:(NSString *)kind;
 - (instancetype)initWithVideoId:(NSString *)videoId title:(NSString *)title channel:(NSString *)channel publishedAt:(NSString *)publishedAt thumbnail:(ThumbnailModel *)thumbnailModel;
+- (NSDictionary<NSString *, ThumbnailModel *> *)thumbnails;
 
 @end

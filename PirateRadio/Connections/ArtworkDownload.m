@@ -16,7 +16,7 @@
 @interface ArtworkDownload ()
 
 @property (strong, nonatomic) NSURLSession *session;
-@property (strong, nonatomic) NSMutableDictionary<NSURLSessionDownloadTask *, LocalSongModel *> *downloadDict;
+@property (strong, nonatomic) NSMutableDictionary<NSNumber *, NSString *> *downloadDict;
 
 @end
 
@@ -42,8 +42,10 @@
 }
 
 
-- (void)downloadArtworkForLocalSongModel:(LocalSongModel *)localSong {
-    [ArtworkRequest makeLastFMSearchRequestWithKeywords:localSong.keywordsFromAuthorAndTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+- (void)downloadArtworkForLocalSongModelWithUniqueName:(NSString *)localSongUniqueName {
+    LocalSongModel *localSong = [LocalSongModel objectForPrimaryKey:localSongUniqueName];
+    NSArray *keywords = localSong.keywordsFromAuthorAndTitle;
+    [ArtworkRequest makeLastFMSearchRequestWithKeywords:keywords andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSError *serializationError;
         NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
         if (serializationError) {
@@ -58,12 +60,12 @@
                     NSURL *artworkURL = [NSURL URLWithString:[thumbDictionary objectForKey:@"#text"]];
                     if (artworkURL != nil) {
                         if ([artworkURL.absoluteString isEqualToString:@""]) {
-                            [self downloadArtworkByTitleForLocalSongModel:localSong];
+                            [self downloadArtworkByTitleForLocalSongModelWithUniqueName:localSongUniqueName];
                         }
                         else {
                             NSLog(@"Found artwork");
                             NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
-                            [self.downloadDict setObject:localSong forKey:downloadTask];
+                            [self.downloadDict setObject:localSongUniqueName forKey:[NSNumber numberWithUnsignedInteger:downloadTask.taskIdentifier]];
                             [downloadTask resume];
                         }
                     }
@@ -74,8 +76,9 @@
     }];
 }
 
-- (void)downloadArtworkByTitleForLocalSongModel:(LocalSongModel *)localSong {
-    [ArtworkRequest makeLastFMSearchRequestWithKeywords:localSong.keywordsFromTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+- (void)downloadArtworkByTitleForLocalSongModelWithUniqueName:(NSString *)localSongUniqueName {
+    NSArray *keywordsFromTitle = [LocalSongModel objectForPrimaryKey:localSongUniqueName].keywordsFromTitle;
+    [ArtworkRequest makeLastFMSearchRequestWithKeywords:keywordsFromTitle andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSError *serializationError;
         NSDictionary<NSString *, id> *responseDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&serializationError];
         if (serializationError) {
@@ -91,7 +94,7 @@
                     if (artworkURL != nil && ![artworkURL.absoluteString isEqualToString:@""]) {
                             NSLog(@"Found artwork");
                             NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithURL:artworkURL];
-                            [self.downloadDict setObject:localSong forKey:downloadTask];
+                            [self.downloadDict setObject:localSongUniqueName forKey:[NSNumber numberWithUnsignedInteger:downloadTask.taskIdentifier]];
                             [downloadTask resume];
                     }
                     
@@ -103,7 +106,8 @@
 
 - (void)URLSession:(nonnull NSURLSession *)session downloadTask:(nonnull NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(nonnull NSURL *)location {
     NSError *err;
-    LocalSongModel *song = self.downloadDict[downloadTask];
+    NSString *songUniqueName = [self.downloadDict objectForKey:[NSNumber numberWithUnsignedInteger:downloadTask.taskIdentifier]];
+    LocalSongModel *song = [LocalSongModel objectForPrimaryKey:songUniqueName];
     NSURL *urlToSave = song.localArtworkURL;
     [NSFileManager.defaultManager moveItemAtURL:location toURL:urlToSave error:&err];
     if (err) {
@@ -112,15 +116,7 @@
     else {
         Reachability *reachability = [Reachability reachabilityForInternetConnection];
         if (reachability.isReachable && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
-            if (![DropBox doesSongExists:song]) {
-                Reachability *reachability = [Reachability reachabilityForInternetConnection];
-                if (reachability.isReachableViaWiFi) {
-                    [DropBox uploadLocalSong:song];
-                }
-                else if (reachability.isReachableViaWWAN && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX_VIA_CELLULAR]) {
-                    [DropBox uploadLocalSong:song];
-                }
-            }
+            [DropBox uploadArtworkForLocalSong:song];
         }
     }
     

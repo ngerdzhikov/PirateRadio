@@ -12,4 +12,6 @@ target 'PirateRadio' do
   pod "AutoScrollLabel"
   pod 'ObjectiveDropboxOfficial'
   pod 'Toast', '~> 4.0.0'
+  pod 'Realm'
+  pod 'Realm/Headers'
 end

@@ -2,21 +2,26 @@
 //  UserModel.h
 //  PirateRadio
 //
-//  Created by A-Team User on 13.07.18.
+//  Created by A-Team User on 17.07.18.
 //  Copyright © 2018 A-Team User. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "Realm.h"
+#import "VideoModel.h"
+#import "UIKit/UIKit.h"
 
-@interface UserModel : NSObject
+RLM_ARRAY_TYPE(VideoModel)
 
-@property (strong, nonatomic, readonly) NSString *username;
-@property (strong, nonatomic, readonly) NSString *password;
-@property (strong, nonatomic, readonly) NSURL *profileImageURL;
-@property (strong, nonatomic, readonly) NSURL *objectID;
+@interface UserModel : RLMObject
 
-- (instancetype)initWithObjectID:(NSURL *)objectID username:(NSString *)username password:(NSString *)password andProfileImageURL:(NSURL *)url;
+@property (strong, nonatomic) NSNumber<RLMInt> *userID;
+@property (strong, nonatomic) NSString *username;
+@property (strong, nonatomic) NSString *password;
+@property (strong, nonatomic) RLMArray<VideoModel *><VideoModel> *favouriteYoutubeEntities;
+
+- (instancetype)initWithUsername:(NSString *)username password:(NSString *)password andUserID:(NSNumber *)userID;
+- (NSArray<VideoModel *> *)favouriteVideos;
 - (UIImage *)profileImage;
 
 @end

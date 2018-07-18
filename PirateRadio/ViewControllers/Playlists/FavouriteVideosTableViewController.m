@@ -49,9 +49,8 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {
-        DataBase *db = [[DataBase alloc] init];
-        self.userModel = [db userModelForUserID:[NSUserDefaults.standardUserDefaults URLForKey:USER_DEFAULT_LOGGED_OBJECT_ID]];
-        self.favouriteVideos = [[NSArray alloc] initWithArray:[db favouriteVideosForUserModel:self.userModel]];
+        self.userModel = [UserModel objectsWhere:@"userID = %ld",[NSUserDefaults.standardUserDefaults integerForKey:USER_DEFAULT_LOGGED_USER_ID]].firstObject;
+        self.favouriteVideos = self.userModel.favouriteVideos;
         [self.tableView reloadData];
     }
 }
@@ -114,13 +113,13 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        VideoModel *video = self.favouriteVideos[indexPath.row];
         NSMutableArray *mutableCopy = self.favouriteVideos.mutableCopy;
         [mutableCopy removeObjectAtIndex:indexPath.row];
         self.favouriteVideos = [NSArray arrayWithArray:mutableCopy];
         
-        DataBase *db = [[DataBase alloc] init];
-        [db deleteFavouriteVideo:video ForUserModel:self.userModel];
+        [RLMRealm.defaultRealm transactionWithBlock:^{
+            [self.userModel.favouriteYoutubeEntities removeObjectAtIndex:indexPath.row];
+        }];
         
         [tableView reloadData];
     }

@@ -47,7 +47,6 @@
                       UIWindow *window=[UIApplication sharedApplication].keyWindow;
                       [window.rootViewController.view makeToast:@"Song uploaded successfully"];
                   });
-                  [[self class] uploadArtworkForLocalSong:song];
               } else {
                   dispatch_async(dispatch_get_main_queue(), ^{
                       UIWindow *window=[UIApplication sharedApplication].keyWindow;
@@ -104,12 +103,16 @@
               AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
               NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
               song.duration = duration;
-              [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song forKey:@"song"]];
+              
+              [RLMRealm.defaultRealm beginWriteTransaction];
+              [RLMRealm.defaultRealm addObject:song];
+              [RLMRealm.defaultRealm commitWriteTransaction];
+              
+              [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:[NSDictionary dictionaryWithObject:song.songUniqueName forKey:@"song"]];
+
               dispatch_async(dispatch_get_main_queue(), ^{
                   UIWindow *window=[UIApplication sharedApplication].keyWindow;
-                  [window.rootViewController.view makeToast:@"Download successful"];
-                  DataBase *db = [[DataBase alloc] init];
-                  [db addNewSong:song withURL:nil];
+                  [window.rootViewController.view makeToast:@"Download successful"]; 
               });
               
               [[self class] downloadArtworkForSongName:songName andLocalSongModel:song];

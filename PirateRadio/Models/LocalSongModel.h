@@ -7,19 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Realm.h"
 
-@interface LocalSongModel : NSObject
+@interface LocalSongModel : RLMObject
 
-@property (strong, nonatomic, readonly) NSURL *localSongURL;
+@property (strong, nonatomic, readonly) NSString *songUniqueName;
 @property (strong, nonatomic, readonly) NSString *artistName;
 @property (strong, nonatomic, readonly) NSString *songTitle;
-@property (strong, nonatomic) NSURL *videoURL;
-@property (strong, nonatomic) NSNumber *duration;
+@property (strong, nonatomic) NSString *videoId;
+@property (strong, nonatomic) NSNumber<RLMDouble> *duration;
+@property (strong, nonatomic) NSURL *localSongURL;
 
--(instancetype) initWithLocalSongURL:(NSURL *)songURL;
--(NSURL *)localArtworkURL;
+- (instancetype)initWithLocalSongURL:(NSURL *)songURL;
+- (NSURL *)videoURL;
+- (NSURL *)localArtworkURL;
 - (NSString *)properMusicTitle;
--(NSArray<NSString *> *)keywordsFromTitle;
--(NSArray<NSString *> *)keywordsFromAuthorAndTitle;
+- (NSArray<NSString *> *)keywordsFromTitle;
+- (NSArray<NSString *> *)keywordsFromAuthorAndTitle;
 
 @end

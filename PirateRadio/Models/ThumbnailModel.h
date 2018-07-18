@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Realm.h"
 
-@interface ThumbnailModel : NSObject
+@interface ThumbnailModel : RLMObject
 
-@property (strong, nonatomic, readonly) NSURL *url;
+@property (strong, nonatomic, readonly) NSString *urlString;
 @property (readonly) NSUInteger width;
 @property (readonly) NSUInteger height;
 
 - (instancetype)initWithJSONDictionary:(NSDictionary<NSString *, id> *)jsonDict;
 - (instancetype)initWithURL:(NSURL *)url width:(NSNumber *)width height:(NSNumber *)height;
+- (NSURL *)url;
 
 @end

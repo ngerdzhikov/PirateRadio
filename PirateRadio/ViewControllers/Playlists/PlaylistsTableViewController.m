@@ -57,8 +57,10 @@
         [self.playlists addObject:dropboxFiles];
     }
     
-    DataBase *db = [[DataBase alloc] init];
-    [self.playlists addObjectsFromArray:db.allPlaylists];
+    RLMResults *realmPlaylists = [PlaylistModel allObjects] ;
+    for (PlaylistModel *playlist in realmPlaylists) {
+        [self.playlists addObject:playlist];
+    }
     // if there are no playlists allocate memory for playlists array
     
     [self.tableView reloadData];
@@ -137,11 +139,9 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        DataBase *db = [[DataBase alloc] init];
-        if ([db deletePlaylist:self.playlists[indexPath.row]]) {
-            [self.playlists removeObjectAtIndex:indexPath.row];
-            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        }
+        [RLMRealm.defaultRealm deleteObject:self.playlists[indexPath.row]];
+        [self.playlists removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 
@@ -169,13 +169,12 @@
         if (alertController.textFields[0].text.length > 1 && ![(NSArray<NSString *> *)[self.playlists valueForKey:@"name"] containsObject:alertController.textFields[0].text]) {
             PlaylistModel *playlist = [[PlaylistModel alloc] initWithName:alertController.textFields[0].text];
 
-            DataBase *db = [[DataBase alloc] init];
-            if ([db addNewPlaylist:playlist]) {
-                [self.playlists addObject:playlist];
-                
-                [self.tableView reloadData];
-                
-            }
+            [RLMRealm.defaultRealm beginWriteTransaction];
+            [RLMRealm.defaultRealm addObject:playlist];
+            [RLMRealm.defaultRealm commitWriteTransaction];
+            [self.playlists addObject:playlist];
+            
+            [self.tableView reloadData];
         }
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
@@ -206,9 +205,9 @@
             
             [alertController addAction:[UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 if (alertController.textFields[0].text.length > 1) {
-                    DataBase *db = [[DataBase alloc] init];
-                    [db renamePlaylistWithNewName:alertController.textFields[0].text forOldPlaylistName:playlist.name];
+                    [RLMRealm.defaultRealm beginWriteTransaction];
                     playlist.name = alertController.textFields[0].text;
+                    [RLMRealm.defaultRealm commitWriteTransaction];
                     [self.tableView reloadData];
                     
                 }

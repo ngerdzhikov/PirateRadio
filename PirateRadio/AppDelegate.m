@@ -14,6 +14,7 @@
 #import "Reachability.h"
 #import "AVKit/AVKit.h"
 #import "DropBox.h"
+#import "Realm.h"
 #import "ArtworkDownload.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 @import AVFoundation;
@@ -113,15 +114,16 @@
             AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:song.localSongURL options:nil];
             NSNumber *duration = [NSNumber numberWithDouble:CMTimeGetSeconds(audioAsset.duration)];
             song.duration = duration;
-            [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModel:song];
+            
             
             NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:@[song] forKeys:@[@"song"]];
             
+            [RLMRealm.defaultRealm beginWriteTransaction];
+            [RLMRealm.defaultRealm addObject:song];
+            [RLMRealm.defaultRealm commitWriteTransaction];
+            
+            [ArtworkDownload.sharedInstance downloadArtworkForLocalSongModelWithUniqueName:song.songUniqueName];
             [NSNotificationCenter.defaultCenter postNotificationName:NOTIFICATION_DOWNLOAD_FINISHED object:nil userInfo:userInfo];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                DataBase *db = [[DataBase alloc] init];
-                [db addNewSong:song withURL:nil];
-            });
             Reachability *reachability = [Reachability reachabilityForInternetConnection];
             if (reachability.isReachable && [NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_UPLOAD_TO_DROPBOX]) {
                 if (![DropBox doesSongExists:song]) {

@@ -10,8 +10,8 @@
 #import "CoreData/CoreData.h"
 #import "ProfileViewController.h"
 #import "DataBase.h"
-#import "Constants.h"
 #import "UserModel.h"
+#import "Constants.h"
 #import "UIView+Toast.h"
 
 @interface LoginViewController ()
@@ -93,15 +93,19 @@
                 shouldContinue = NO;
             }
             else {
-                DataBase *db = [[DataBase alloc] init];
-                if ([db doesUserWithUsernameExists:self.userNameTextField.text]) {
+                RLMResults *usersWithThisUsername = [UserModel objectsWhere:@"username = %@", self.userNameTextField.text];
+                if (usersWithThisUsername.count > 0) {
                     shouldContinue = NO;
                     messageToDisplay = @"User with this username already exists";
                 }
                 else {
-                    UserModel *user = [db newUserWithUsername:self.userNameTextField.text andPassword:self.passwordTextField.text];
+                    NSNumber *newUserID = [NSNumber numberWithUnsignedInteger:[UserModel allObjects].count];
+                    UserModel *user = [[UserModel alloc] initWithUsername:self.userNameTextField.text password:self.passwordTextField.text andUserID:newUserID];
+                    [RLMRealm.defaultRealm transactionWithBlock:^{
+                        [RLMRealm.defaultRealm addObject:user];
+                    }];
                     [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
-                    [NSUserDefaults.standardUserDefaults setURL:user.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
+                    [NSUserDefaults.standardUserDefaults setInteger:user.userID.integerValue forKey:USER_DEFAULT_LOGGED_USER_ID];
                     [self.profileDelegate loggedSuccessfulyWithUserModel:user];
                 }
             }
@@ -134,11 +138,10 @@
 }
 
 - (void)authenticateUsername:(NSString *)username andPassword:(NSString *)password {
-    DataBase *db = [[DataBase alloc] init];
-    UserModel *userModel = [db userModelForUsername:username];
+    UserModel *userModel = [UserModel objectsWhere:@"username = %@",username].firstObject;
     if ([userModel.password isEqualToString:password]) {
         [NSUserDefaults.standardUserDefaults setBool:YES forKey:USER_DEFAULTS_IS_LOGGED];
-        [NSUserDefaults.standardUserDefaults setURL:userModel.objectID forKey:USER_DEFAULT_LOGGED_OBJECT_ID];
+        [NSUserDefaults.standardUserDefaults setInteger:userModel.userID.integerValue forKey:USER_DEFAULT_LOGGED_USER_ID];
         [self.profileDelegate loggedSuccessfulyWithUserModel:userModel];
     }
     else {
