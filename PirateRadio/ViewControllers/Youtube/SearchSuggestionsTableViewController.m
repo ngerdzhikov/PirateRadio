@@ -7,6 +7,7 @@
 //
 
 #import "SearchSuggestionsTableViewController.h"
+#import "YoutubeConnectionManager.h"
 
 @interface SearchSuggestionsTableViewController ()
 
@@ -16,11 +17,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.searchHistory = [[NSUserDefaults.standardUserDefaults objectForKey:@"searchHistory"] mutableCopy];
+    if (!self.searchHistory) {
+        self.searchHistory = [[NSMutableArray alloc] init];
+    }
+    self.searchSuggestions = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [NSUserDefaults.standardUserDefaults setObject:self.searchHistory forKey:@"searchHistory"];
+    [NSUserDefaults.standardUserDefaults synchronize];
 }
 
 #pragma mark - Table view data source
@@ -30,75 +43,74 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.delegate.searchSuggestions.count < 1) {
-        return self.delegate.searchHistory.count;
+    if (self.searchSuggestions.count < 1) {
+        return self.searchHistory.count;
     }
-    return self.delegate.searchSuggestions.count;
+    return self.searchSuggestions.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"emptyCell" forIndexPath:indexPath];
-    if (self.delegate.searchSuggestions.count < 1) {
-        cell.textLabel.text = self.delegate.searchHistory[indexPath.row];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"suggestionsCell" forIndexPath:indexPath];
+    if (self.searchSuggestions.count < 1) {
+        cell.textLabel.text = self.searchHistory[indexPath.row];
         cell.imageView.image = [UIImage imageNamed:@"history_icon"];
     }
     else {
-        cell.textLabel.text = self.delegate.searchSuggestions[indexPath.row];
+        cell.textLabel.text = self.searchSuggestions[indexPath.row];
         cell.imageView.image = nil;
     }
     return cell;
 }
 
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     [self.delegate makeSearchWithString:cell.textLabel.text];
+    [self didMakeSearchWithText:cell.textLabel.text];
 }
-
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.delegate.searchHistory removeObjectAtIndex:indexPath.row];
+        [self.searchHistory removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.delegate.searchSuggestions.count < 1) {
+    if (self.searchSuggestions.count < 1) {
         return YES;
     }
     return NO;
 }
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+- (void)searchForSuggestionsWithText:(NSString *)searchText {
+    [YoutubeConnectionManager makeSuggestionsSearchWithPrefix:searchText andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
+        NSError *serializationError;
+        NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&serializationError];
+        if (serializationError) {
+            NSLog(@"serializationError = %@", serializationError);
+            [self.searchSuggestions removeAllObjects];
+        }
+        else {
+            [self.searchSuggestions removeAllObjects];
+            for (NSString *suggestion in responseArray[1]) {
+                [self.searchSuggestions addObject:suggestion];
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }];
 }
-*/
 
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
+- (void)didMakeSearchWithText:(NSString *)searchText {
+    if ([self.searchHistory containsObject:searchText]) {
+        [self.searchHistory removeObject:searchText];
+    }
+    [self.searchHistory insertObject:searchText atIndex:0];
 }
-*/
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)didChangeText:(NSString *)searchText {
+    [self searchForSuggestionsWithText:searchText];
 }
-*/
 
 @end

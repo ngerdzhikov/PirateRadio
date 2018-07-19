@@ -18,8 +18,6 @@
 @property (weak, nonatomic) IBOutlet UIView *tableViewContainer;
 @property (weak, nonatomic) IBOutlet UIView *musicPlayerContainer;
 
-@property (strong, nonatomic) PlaylistModel *playlist;
-
 +(instancetype)songListPlusPlayerViewControllerWithPlaylist:(PlaylistModel *)playlist;
 
 @end

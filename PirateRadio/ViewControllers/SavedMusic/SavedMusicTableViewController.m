@@ -32,9 +32,9 @@
     
     self.songListSearchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     
-    if (!self.allSongs) {
-        self.allSongs = [[NSMutableArray alloc] init];
-    }
+//    if (!self.allSongs) {
+//        self.allSongs = [[NSMutableArray alloc] init];
+//    }
     
     UILongPressGestureRecognizer* longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onCellLongPress:)];
     [self.tableView addGestureRecognizer:longPressRecognizer];
@@ -42,17 +42,15 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+    self.definesPresentationContext = YES;
     [self displayEmptyListImageIfNeeded];
     
-//    if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_THEME]) {
-//        self.tableView.backgroundColor = [UIColor blackColor];
-//    }
-//    else {
-//        self.tableView.backgroundColor = [UIColor clearColor];
-//    }
-    
     [self.tableView reloadData];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.songListSearchController.searchBar resignFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -158,7 +156,7 @@
         else {
             
 //            remove from dataSource
-            [self.allSongs removeObjectAtIndex:indexPath.row];
+//            [self.allSongs removeObjectAtIndex:indexPath.row];
             
 //            remove from Realm
             [RLMRealm.defaultRealm transactionWithBlock:^{
@@ -305,7 +303,7 @@
 - (void)didStartPlayingSong:(LocalSongModel *)song {
     
     NSIndexPath *indexPath = [self indexPathForSong:song];
-    if (indexPath.row <= self.allSongs.count) {
+    if (indexPath.row <= self.songs.count) {
         [self setMediaPlayBackState:EnumCellMediaPlaybackStatePlaying forCellAtIndexPath:indexPath];
     }
 
@@ -351,11 +349,8 @@
 }
 
 - (void)didRecieveNewSong:(NSNotification *)notification {
-    NSString *songName = [notification.userInfo objectForKey:@"song"];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        LocalSongModel *newSong = [LocalSongModel objectForPrimaryKey:songName];
-        [self.allSongs addObject:newSong];
         
         NSArray *paths = @[[NSIndexPath indexPathForRow:self.songs.count - 1 inSection:0]];
         [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -365,16 +360,6 @@
 #pragma mark searchBarDelegate
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    
-    if (searchText.length > 0) {
-        self.filteredSongs = [self.allSongs filteredArrayUsingPredicate:
-                               [NSPredicate predicateWithBlock:^BOOL(LocalSongModel *evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
-            
-            return ([evaluatedObject.properMusicTitle.lowercaseString containsString:searchText.lowercaseString] ||
-                    [evaluatedObject.songTitle.lowercaseString containsString:searchText.lowercaseString] ||
-                    [evaluatedObject.artistName.lowercaseString containsString:searchText.lowercaseString]);
-        }]];
-    }
     [self.tableView reloadData];
 }
 
@@ -389,9 +374,9 @@
 
 - (NSArray<LocalSongModel *> *)songs {
     if (self.isFiltering) {
-        return self.filteredSongs;
+        return [[LocalSongModel objectsWithPredicate:[NSPredicate predicateWithFormat:@"songUniqueName CONTAINS[c] %@", self.songListSearchController.searchBar.text]] valueForKey:@"self"];
     }
-    return self.allSongs;
+    return [[LocalSongModel allObjects] valueForKey:@"self"];
 }
 
 #pragma mark Calculating Methods
@@ -414,7 +399,7 @@
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         CGPoint touchPoint = [recognizer locationInView:self.tableView];
         NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:touchPoint];
-        LocalSongModel *song = self.allSongs[indexPath.row];
+        LocalSongModel *song = self.songs[indexPath.row];
         if (indexPath) {
             SavedMusicTableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
             

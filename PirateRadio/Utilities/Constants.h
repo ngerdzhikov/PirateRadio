@@ -28,5 +28,6 @@
 #define USER_DEFAULTS_IS_LOGGED @"UserDefaultsIsLogged"
 #define USER_DEFAULT_LOGGED_USER_ID @"UserDefaultsLoggedObjectID"
 #define USER_DEFAULTS_THEME @"UserDefaultsTheme"
+#define USER_DEFAULTS_ECO_MODE @"UserDefaultsEcoMode"
 
 #endif /* Constants_h */

@@ -8,6 +8,7 @@
 
 #import "YoutubeEntityModel.h"
 #import "ThumbnailModel.h"
+#import "Constants.h"
 #import "ImageCacher.h"
 
 @interface YoutubeEntityModel ()
@@ -27,15 +28,20 @@
 
 - (instancetype)initWithSnippet:(NSDictionary<NSString *, id> *)snippet entityId:(NSString *)entityId andKind:(NSString *)kind {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         self.entityId = entityId;
         self.title = [snippet objectForKey:@"title"];
         self.kind = kind;
         self.entityDescription = [snippet objectForKey:@"description"];
         self.publishedAt = [snippet objectForKey:@"publishedAt"];
         NSDictionary<NSString *, id> *thumbnailsDict = [snippet objectForKey:@"thumbnails"];
-        NSDictionary *thumbDict = [thumbnailsDict objectForKey:thumbnailsDict.allKeys.lastObject];
+        NSDictionary *thumbDict;
+        if ([NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_ECO_MODE]) {
+            thumbDict = [thumbnailsDict objectForKey:thumbnailsDict.allKeys.firstObject];
+        }
+        else {
+            thumbDict = [thumbnailsDict objectForKey:thumbnailsDict.allKeys.lastObject];
+        }
         self.thumbnail = [[ThumbnailModel alloc] initWithJSONDictionary:thumbDict];
         UIImage *thumb = [UIImage imageWithData:[NSData dataWithContentsOfURL:[self.thumbnails objectForKey:@"high"].url]];
         [ImageCacher.sharedInstance cacheImage:thumb forSearchResultId:entityId];
@@ -62,6 +68,8 @@
 
 - (NSDictionary<NSString *, ThumbnailModel *> *)thumbnails {
 //    returning a dictionary with only 1 element for high resolution
+//    change this code along with the initWithJSON so you store all the thumbnails
+//    but it is not necessary for now
     return [NSDictionary dictionaryWithObject:self.thumbnail forKey:@"high"];
 }
 

@@ -9,10 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Protocols.h"
 
-@interface SearchTableViewController : UITableViewController<SearchSuggestionsDelegate>
-
-@property (strong, nonatomic) NSMutableArray<NSString *> *searchSuggestions;
-@property (strong, nonatomic) NSMutableArray<NSString *> *searchHistory;
+@interface SearchTableViewController : UITableViewController<SearchTableViewDelegate>
 
 - (void)makeSearchWithString:(NSString *)string;
 

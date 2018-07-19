@@ -18,6 +18,7 @@
 
 @property (strong, nonatomic) SavedMusicTableViewController *songListViewController;
 @property (strong, nonatomic) MusicPlayerViewController *playerViewController;
+@property (strong, nonatomic) PlaylistModel *playlist;
 @property CGFloat musicPlayerHeight;
 
 @end
@@ -34,8 +35,8 @@
     self.songListViewController.musicPlayerDelegate = self.playerViewController;
     self.playerViewController.songListDelegate = self.songListViewController;
     
-    if (self.songListViewController.allSongs.firstObject && self.playerViewController.nowPlaying == nil) {
-        [self.playerViewController prepareSong:self.songListViewController.allSongs.firstObject];
+    if (self.songListViewController.songs.firstObject && self.playerViewController.nowPlaying == nil) {
+        [self.playerViewController prepareSong:self.songListViewController.songs.firstObject];
     }
     
     self.navigationItem.searchController = self.songListViewController.songListSearchController;
@@ -85,11 +86,9 @@
         
         [UIView commitAnimations];
     }
-    
-
 }
 
-+(instancetype)songListPlusPlayerViewControllerWithPlaylist:(PlaylistModel *)playlist {
++ (instancetype)songListPlusPlayerViewControllerWithPlaylist:(PlaylistModel *)playlist {
     SongListPlusPlayerViewController *songListPlusPlayerVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SongListPlusPlayer"];
     songListPlusPlayerVC.playlist = playlist;
     return songListPlusPlayerVC;
@@ -103,8 +102,6 @@
         SongListFromPlaylistTableViewController *vc = [storyBoard instantiateViewControllerWithIdentifier:@"songListFromPlaylistTableViewController"];
         vc.playlist = self.playlist;
         self.songListViewController = vc;
-        self.songListViewController.allSongs = self.playlist.songs;
-        
         self.navigationItem.title = self.playlist.name;
         UIBarButtonItem *addSongsButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self.songListViewController action:@selector(addSongInPlaylist)];
         UIBarButtonItem *editSongsButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self.songListViewController action:@selector(editSongs:)];
@@ -115,7 +112,6 @@
         self.songListViewController = [storyBoard instantiateViewControllerWithIdentifier:@"savedMusicViewController"];
         UIBarButtonItem *editSongsButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self.songListViewController action:@selector(editSongs:)];
         self.navigationItem.rightBarButtonItems = @[editSongsButton,];
-        self.songListViewController.allSongs = [self songsFromDisk];
     }
     
     
@@ -124,17 +120,6 @@
     [self.tableViewContainer addSubview:self.songListViewController.view];
     [self addChildViewController:self.songListViewController];
     [self.songListViewController didMoveToParentViewController:self];
-}
-
-- (NSMutableArray<LocalSongModel *> *)songsFromDisk {
-    
-    NSMutableArray<LocalSongModel *> * songs = [[NSMutableArray alloc] init];
-    RLMResults *results = [LocalSongModel allObjects];
-    for (LocalSongModel *song in results) {
-        [songs addObject:song];
-    }
-    
-    return songs;
 }
 
 - (BOOL)isPortrait {

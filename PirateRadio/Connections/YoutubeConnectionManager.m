@@ -49,6 +49,7 @@
                                               [NSURLQueryItem queryItemWithName:@"part" value:@"snippet,contentDetails,statistics"],
                                               [NSURLQueryItem queryItemWithName:@"key" value:API_KEY],
                                               [NSURLQueryItem queryItemWithName:@"chart" value:@"mostPopular"],
+                                              [NSURLQueryItem queryItemWithName:@"maxResults" value:@"15"],
                                               [NSURLQueryItem queryItemWithName:@"regionCode" value:@"BG"],
                                               [NSURLQueryItem queryItemWithName:@"pageToken" value:nextPageToken]
                                               ];

@@ -24,7 +24,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(onSongDelete:) name:NOTIFICATION_REMOVED_SONG_FROM_FILES object:nil];
     [NSNotificationCenter.defaultCenter removeObserver:self name:NOTIFICATION_DOWNLOAD_FINISHED object:nil];
 }
 
@@ -57,36 +56,31 @@
         [self.playlist.realmSongs removeObjectAtIndex:indexPath.row];
         [RLMRealm.defaultRealm commitWriteTransaction];
         
-        [self.allSongs removeObjectAtIndex:indexPath.row];
-        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         [super displayEmptyListImageIfNeeded];
     }
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-    
-    NSMutableArray<LocalSongModel *> *rearrangedSongs = [[NSMutableArray alloc] initWithCapacity:self.allSongs.count];
+    NSMutableArray<LocalSongModel *> *rearrangedSongs = [[NSMutableArray alloc] initWithCapacity:self.songs.count];
     if (toIndexPath.row - fromIndexPath.row > 0) {
-        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(0, fromIndexPath.row)]];
-        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, toIndexPath.row - fromIndexPath.row)]];
-        [rearrangedSongs addObject:self.allSongs[fromIndexPath.row]];
-        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(toIndexPath.row + 1, self.allSongs.count - toIndexPath.row - 1)]];
-        self.allSongs = [NSMutableArray arrayWithArray:rearrangedSongs];
+        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(0, fromIndexPath.row)]];
+        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, toIndexPath.row - fromIndexPath.row)]];
+        [rearrangedSongs addObject:self.songs[fromIndexPath.row]];
+        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(toIndexPath.row + 1, self.songs.count - toIndexPath.row - 1)]];
     }
     else if (toIndexPath.row - fromIndexPath.row < 0) {
-        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(0, toIndexPath.row)]];
-        [rearrangedSongs addObject:self.allSongs[fromIndexPath.row]];
-        [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(toIndexPath.row, fromIndexPath.row - toIndexPath.row)]];
-        if (fromIndexPath.row < self.allSongs.count - 1) {
-            [rearrangedSongs addObjectsFromArray:[self.allSongs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, self.allSongs.count - 1 - fromIndexPath.row)]];
+        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(0, toIndexPath.row)]];
+        [rearrangedSongs addObject:self.songs[fromIndexPath.row]];
+        [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(toIndexPath.row, fromIndexPath.row - toIndexPath.row)]];
+        if (fromIndexPath.row < self.songs.count - 1) {
+            [rearrangedSongs addObjectsFromArray:[self.songs subarrayWithRange:NSMakeRange(fromIndexPath.row + 1, self.songs.count - 1 - fromIndexPath.row)]];
         }
-        self.allSongs = [NSMutableArray arrayWithArray:rearrangedSongs];
     }
     
     [RLMRealm.defaultRealm beginWriteTransaction];
     [self.playlist.realmSongs removeAllObjects];
-    [self.playlist.realmSongs addObjects:self.allSongs];
+    [self.playlist.realmSongs addObjects:rearrangedSongs];
     [RLMRealm.defaultRealm commitWriteTransaction];
 
     
@@ -94,23 +88,8 @@
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     return YES;
-}
-
-- (void)onSongDelete:(NSNotification *)notification {
-//    LocalSongModel *song = [notification.userInfo objectForKey:@"song"];
-//
-//    if ([self.playlist.songs containsObject:song]) {
-//
-//        [self.playlist.realmSongs removeObjectAtIndex:[self.playlist.realmSongs indexOfObject:song]];
-//
-//        [super displayEmptyListImageIfNeeded];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.tableView reloadData];
-//    });
-//
-//    }
+    
 }
 
 - (void)editSongs:(id)sender {
@@ -130,9 +109,9 @@
 
 -(NSArray<LocalSongModel *> *)songs {
     if (self.isFiltering) {
-        return self.filteredSongs;
+        return [[self.playlist.realmSongs objectsWithPredicate:[NSPredicate predicateWithFormat:@"songUniqueName CONTAINS[c] %@", self.songListSearchController.searchBar.text]] valueForKey:@"self"];
     }
-    return self.playlist.songs;
+    return [self.playlist.realmSongs valueForKey:@"self"];
 }
 
 @end

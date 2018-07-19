@@ -12,6 +12,4 @@
 
 @interface PlaylistsTableViewController : UITableViewController
 
-@property (strong, nonatomic) NSMutableArray<PlaylistModel *> *playlists;
-
 @end

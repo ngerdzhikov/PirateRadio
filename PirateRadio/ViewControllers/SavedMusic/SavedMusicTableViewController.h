@@ -16,10 +16,9 @@
 @interface SavedMusicTableViewController : UITableViewController<SongListDelegate, UISearchBarDelegate>
 
 @property (weak, nonatomic) id<MusicPlayerDelegate> musicPlayerDelegate;
-@property (strong, nonatomic) NSMutableArray<LocalSongModel *> *allSongs;
 @property (strong, nonatomic) UISearchController *songListSearchController;
-@property (strong, nonatomic) NSArray<LocalSongModel *> *filteredSongs;
 
 - (void)displayEmptyListImageIfNeeded;
+- (NSArray<LocalSongModel *> *)songs;
 
 @end

@@ -15,6 +15,7 @@
 
 @interface PlaylistsTableViewController ()
 
+@property (strong, nonatomic) NSMutableArray<PlaylistModel *> *playlists;
 @property (strong, nonatomic) SongListPlusPlayerViewController * songListPlusPlayerVC;
 @property BOOL showLoggedUserPlaylists;
 
@@ -55,12 +56,7 @@
         PlaylistModel *dropboxFiles = [[PlaylistModel alloc] initWithName:@"Dropbox"];
         [self.playlists addObject:dropboxFiles];
     }
-    
-    RLMResults *realmPlaylists = [PlaylistModel allObjects] ;
-    for (PlaylistModel *playlist in realmPlaylists) {
-        [self.playlists addObject:playlist];
-    }
-    // if there are no playlists allocate memory for playlists array
+    [self.playlists addObjectsFromArray:[[PlaylistModel allObjects] valueForKey:@"self"]];
     
     [self.tableView reloadData];
 }
@@ -83,12 +79,12 @@
     
     cell.textLabel.text = playlist.name;
     
-    if ([self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
-    else {
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
+//    if ([self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
+//        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//    }
+//    else {
+//        cell.accessoryType = UITableViewCellAccessoryNone;
+//    }
     if (indexPath.row == 0 && self.self.showLoggedUserPlaylists) {
         cell.imageView.image = [UIImage imageNamed:@"video_icon"];
     }
@@ -114,9 +110,9 @@
         [self.navigationController pushViewController:dropboxSongListVC animated:YES];
     }
     else {
-        if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
+//        if (![self.songListPlusPlayerVC.playlist.name isEqualToString:playlist.name]) {
             self.songListPlusPlayerVC = [SongListPlusPlayerViewController songListPlusPlayerViewControllerWithPlaylist:playlist];
-        }
+//        }
         [self.navigationController pushViewController:self.songListPlusPlayerVC animated:YES];
     }
 
@@ -156,7 +152,6 @@
 
     return YES;
 }
-
 
 - (void)addPlaylist {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Create playlist" message:nil preferredStyle:UIAlertControllerStyleAlert];

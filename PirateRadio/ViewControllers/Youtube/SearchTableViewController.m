@@ -32,7 +32,7 @@ typedef enum {
 @property (strong, nonatomic) NSMutableDictionary<NSString *, VideoModel *> *videoModelsDict;
 @property (strong, nonatomic) NSMutableDictionary<NSString *, YoutubePlaylistModel *> *youtubePlaylistsDict;
 @property (strong, nonatomic) NSMutableArray<YoutubeEntityModel *> *youtubeSearchEntities;
-@property (strong, nonatomic) SearchSuggestionsTableViewController *searchSuggestionsTable;
+@property (strong, nonatomic) id<SearchSuggestionsDelegate> searchSuggestionsDelegate;
 @property (strong, nonatomic) DGActivityIndicatorView *activityIndicatorView;
 @property (strong, nonatomic) UIVisualEffectView *blurEffectView;
 @property (strong, nonatomic) Reachability *reachability;
@@ -59,13 +59,10 @@ typedef enum {
     UIBarButtonItem *homeButton = [[UIBarButtonItem alloc] initWithTitle:@"Home" style:UIBarButtonItemStylePlain target:self action:@selector(homeButtonPressed)];
     self.navigationItem.leftBarButtonItem = homeButton;
     
-    self.searchHistory = [[NSUserDefaults.standardUserDefaults objectForKey:@"searchHistory"] mutableCopy];
-    if (!self.searchHistory) {
-        self.searchHistory = [[NSMutableArray alloc] init];
-    }
+
     self.isNextPageEnabled = NO;
     self.videoModelsDict = [[NSMutableDictionary alloc] init];
-    self.searchSuggestions = [[NSMutableArray alloc] init];
+
     self.youtubePlaylistsDict = [[NSMutableDictionary alloc] init];
     self.youtubeSearchEntities = [[NSMutableArray alloc] init];
     self.tableView.showsVerticalScrollIndicator = YES;
@@ -89,8 +86,9 @@ typedef enum {
 
 - (void)reachabilityChanged:(NSNotification *)notification {
     if (self.reachability.isReachable) {
-        self.tableView.allowsSelection = YES;
         self.lastSearchType = EnumLastSearchTypeNone;
+        self.tableView.allowsSelection = YES;
+        self.tableView.scrollEnabled = YES;
         [self.view makeToast:@"Connection established"];
     }
     else {
@@ -124,6 +122,9 @@ typedef enum {
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row > self.youtubeSearchEntities.count) {
+        return [[UITableViewCell alloc] init];
+    }
     SearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"videoCell" forIndexPath:indexPath];
     YoutubeEntityModel *entityModel = self.youtubeSearchEntities[indexPath.row];
     UIImage *thumbnail = [ImageCacher.sharedInstance imageForSearchResultId:entityModel.entityId];
@@ -239,13 +240,6 @@ typedef enum {
 
 #pragma mark HistoryAndSearchBarDelegate
 
-- (void)manageSearchHistory {
-    if ([self.searchHistory containsObject:self.searchBar.text]) {
-        [self.searchHistory removeObject:self.searchBar.text];
-    }
-    [self.searchHistory insertObject:self.searchBar.text atIndex:0];
-}
-
 - (void)displaySearchBar {
     self.navigationItem.hidesSearchBarWhenScrolling = !self.navigationItem.hidesSearchBarWhenScrolling;
 }
@@ -262,23 +256,7 @@ typedef enum {
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     if (self.reachability.isReachable) {
-        [YoutubeConnectionManager makeSuggestionsSearchWithPrefix:searchText andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
-            NSError *serializationError;
-            NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&serializationError];
-            if (serializationError) {
-                NSLog(@"serializationError = %@", serializationError);
-                [self.searchSuggestions removeAllObjects];
-            }
-            else {
-                [self.searchSuggestions removeAllObjects];
-                for (NSString *suggestion in responseArray[1]) {
-                    [self.searchSuggestions addObject:suggestion];
-                }
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.searchSuggestionsTable.tableView reloadData];
-            });
-        }];
+        [self.searchSuggestionsDelegate didChangeText:searchText];
     }
     else {
         [self.view makeToast:@"No internet connection"];
@@ -288,6 +266,7 @@ typedef enum {
 #pragma mark Searching
 
 - (void)makeSearchWithString:(NSString *)string {
+    [self stopAnimation];
     if (self.reachability.isReachable) {
         if (![string isEqualToString:@""]) {
             [self.tableView scrollRectToVisible:CGRectZero animated:YES];
@@ -296,8 +275,9 @@ typedef enum {
             self.nextPageToken = nil;
             self.lastSearchType = EnumLastSearchTypeWithKeywords;
             NSArray<NSString *> *keywords = [string componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            self.videoModelsDict = [[NSMutableDictionary alloc] init];
-            self.youtubeSearchEntities = [[NSMutableArray alloc] init];
+            [self.videoModelsDict removeAllObjects];
+            [self.youtubeSearchEntities removeAllObjects];
+            [self.tableView reloadData];
             [self makeSearchWithKeywords:keywords];
         }
     }
@@ -305,11 +285,10 @@ typedef enum {
         [self.view makeToast:@"No internet connection"];
     }
     
-    [self.searchSuggestionsTable dismissViewControllerAnimated:NO completion:nil];
+    [self.searchSuggestionsDelegate didMakeSearchWithText:string];
+    [self dismissViewControllerAnimated:NO completion:nil];
     self.navigationItem.searchController.active = NO;
     self.searchBar.text = string;
-    [self manageSearchHistory];
-    
 }
 
 - (void)makeSearchWithKeywords:(NSArray<NSString *> *)keywords {
@@ -356,10 +335,16 @@ typedef enum {
                             }
                         }
                         NSString *resultsPerPage = [[responseDict objectForKey:@"pageInfo"] objectForKey:@"resultsPerPage"];
+                        if ((self.youtubeSearchEntities.count - resultsPerPage.integerValue) < self.youtubeSearchEntities.count) {
+                            NSRange subArrayRange = NSMakeRange(self.youtubeSearchEntities.count - resultsPerPage.integerValue, resultsPerPage.integerValue);
+                            [self makeSearchForVideoDurationsWithVideoModels:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
+                            [self makeSearchForPlaylistContentDetailsForPlaylists:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
+                        }
+                        else {
+                            [self makeSearchForVideoDurationsWithVideoModels:self.youtubeSearchEntities];
+                            [self makeSearchForPlaylistContentDetailsForPlaylists:self.youtubeSearchEntities];
+                        }
                         
-                        NSRange subArrayRange = NSMakeRange(self.youtubeSearchEntities.count - resultsPerPage.integerValue, resultsPerPage.integerValue);
-                        [self makeSearchForVideoDurationsWithVideoModels:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
-                        [self makeSearchForPlaylistContentDetailsForPlaylists:[self.youtubeSearchEntities subarrayWithRange:subArrayRange]];
                     }
                 }
             }
@@ -407,7 +392,7 @@ typedef enum {
     NSArray<NSString *> *playlistIds = [entities valueForKey:@"entityId"];
     [YoutubeConnectionManager makeSearchForPlaylistItemsCountForPlaylistIds:playlistIds andCompletion:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
-            NSLog(@"Error searching for video durations = %@", error);
+            NSLog(@"Error searching for playlistContentDetails = %@", error);
             [self stopAnimation];
         }
         else {
@@ -520,7 +505,7 @@ typedef enum {
 - (void)homeButtonPressed {
     if (self.reachability.isReachable) {
         if (self.lastSearchType != EnumLastSearchTypeSuggestions) {
-            self.youtubeSearchEntities = [[NSMutableArray alloc] init];
+            [self.youtubeSearchEntities removeAllObjects];
             self.nextPageToken = nil;
             [self makeSearchForMostPopularVideos];
         }
@@ -531,25 +516,19 @@ typedef enum {
 }
 
 - (void)presentSearchSuggestoinsTableView {
-    self.searchSuggestionsTable = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SearchSuggestionsTableViewController"];
-    self.searchSuggestionsTable.delegate = self;
-    self.searchSuggestionsTable.modalPresentationStyle = UIModalPresentationPopover;
-    self.searchSuggestionsTable.popoverPresentationController.sourceView = self.searchBar;
-    self.searchSuggestionsTable.popoverPresentationController.sourceRect = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, self.searchBar.frame.size.width, self.searchBar.frame.size.height);
-    self.searchSuggestionsTable.popoverPresentationController.delegate = self;
-    [self presentViewController:self.searchSuggestionsTable animated:YES completion:nil];
+    SearchSuggestionsTableViewController *searchSuggestionsTable = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"SearchSuggestionsTableViewController"];
+    searchSuggestionsTable.delegate = self;
+    self.searchSuggestionsDelegate = searchSuggestionsTable;
+    searchSuggestionsTable.modalPresentationStyle = UIModalPresentationPopover;
+    searchSuggestionsTable.popoverPresentationController.sourceView = self.searchBar;
+    searchSuggestionsTable.popoverPresentationController.sourceRect = CGRectMake(self.searchBar.frame.origin.x, self.searchBar.frame.origin.y, self.searchBar.frame.size.width, self.searchBar.frame.size.height);
+    searchSuggestionsTable.popoverPresentationController.delegate = self;
+    [self presentViewController:searchSuggestionsTable animated:YES completion:nil];
 }
 
 
 - (UIModalPresentationStyle) adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
     return UIModalPresentationNone;
-}
-
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [NSUserDefaults.standardUserDefaults setObject:self.searchHistory forKey:@"searchHistory"];
-    [NSUserDefaults.standardUserDefaults synchronize];
 }
 
 - (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {

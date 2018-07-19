@@ -19,12 +19,16 @@ typedef enum {
 @class UserModel;
 @class LocalSongModel;
 
-@protocol SearchSuggestionsDelegate
-
-@property (strong, nonatomic) NSMutableArray<NSString *> *searchSuggestions;
-@property (strong, nonatomic) NSMutableArray<NSString *> *searchHistory;
+@protocol SearchTableViewDelegate
 
 - (void)makeSearchWithString:(NSString *)string;
+
+@end
+
+@protocol SearchSuggestionsDelegate
+
+- (void)didChangeText:(NSString *)searchText;
+- (void)didMakeSearchWithText:(NSString *)searchText;
 
 @end
 
