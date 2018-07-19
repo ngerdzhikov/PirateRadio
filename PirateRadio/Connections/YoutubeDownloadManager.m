@@ -12,7 +12,6 @@
 #import "LocalSongModel.h"
 #import "Constants.h"
 #import "VideoModel.h"
-#import "DataBase.h"
 #import "Reachability.h"
 #import "AVKit/AVKit.h"
 #import "DropBox.h"

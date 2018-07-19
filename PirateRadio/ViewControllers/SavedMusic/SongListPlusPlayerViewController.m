@@ -10,7 +10,6 @@
 #import "SavedMusicTableViewController.h"
 #import "MusicPlayerViewController.h"
 #import "PlaylistModel.h"
-#import "DataBase.h"
 #import "LocalSongModel.h"
 #import "SongListFromPlaylistTableViewController.h"
 #import "CoreData/CoreData.h"

@@ -12,7 +12,6 @@
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
 #import "Constants.h"
-#import "DataBase.h"
 #import "SelectedSongOptionsPopoverViewController.h"
 #import "DropboxSongListTableViewController.h"
 #import "DGActivityIndicatorView.h"

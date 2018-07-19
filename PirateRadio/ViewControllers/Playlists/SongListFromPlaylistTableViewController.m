@@ -10,7 +10,6 @@
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
 #import "AllSongsTableViewController.h"
 #import "SavedMusicTableViewCell.h"
-#import "DataBase.h"
 #import "LocalSongModel.h"
 #import "PlaylistModel.h"
 #import "Constants.h"

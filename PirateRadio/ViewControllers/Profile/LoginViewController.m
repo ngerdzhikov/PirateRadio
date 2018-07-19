@@ -9,7 +9,6 @@
 #import "LoginViewController.h"
 #import "CoreData/CoreData.h"
 #import "ProfileViewController.h"
-#import "DataBase.h"
 #import "UserModel.h"
 #import "Constants.h"
 #import "UIView+Toast.h"

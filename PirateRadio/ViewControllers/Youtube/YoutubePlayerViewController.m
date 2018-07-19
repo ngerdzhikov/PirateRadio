@@ -22,7 +22,6 @@
 #import "DownloadModel.h"
 #import "ThumbnailModel.h"
 #import <MBCircularProgressBar/MBCircularProgressBarView.h>
-#import "DataBase.h"
 #import "AudioStreamNotificationCenter.h"
 #import "UIView+Toast.h"
 #import "UserModel.h"
