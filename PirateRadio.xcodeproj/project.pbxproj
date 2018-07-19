@@ -36,7 +36,6 @@
 		067A6A8020E27C7900F861C0 /* ArtworkDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 067A6A7F20E27C7900F861C0 /* ArtworkDownload.m */; };
 		069C32CD20BC071C0079C5C5 /* SongListPlusPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32CC20BC071C0079C5C5 /* SongListPlusPlayerViewController.m */; };
 		069C32D420BD7A440079C5C5 /* MusicPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */; };
-		06A5697320E6742700260A25 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 06A5697120E6742700260A25 /* Model.xcdatamodeld */; };
 		06B1B9CA20A974500019B0CC /* SavedMusicTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */; };
 		06B1B9D020A9E6E40019B0CC /* SavedMusicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B1B9CF20A9E6E40019B0CC /* SavedMusicTableViewCell.m */; };
 		06B53DFB20C98A3900D3AD79 /* PirateAVPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 06B53DF920C98A3800D3AD79 /* PirateAVPlayer.m */; };
@@ -116,7 +115,6 @@
 		069C32CC20BC071C0079C5C5 /* SongListPlusPlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SongListPlusPlayerViewController.m; sourceTree = "<group>"; };
 		069C32CE20BD797D0079C5C5 /* MusicPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicPlayerViewController.h; sourceTree = "<group>"; };
 		069C32D320BD7A440079C5C5 /* MusicPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MusicPlayerViewController.m; sourceTree = "<group>"; };
-		06A5697220E6742700260A25 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		06B1B9C820A974500019B0CC /* SavedMusicTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewController.h; sourceTree = "<group>"; };
 		06B1B9C920A974500019B0CC /* SavedMusicTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SavedMusicTableViewController.m; sourceTree = "<group>"; };
 		06B1B9CE20A9E6E40019B0CC /* SavedMusicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SavedMusicTableViewCell.h; sourceTree = "<group>"; };
@@ -371,7 +369,6 @@
 				06BE0CAA20A4474F007D9319 /* Utilities */,
 				06BE0CAF20A44F9D007D9319 /* ViewControllers */,
 				06D65A3B20B31317000AC0FC /* Resources */,
-				06A5697120E6742700260A25 /* Model.xcdatamodeld */,
 				06FC536720A335CF003238BF /* AppDelegate.h */,
 				06FC536820A335CF003238BF /* AppDelegate.m */,
 				06FC536D20A335CF003238BF /* Main.storyboard */,
@@ -547,7 +544,6 @@
 				063EDF3920B43DFD00630747 /* SearchSuggestionsTableViewController.m in Sources */,
 				06BE0CD420A4A6B4007D9319 /* VideoModel.m in Sources */,
 				06B998ED20C7EBC9007D01AD /* SongListFromPlaylistTableViewController.m in Sources */,
-				06A5697320E6742700260A25 /* Model.xcdatamodeld in Sources */,
 				0656EFCE20C68ED800ECB25F /* AllSongsTableViewController.m in Sources */,
 				06D65A3A20AEE9FB000AC0FC /* LocalSongModel.m in Sources */,
 				06FC536920A335CF003238BF /* AppDelegate.m in Sources */,
@@ -778,19 +774,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		06A5697120E6742700260A25 /* Model.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				06A5697220E6742700260A25 /* Model.xcdatamodel */,
-			);
-			currentVersion = 06A5697220E6742700260A25 /* Model.xcdatamodel */;
-			path = Model.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 06FC535C20A335CF003238BF /* Project object */;
 }
