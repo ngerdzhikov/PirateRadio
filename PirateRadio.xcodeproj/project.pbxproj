@@ -22,6 +22,7 @@
 		0634628820D7F3070044EF85 /* YoutubeEntityModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0634628720D7F3070044EF85 /* YoutubeEntityModel.m */; };
 		063EDF3920B43DFD00630747 /* SearchSuggestionsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */; };
 		063EDF3C20B43E3200630747 /* ImageCacher.m in Sources */ = {isa = PBXBuildFile; fileRef = 063EDF3A20B43E3100630747 /* ImageCacher.m */; };
+		065509262100D1F400125D70 /* cinagin_kradec.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 065509252100D1F300125D70 /* cinagin_kradec.jpg */; };
 		0656EFCE20C68ED800ECB25F /* AllSongsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0656EFCD20C68ED800ECB25F /* AllSongsTableViewController.m */; };
 		0659CBF220FE239800E7BA35 /* UserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0659CBF120FE239800E7BA35 /* UserModel.m */; };
 		0660029220E4C7040000884E /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0660029120E4C7040000884E /* ProfileViewController.m */; };
@@ -87,6 +88,7 @@
 		063EDF3820B43DFD00630747 /* SearchSuggestionsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchSuggestionsTableViewController.m; sourceTree = "<group>"; };
 		063EDF3A20B43E3100630747 /* ImageCacher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageCacher.m; path = PirateRadio/Utilities/ImageCacher.m; sourceTree = "<group>"; };
 		063EDF3B20B43E3200630747 /* ImageCacher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageCacher.h; path = PirateRadio/Utilities/ImageCacher.h; sourceTree = "<group>"; };
+		065509252100D1F300125D70 /* cinagin_kradec.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cinagin_kradec.jpg; sourceTree = "<group>"; };
 		0656EFCC20C68ED800ECB25F /* AllSongsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AllSongsTableViewController.h; sourceTree = "<group>"; };
 		0656EFCD20C68ED800ECB25F /* AllSongsTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AllSongsTableViewController.m; sourceTree = "<group>"; };
 		0659CBF020FE239800E7BA35 /* UserModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserModel.h; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 		06D65A3B20B31317000AC0FC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				065509252100D1F300125D70 /* cinagin_kradec.jpg */,
 				06D65A3C20B31317000AC0FC /* Fonts */,
 			);
 			path = Resources;
@@ -469,6 +472,7 @@
 				06D65A3E20B31318000AC0FC /* Icons South St.ttf in Resources */,
 				06FC537420A335D4003238BF /* LaunchScreen.storyboard in Resources */,
 				06FC537120A335D4003238BF /* Assets.xcassets in Resources */,
+				065509262100D1F400125D70 /* cinagin_kradec.jpg in Resources */,
 				06FC536F20A335CF003238BF /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

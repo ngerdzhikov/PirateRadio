@@ -38,6 +38,7 @@
     else if ([self.reuseIdentifier isEqualToString:@"userPreferencesCell3"]) {
         [NSUserDefaults.standardUserDefaults setBool:sender.isOn forKey:USER_DEFAULTS_ECO_MODE];
         [NSUserDefaults.standardUserDefaults synchronize];
+        [self.profileDelegate ecoMode:sender.isOn];
     }
 }
 

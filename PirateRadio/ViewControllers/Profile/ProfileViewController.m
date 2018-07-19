@@ -225,4 +225,13 @@
     }
 }
 
+- (void)ecoMode:(BOOL)eco {
+    if (eco) {
+        self.userImageView.image = [UIImage imageNamed:@"cinagin_kradec.jpg"];
+    }
+    else {
+        [self updateUIForUserModel:self.userModel];
+    }
+}
+
 @end

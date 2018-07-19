@@ -197,8 +197,10 @@
 }
 
 - (void)playerViewDidBecomeReady:(YTPlayerView *)playerView {
-    [self.youtubePlayer playVideo];
-    [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1];
+    if (![NSUserDefaults.standardUserDefaults boolForKey:USER_DEFAULTS_ECO_MODE]) {
+        [self.youtubePlayer playVideo];
+        [self updateMPNowPlayingInfoCenterWithLoadedSongInfoAndPlaybackRate:1];
+    }
     [self stopAnimation];
 }
 

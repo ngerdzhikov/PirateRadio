@@ -62,6 +62,7 @@ typedef enum {
 @protocol ProfileUserPreferencesDelegate
 
 - (void)changeProfilePicture;
+- (void)ecoMode:(BOOL)eco;
 - (void)changeName;
 - (void)changePassword;
 
